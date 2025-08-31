@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Session - LinoxFitness</title>
+  <link rel="stylesheet" href="HomePage.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="book-session.html" class="active">Book Session</a></li>
+        <li><a href="workout-plans.html">Workout Plans</a></li>
+        <li><a href="progress.html">Progress</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" style="min-height: 40vh;">
+      <div class="hero-content">
+        <h1>Book Your Session</h1>
+        <p>Choose from our personal training sessions, group classes, or specialized programs to accelerate your fitness journey.</p>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2>Available Sessions</h2>
+        
+        <!-- Session Type Selection -->
+        <div style="margin-bottom: 3rem;">
+          <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <button class="btn-primary" onclick="showSessionType('personal')" id="personalBtn">Personal Training</button>
+            <button class="btn-secondary" onclick="showSessionType('group')" id="groupBtn">Group Classes</button>
+            <button class="btn-secondary" onclick="showSessionType('specialized')" id="specializedBtn">Specialized Programs</button>
+          </div>
+        </div>
+
+        <!-- Personal Training Section -->
+        <div id="personalSection" class="session-section">
+          <h3>Personal Training Sessions</h3>
+          <div class="features-grid">
+            <div class="feature-card">
+              <h4>One-on-One Training</h4>
+              <p><strong>Duration:</strong> 60 minutes</p>
+              <p><strong>Price:</strong> $75/session</p>
+              <p><strong>Description:</strong> Personalized attention with customized workout plans tailored to your goals.</p>
+              <button class="btn-primary" onclick="bookSession('personal', 'one-on-one')">Book Now</button>
+            </div>
+            
+            <div class="feature-card">
+              <h4>30-Minute Express</h4>
+              <p><strong>Duration:</strong> 30 minutes</p>
+              <p><strong>Price:</strong> $45/session</p>
+              <p><strong>Description:</strong> Quick, intense workout perfect for busy schedules.</p>
+              <button class="btn-primary" onclick="bookSession('personal', 'express')">Book Now</button>
+            </div>
+            
+            <div class="feature-card">
+              <h4>Nutrition Consultation</h4>
+              <p><strong>Duration:</strong> 45 minutes</p>
+              <p><strong>Price:</strong> $60/session</p>
+              <p><strong>Description:</strong> Personalized nutrition planning and guidance.</p>
+              <button class="btn-primary" onclick="bookSession('personal', 'nutrition')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group Classes Section -->
+        <div id="groupSection" class="session-section" style="display: none;">
+          <h3>Group Classes</h3>
+          <div class="features-grid">
+            <div class="feature-card">
+              <h4>HIIT Cardio</h4>
+              <p><strong>Duration:</strong> 45 minutes</p>
+              <p><strong>Price:</strong> $20/class</p>
+              <p><strong>Schedule:</strong> Mon, Wed, Fri - 6:00 AM</p>
+              <button class="btn-primary" onclick="bookSession('group', 'hiit')">Book Now</button>
+            </div>
+            
+            <div class="feature-card">
+              <h4>Strength Training</h4>
+              <p><strong>Duration:</strong> 60 minutes</p>
+              <p><strong>Price:</strong> $25/class</p>
+              <p><strong>Schedule:</strong> Tue, Thu - 5:30 PM</p>
+              <button class="btn-primary" onclick="bookSession('group', 'strength')">Book Now</button>
+            </div>
+            
+            <div class="feature-card">
+              <h4>Yoga & Flexibility</h4>
+              <p><strong>Duration:</strong> 60 minutes</p>
+              <p><strong>Price:</strong> $18/class</p>
+              <p><strong>Schedule:</strong> Mon, Wed, Fri - 7:00 PM</p>
+              <button class="btn-primary" onclick="bookSession('group', 'yoga')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Specialized Programs Section -->
+        <div id="specializedSection" class="session-section" style="display: none;">
+          <h3>Specialized Programs</h3>
+          <div class="features-grid">
+            <div class="feature-card">
+              <h4>Weight Loss Program</h4>
+              <p><strong>Duration:</strong> 8 weeks</p>
+              <p><strong>Price:</strong> $400</p>
+              <p><strong>Includes:</strong> 16 sessions + nutrition plan</p>
+              <button class="btn-primary" onclick="bookSession('specialized', 'weight-loss')">Book Now</button>
+            </div>
+            
+            <div class="feature-card">
+              <h4>Muscle Building</h4>
+              <p><strong>Duration:</strong> 12 weeks</p>
+              <p><strong>Price:</strong> $600</p>
+              <p><strong>Includes:</strong> 24 sessions + meal plan</p>
+              <button class="btn-primary" onclick="bookSession('specialized', 'muscle-building')">Book Now</button>
+            </div>
+            
+            <div class="feature-card">
+              <h4>Sports Performance</h4>
+              <p><strong>Duration:</strong> 6 weeks</p>
+              <p><strong>Price:</strong> $350</p>
+              <p><strong>Includes:</strong> 12 sessions + assessment</p>
+              <button class="btn-primary" onclick="bookSession('specialized', 'sports')">Book Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Booking Calendar -->
+    <section class="about-preview">
+      <div class="container">
+        <div class="about-content">
+          <h2>Select Date & Time</h2>
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-bottom: 2rem;">
+              <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Sun</div>
+              <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Mon</div>
+              <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Tue</div>
+              <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Wed</div>
+              <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Thu</div>
+              <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Fri</div>
+              <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Sat</div>
+              
+              <!-- Calendar days -->
+              <div style="text-align: center; padding: 0.5rem; color: #ccc;">28</div>
+              <div style="text-align: center; padding: 0.5rem; color: #ccc;">29</div>
+              <div style="text-align: center; padding: 0.5rem; color: #ccc;">30</div>
+              <div style="text-align: center; padding: 0.5rem; color: #ccc;">31</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('1')">1</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('2')">2</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('3')">3</div>
+              
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('4')">4</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('5')">5</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('6')">6</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('7')">7</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('8')">8</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('9')">9</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('10')">10</div>
+              
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('11')">11</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('12')">12</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('13')">13</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('14')">14</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('15')">15</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('16')">16</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('17')">17</div>
+            </div>
+            
+            <div id="timeSlots" style="display: none;">
+              <h4>Available Time Slots</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <button class="btn-outline" onclick="selectTime('6:00 AM')">6:00 AM</button>
+                <button class="btn-outline" onclick="selectTime('7:00 AM')">7:00 AM</button>
+                <button class="btn-outline" onclick="selectTime('8:00 AM')">8:00 AM</button>
+                <button class="btn-outline" onclick="selectTime('9:00 AM')">9:00 AM</button>
+                <button class="btn-outline" onclick="selectTime('5:00 PM')">5:00 PM</button>
+                <button class="btn-outline" onclick="selectTime('6:00 PM')">6:00 PM</button>
+                <button class="btn-outline" onclick="selectTime('7:00 PM')">7:00 PM</button>
+                <button class="btn-outline" onclick="selectTime('8:00 PM')">8:00 PM</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="about-image">
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <h3 style="color: #667eea; margin-bottom: 1rem;">Your Bookings</h3>
+            <div style="margin-bottom: 1rem;">
+              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                <strong>Tomorrow - 9:00 AM</strong><br>
+                One-on-One Training with Sarah
+              </div>
+              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                <strong>Friday - 6:00 PM</strong><br>
+                HIIT Cardio Class
+              </div>
+              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                <strong>Sunday - 10:00 AM</strong><br>
+                Yoga & Flexibility
+              </div>
+            </div>
+            <a href="#" class="btn-outline" style="width: 100%; text-align: center;">View All Bookings</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Booking Confirmation Modal -->
+    <div id="bookingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+      <div style="background: white; padding: 2rem; border-radius: 15px; max-width: 500px; width: 90%;">
+        <h3 style="color: #1e1e2f; margin-bottom: 1rem;">Confirm Your Booking</h3>
+        <div id="bookingDetails" style="margin-bottom: 2rem;">
+          <!-- Booking details will be inserted here -->
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <button class="btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+          <button class="btn-secondary" onclick="closeBookingModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>LinoxFitness</h3>
+          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="book-session.html">Book Session</a></li>
+            <li><a href="workout-plans.html">Workout Plans</a></li>
+            <li><a href="progress.html">Progress</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <p>Need help with booking?</p>
+          <a href="#" class="btn-outline">Contact Us</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth-utils.js"></script>
+  <script src="book-session.js"></script>
+</body>
+</html>

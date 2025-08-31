@@ -3,34 +3,229 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LinoxFitness - Home</title>
+  <title>LinoxFitness - Transform Your Life</title>
   <link rel="stylesheet" href="HomePage.css" />
 </head>
 <body>
   <header>
-    <h1>Welcome to LinoxFitness</h1>
-    <nav>
-      <ul>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+      </div>
+      <ul class="nav-menu">
         <li><a href="about.html">About</a></li>
         <li><a href="schedule.html">Workout Schedule</a></li>
         <li><a href="services.html">Services</a></li>
         <li><a href="credentials.html">Credentials</a></li>
-        <li><a href="login.html">Login</a></li>
+        <li><a href="signUp.html">Sign Up</a></li>
+        <li><a href="loginPage.html">Login</a></li>
+        <li id="memberPortal" style="display: none;"><a href="dashboard.html">Dashboard</a></li>
+        <li id="logoutBtn" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    <section>
-      <h2>Transform Your Life</h2>
-      <p>Achieve your peak performance with our personalized training and nutrition plans.</p>
-      <button onclick="alert('Join Us feature coming soon!')">Join Us</button>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Transform Your Life Today</h1>
+        <p>Achieve your peak performance with our personalized training and nutrition plans designed to help you reach your fitness goals faster and more effectively.</p>
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="alert('Join Us feature coming soon!')">Start Your Journey</button>
+          <button class="btn-secondary" onclick="alert('Learn More feature coming soon!')">Learn More</button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <!-- Hero image placeholder -->
+        <div class="image-placeholder">
+          <p>Hero Image - Fitness Motivation</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="container">
+        <h2>Why Choose LinoxFitness?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-image">
+              <!-- Feature image placeholder -->
+              <div class="image-placeholder">
+                <p>Personal Training</p>
+              </div>
+            </div>
+            <h3>Personalized Training</h3>
+            <p>Get customized workout plans tailored to your specific goals, fitness level, and schedule. Our expert trainers create programs that work for you.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-image">
+              <!-- Feature image placeholder -->
+              <div class="image-placeholder">
+                <p>Nutrition Plans</p>
+              </div>
+            </div>
+            <h3>Nutrition Guidance</h3>
+            <p>Receive comprehensive nutrition plans and guidance to fuel your workouts and support your fitness journey with healthy, sustainable eating habits.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-image">
+              <!-- Feature image placeholder -->
+              <div class="image-placeholder">
+                <p>Community Support</p>
+              </div>
+            </div>
+            <h3>Community Support</h3>
+            <p>Join a supportive community of like-minded individuals who are committed to their fitness goals and will motivate you every step of the way.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Preview Section -->
+    <section class="about-preview">
+      <div class="container">
+        <div class="about-content">
+          <h2>Meet Your Trainer</h2>
+          <p>With years of experience in fitness training and nutrition, our certified professionals are dedicated to helping you achieve your goals. We believe in creating sustainable, long-term results through proven methods and personalized attention.</p>
+          <p>Whether you're a beginner or an experienced athlete, we have the expertise to guide you through your fitness journey with confidence and support.</p>
+          <a href="about.html" class="btn-outline">Learn More About Us</a>
+        </div>
+        <div class="about-image">
+          <!-- About image placeholder -->
+          <div class="image-placeholder">
+            <p>Trainer Profile</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Preview Section -->
+    <section class="services-preview">
+      <div class="container">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-image">
+              <!-- Service image placeholder -->
+              <div class="image-placeholder">
+                <p>One-on-One Training</p>
+              </div>
+            </div>
+            <h3>One-on-One Training</h3>
+            <p>Personalized attention and customized programs designed specifically for your needs and goals.</p>
+          </div>
+          
+          <div class="service-card">
+            <div class="service-image">
+              <!-- Service image placeholder -->
+              <div class="image-placeholder">
+                <p>Group Classes</p>
+              </div>
+            </div>
+            <h3>Group Classes</h3>
+            <p>High-energy group sessions that combine cardio, strength training, and fun in a motivating environment.</p>
+          </div>
+          
+          <div class="service-card">
+            <div class="service-image">
+              <!-- Service image placeholder -->
+              <div class="image-placeholder">
+                <p>Nutrition Coaching</p>
+              </div>
+            </div>
+            <h3>Nutrition Coaching</h3>
+            <p>Comprehensive nutrition guidance to complement your training and maximize your results.</p>
+          </div>
+        </div>
+        <div class="services-cta">
+          <a href="services.html" class="btn-primary">View All Services</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+      <div class="container">
+        <h2>Success Stories</h2>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-image">
+              <!-- Testimonial image placeholder -->
+              <div class="image-placeholder">
+                <p>Client Photo</p>
+              </div>
+            </div>
+            <blockquote>
+              <p>"LinoxFitness transformed my approach to health and fitness. The personalized training and nutrition guidance helped me achieve results I never thought possible."</p>
+              <cite>- Sarah Johnson</cite>
+            </blockquote>
+          </div>
+          
+          <div class="testimonial-card">
+            <div class="testimonial-image">
+              <!-- Testimonial image placeholder -->
+              <div class="image-placeholder">
+                <p>Client Photo</p>
+              </div>
+            </div>
+            <blockquote>
+              <p>"The community support and expert guidance at LinoxFitness made all the difference in my fitness journey. I've never felt stronger or more confident."</p>
+              <cite>- Mike Chen</cite>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta">
+      <div class="container">
+        <h2>Ready to Start Your Transformation?</h2>
+        <p>Join hundreds of others who have already transformed their lives with LinoxFitness. Your journey to a healthier, stronger you starts today.</p>
+        <div class="cta-buttons">
+          <button class="btn-primary" onclick="alert('Join Us feature coming soon!')">Get Started Now</button>
+          <a href="schedule.html" class="btn-secondary">View Schedule</a>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>LinoxFitness</h3>
+          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="schedule.html">Schedule</a></li>
+            <li><a href="credentials.html">Credentials</a></li>
+            <li id="dashboardLink" style="display: none;"><a href="dashboard.html">Dashboard</a></li>
+            <li id="bookingLink" style="display: none;"><a href="book-session.html">Book Session</a></li>
+            <li id="workoutLink" style="display: none;"><a href="workout-plans.html">Workout Plans</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>Ready to start your journey?</p>
+          <a href="loginPage.html" class="btn-outline">Get Started</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+      </div>
+    </div>
   </footer>
+
+  <script src="auth-utils.js"></script>
   <script src="home.js"></script>
 </body>
 </html>

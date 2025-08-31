@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workout Plans - LinoxFitness</title>
+  <link rel="stylesheet" href="HomePage.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="book-session.html">Book Session</a></li>
+        <li><a href="workout-plans.html" class="active">Workout Plans</a></li>
+        <li><a href="progress.html">Progress</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" style="min-height: 40vh;">
+      <div class="hero-content">
+        <h1>Your Workout Plans</h1>
+        <p>Access your personalized training programs designed to help you achieve your fitness goals efficiently and safely.</p>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2>Current Training Program</h2>
+        <div class="features-grid">
+          <div class="feature-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h3>Week 1-4: Foundation Building</h3>
+            <p><strong>Focus:</strong> Building strength and endurance</p>
+            <p><strong>Progress:</strong> 75% Complete</p>
+            <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 1rem 0;">
+              <div style="background: white; height: 100%; width: 75%; border-radius: 4px;"></div>
+            </div>
+            <button class="btn-primary" onclick="viewWeekDetails(1)">View Details</button>
+          </div>
+          
+          <div class="feature-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+            <h3>Week 5-8: Strength Development</h3>
+            <p><strong>Focus:</strong> Increasing muscle mass and power</p>
+            <p><strong>Progress:</strong> 25% Complete</p>
+            <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 1rem 0;">
+              <div style="background: white; height: 100%; width: 25%; border-radius: 4px;"></div>
+            </div>
+            <button class="btn-primary" onclick="viewWeekDetails(5)">View Details</button>
+          </div>
+          
+          <div class="feature-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+            <h3>Week 9-12: Advanced Training</h3>
+            <p><strong>Focus:</strong> Peak performance and refinement</p>
+            <p><strong>Progress:</strong> Not Started</p>
+            <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 1rem 0;">
+              <div style="background: white; height: 100%; width: 0%; border-radius: 4px;"></div>
+            </div>
+            <button class="btn-primary" onclick="viewWeekDetails(9)">View Details</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-preview">
+      <div class="container">
+        <div class="about-content">
+          <h2>This Week's Workout Schedule</h2>
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+              <div style="border: 2px solid #e9ecef; border-radius: 8px; padding: 1rem;">
+                <h4 style="color: #667eea; margin-bottom: 0.5rem;">Monday - Upper Body</h4>
+                <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                  <li>✓ Bench Press: 3x8</li>
+                  <li>✓ Pull-ups: 3x6</li>
+                  <li>✓ Shoulder Press: 3x10</li>
+                  <li>✓ Bicep Curls: 3x12</li>
+                </ul>
+                <div style="margin-top: 1rem;">
+                  <span style="color: #28a745; font-weight: bold;">✓ Completed</span>
+                </div>
+              </div>
+              
+              <div style="border: 2px solid #e9ecef; border-radius: 8px; padding: 1rem;">
+                <h4 style="color: #667eea; margin-bottom: 0.5rem;">Wednesday - Lower Body</h4>
+                <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                  <li>✓ Squats: 3x10</li>
+                  <li>✓ Deadlifts: 3x8</li>
+                  <li>✓ Lunges: 3x12</li>
+                  <li>✓ Calf Raises: 3x15</li>
+                </ul>
+                <div style="margin-top: 1rem;">
+                  <span style="color: #28a745; font-weight: bold;">✓ Completed</span>
+                </div>
+              </div>
+              
+              <div style="border: 2px solid #e9ecef; border-radius: 8px; padding: 1rem;">
+                <h4 style="color: #667eea; margin-bottom: 0.5rem;">Friday - Full Body</h4>
+                <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                  <li>○ Deadlifts: 3x8</li>
+                  <li>○ Push-ups: 3x12</li>
+                  <li>○ Rows: 3x10</li>
+                  <li>○ Planks: 3x60s</li>
+                </ul>
+                <div style="margin-top: 1rem;">
+                  <button class="btn-primary" onclick="markWorkoutComplete('friday')">Mark Complete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <h3>Quick Actions</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <button class="btn-primary" onclick="downloadWorkoutPlan()">Download PDF</button>
+            <button class="btn-secondary" onclick="requestModification()">Request Changes</button>
+            <button class="btn-outline" onclick="viewProgress()">View Progress</button>
+            <button class="btn-outline" onclick="contactTrainer()">Contact Trainer</button>
+          </div>
+        </div>
+        
+        <div class="about-image">
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <h3 style="color: #667eea; margin-bottom: 1rem;">Workout Statistics</h3>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Workouts Completed</span>
+                <span style="font-weight: bold;">12/16</span>
+              </div>
+              <div style="background: #e9ecef; height: 8px; border-radius: 4px;">
+                <div style="background: #667eea; height: 100%; width: 75%; border-radius: 4px;"></div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Strength Progress</span>
+                <span style="font-weight: bold;">+15%</span>
+              </div>
+              <div style="background: #e9ecef; height: 8px; border-radius: 4px;">
+                <div style="background: #28a745; height: 100%; width: 65%; border-radius: 4px;"></div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Weight Loss</span>
+                <span style="font-weight: bold;">-8 lbs</span>
+              </div>
+              <div style="background: #e9ecef; height: 8px; border-radius: 4px;">
+                <div style="background: #ffc107; height: 100%; width: 80%; border-radius: 4px;"></div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+              <h4 style="color: #667eea; margin-bottom: 1rem;">Next Milestone</h4>
+              <p style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 0;">
+                <strong>Complete Week 4:</strong> Unlock advanced exercises and increase training intensity.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="services-preview">
+      <div class="container">
+        <h2>Available Training Programs</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <h3>Beginner Program</h3>
+            <p><strong>Duration:</strong> 8 weeks</p>
+            <p><strong>Focus:</strong> Building foundation and proper form</p>
+            <ul style="text-align: left; margin-top: 1rem;">
+              <li>Basic strength training</li>
+              <li>Cardio introduction</li>
+              <li>Flexibility work</li>
+              <li>Nutrition basics</li>
+            </ul>
+            <button class="btn-outline" onclick="switchProgram('beginner')">Switch to This</button>
+          </div>
+          
+          <div class="service-card">
+            <h3>Intermediate Program</h3>
+            <p><strong>Duration:</strong> 12 weeks</p>
+            <p><strong>Focus:</strong> Strength building and muscle development</p>
+            <ul style="text-align: left; margin-top: 1rem;">
+              <li>Progressive overload</li>
+              <li>Compound movements</li>
+              <li>Recovery protocols</li>
+              <li>Advanced nutrition</li>
+            </ul>
+            <button class="btn-outline" onclick="switchProgram('intermediate')">Switch to This</button>
+          </div>
+          
+          <div class="service-card">
+            <h3>Advanced Program</h3>
+            <p><strong>Duration:</strong> 16 weeks</p>
+            <p><strong>Focus:</strong> Peak performance and specialization</p>
+            <ul style="text-align: left; margin-top: 1rem;">
+              <li>Periodization training</li>
+              <li>Sport-specific work</li>
+              <li>Recovery optimization</li>
+              <li>Performance nutrition</li>
+            </ul>
+            <button class="btn-outline" onclick="switchProgram('advanced')">Switch to This</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workout Detail Modal -->
+    <div id="workoutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+      <div style="background: white; padding: 2rem; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+        <h3 style="color: #1e1e2f; margin-bottom: 1rem;">Workout Details</h3>
+        <div id="workoutDetails" style="margin-bottom: 2rem;">
+          <!-- Workout details will be inserted here -->
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <button class="btn-primary" onclick="startWorkout()">Start Workout</button>
+          <button class="btn-secondary" onclick="closeWorkoutModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>LinoxFitness</h3>
+          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="book-session.html">Book Session</a></li>
+            <li><a href="workout-plans.html">Workout Plans</a></li>
+            <li><a href="progress.html">Progress</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <p>Need help with your workout plan?</p>
+          <a href="#" class="btn-outline">Contact Trainer</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth-utils.js"></script>
+  <script src="workout-plans.js"></script>
+</body>
+</html>
