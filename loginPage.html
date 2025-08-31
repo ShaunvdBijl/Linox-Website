@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - LinoxFitness</title>
+  <link rel="stylesheet" href="HomePage.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="about.html">About</a></li>
+        <li><a href="schedule.html">Workout Schedule</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="credentials.html">Credentials</a></li>
+        <li><a href="signUp.html">Sign Up</a></li>
+        <li><a href="loginPage.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" style="min-height: 60vh;">
+      <div class="hero-content">
+        <h1>Welcome Back</h1>
+        <p>Log in to access your personalized fitness plans and track your progress.</p>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <div style="max-width: 500px; margin: 0 auto; background: white; padding: 3rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+          <h2 style="text-align: center; margin-bottom: 2rem; color: #1e1e2f;">Login to Your Account</h2>
+          
+          <!-- Test Account Information -->
+          <div style="background: #e8f4fd; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border-left: 4px solid #667eea;">
+            <h4 style="margin: 0 0 1rem 0; color: #0056b3;">🧪 Test Accounts Available</h4>
+            <div style="margin-bottom: 1rem;">
+              <strong>Admin Account:</strong><br>
+              Email: <code>admin@linoxfitness.com</code><br>
+              Password: <code>Admin123!</code>
+            </div>
+            <div>
+              <strong>Test Account:</strong><br>
+              Email: <code>test@linoxfitness.com</code><br>
+              Password: <code>Test123!</code>
+            </div>
+            <small style="color: #666; display: block; margin-top: 0.5rem;">These accounts are automatically created for testing purposes.</small>
+          </div>
+          
+          <form id="loginForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div>
+              <label for="loginEmail" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Email Address *</label>
+              <input type="email" id="loginEmail" name="email" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+            </div>
+            
+            <div>
+              <label for="loginPassword" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Password *</label>
+              <div style="position: relative;">
+                <input type="password" id="loginPassword" name="password" required style="width: 100%; padding: 12px; padding-right: 50px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+                <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666; padding: 0;" onclick="togglePasswordVisibility()">
+                  👁️
+                </button>
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="rememberMe" name="rememberMe" style="width: auto;">
+                <label for="rememberMe" style="font-size: 0.9rem; color: #333;">Remember me</label>
+              </div>
+              <a href="#" style="color: #667eea; font-size: 0.9rem; text-decoration: none;">Forgot Password?</a>
+            </div>
+            
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 1rem;">Log In</button>
+          </form>
+          
+          <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
+            <p style="color: #666;">Don't have an account? <a href="signUp.html" style="color: #667eea; font-weight: bold;">Sign up here</a></p>
+          </div>
+          
+          <div style="text-align: center; margin-top: 2rem;">
+            <p style="color: #666; font-size: 0.9rem;">Or continue with</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: center;">
+              <button style="padding: 10px 20px; border: 2px solid #e9ecef; background: white; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+                <span style="font-weight: bold; color: #333;">Google</span>
+              </button>
+              <button style="padding: 10px 20px; border: 2px solid #e9ecef; background: white; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+                <span style="font-weight: bold; color: #333;">Facebook</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <h2>Ready to Continue Your Journey?</h2>
+        <p>Log in to access your personalized dashboard, workout plans, and progress tracking.</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+          <div style="text-align: center;">
+            <h3 style="color: #ffd700; margin-bottom: 1rem;">Your Dashboard</h3>
+            <p>Access your personalized fitness dashboard with progress tracking and analytics.</p>
+          </div>
+          <div style="text-align: center;">
+            <h3 style="color: #ffd700; margin-bottom: 1rem;">Workout Plans</h3>
+            <p>View and update your customized workout plans designed by our expert trainers.</p>
+          </div>
+          <div style="text-align: center;">
+            <h3 style="color: #ffd700; margin-bottom: 1rem;">Book Sessions</h3>
+            <p>Schedule personal training sessions and group classes directly from your account.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>LinoxFitness</h3>
+          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="schedule.html">Schedule</a></li>
+            <li><a href="credentials.html">Credentials</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>Ready to start your journey?</p>
+          <a href="signUp.html" class="btn-outline">Get Started</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth-utils.js"></script>
+  <script src="loginPage.js"></script>
+</body>
+</html>

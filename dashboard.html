@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - LinoxFitness</title>
+  <link rel="stylesheet" href="HomePage.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="book-session.html">Book Session</a></li>
+        <li><a href="workout-plans.html">Workout Plans</a></li>
+        <li><a href="progress.html">Progress</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Welcome Section -->
+    <section class="hero" style="min-height: 40vh;">
+      <div class="hero-content">
+        <h1>Welcome back, <span id="userName">John</span>!</h1>
+        <p>Ready to crush your fitness goals today? Let's check your progress and plan your next workout.</p>
+      </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="features">
+      <div class="container">
+        <h2>Your Progress Overview</h2>
+        <div class="features-grid">
+          <div class="feature-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h3>Workouts This Week</h3>
+            <div style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">4</div>
+            <p>Goal: 5 workouts</p>
+          </div>
+          
+          <div class="feature-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+            <h3>Calories Burned</h3>
+            <div style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">2,450</div>
+            <p>This week</p>
+          </div>
+          
+          <div class="feature-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+            <h3>Weight Progress</h3>
+            <div style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">-3.2 lbs</div>
+            <p>This month</p>
+          </div>
+          
+          <div class="feature-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+            <h3>Next Session</h3>
+            <div style="font-size: 1.5rem; font-weight: bold; margin: 1rem 0;">Tomorrow</div>
+            <p>9:00 AM - HIIT Training</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Today's Workout & Quick Actions -->
+    <section class="about-preview">
+      <div class="container">
+        <div class="about-content">
+          <h2>Today's Workout Plan</h2>
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+            <h3 style="color: #667eea; margin-bottom: 1rem;">Upper Body Strength</h3>
+            <ul style="list-style: none; padding: 0;">
+              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                <strong>Bench Press:</strong> 3 sets x 8 reps
+              </li>
+              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                <strong>Pull-ups:</strong> 3 sets x 6 reps
+              </li>
+              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                <strong>Shoulder Press:</strong> 3 sets x 10 reps
+              </li>
+              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                <strong>Bicep Curls:</strong> 3 sets x 12 reps
+              </li>
+              <li style="padding: 0.5rem 0;">
+                <strong>Tricep Dips:</strong> 3 sets x 15 reps
+              </li>
+            </ul>
+            <div style="margin-top: 1.5rem;">
+              <button class="btn-primary" onclick="markWorkoutComplete()">Mark as Complete</button>
+              <button class="btn-secondary" onclick="viewFullPlan()">View Full Plan</button>
+            </div>
+          </div>
+          
+          <h3>Quick Actions</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="book-session.html" class="btn-primary" style="text-align: center; padding: 1rem;">Book New Session</a>
+            <a href="workout-plans.html" class="btn-secondary" style="text-align: center; padding: 1rem;">View Workout Plans</a>
+            <a href="progress.html" class="btn-outline" style="text-align: center; padding: 1rem;">Track Progress</a>
+            <a href="profile.html" class="btn-outline" style="text-align: center; padding: 1rem;">Update Profile</a>
+          </div>
+        </div>
+        
+        <div class="about-image">
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <h3 style="color: #667eea; margin-bottom: 1rem;">Upcoming Sessions</h3>
+            <div style="margin-bottom: 1rem;">
+              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                <strong>Tomorrow - 9:00 AM</strong><br>
+                HIIT Training with Sarah
+              </div>
+              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                <strong>Friday - 6:00 PM</strong><br>
+                Strength Training with Mike
+              </div>
+              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                <strong>Sunday - 10:00 AM</strong><br>
+                Yoga & Recovery with Emily
+              </div>
+            </div>
+            <a href="book-session.html" class="btn-primary" style="width: 100%; text-align: center;">Book More Sessions</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Activity & Achievements -->
+    <section class="services-preview">
+      <div class="container">
+        <h2>Recent Activity & Achievements</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <h3>🏆 New Achievement!</h3>
+            <p><strong>Consistency Champion</strong> - Completed 4 workouts this week!</p>
+            <small style="color: #666;">Earned 2 days ago</small>
+          </div>
+          
+          <div class="service-card">
+            <h3>📈 Progress Update</h3>
+            <p><strong>Bench Press:</strong> Increased from 135 lbs to 145 lbs</p>
+            <small style="color: #666;">Updated yesterday</small>
+          </div>
+          
+          <div class="service-card">
+            <h3>🎯 Goal Milestone</h3>
+            <p><strong>Weight Loss:</strong> 75% to your monthly goal!</p>
+            <small style="color: #666;">Updated 3 days ago</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nutrition & Wellness -->
+    <section class="testimonials">
+      <div class="container">
+        <h2>Nutrition & Wellness</h2>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <h3>Today's Nutrition Plan</h3>
+            <div style="text-align: left;">
+              <p><strong>Breakfast:</strong> Protein smoothie with berries</p>
+              <p><strong>Lunch:</strong> Grilled chicken salad</p>
+              <p><strong>Dinner:</strong> Salmon with quinoa</p>
+              <p><strong>Snacks:</strong> Greek yogurt, almonds</p>
+            </div>
+            <a href="#" class="btn-outline" style="margin-top: 1rem;">View Full Meal Plan</a>
+          </div>
+          
+          <div class="testimonial-card">
+            <h3>Wellness Tips</h3>
+            <div style="text-align: left;">
+              <p>💧 Stay hydrated - aim for 8 glasses of water</p>
+              <p>😴 Get 7-8 hours of quality sleep</p>
+              <p>🧘 Practice 10 minutes of meditation</p>
+              <p>🚶 Take 10,000 steps today</p>
+            </div>
+            <a href="#" class="btn-outline" style="margin-top: 1rem;">More Wellness Tips</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>LinoxFitness</h3>
+          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="book-session.html">Book Session</a></li>
+            <li><a href="workout-plans.html">Workout Plans</a></li>
+            <li><a href="progress.html">Progress</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <p>Need help with your fitness journey?</p>
+          <a href="#" class="btn-outline">Contact Trainer</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth-utils.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
