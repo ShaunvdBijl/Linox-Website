@@ -1,17 +1,44 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 25%, #15803d 50%, #166534 75%, #14532d 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: #333;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+  }
+
+  /* Watermark background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    opacity: 0.05;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
   
   header {
-    background-color: #1e1e2f;
+    background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #166534 100%);
     color: white;
     padding: 1em;
+    box-shadow: 0 4px 20px rgba(20, 83, 45, 0.3);
+    backdrop-filter: blur(10px);
   }
 
   .navbar {
@@ -20,6 +47,24 @@ body {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-logo {
+    height: 40px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+  }
+
+  .nav-logo:hover {
+    filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
+    transform: scale(1.1);
   }
 
   .nav-brand h1 {
@@ -43,7 +88,10 @@ body {
   }
 
   .nav-menu li a:hover {
-    color: #ffd700;
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
   }
   
   main {
@@ -62,9 +110,29 @@ body {
     display: flex;
     align-items: center;
     min-height: 80vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 25%, #15803d 50%, #166534 75%, #14532d 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: white;
     padding: 4em 2em;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
   }
 
   .hero-content {
@@ -73,8 +141,21 @@ body {
   }
 
   .hero-content h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #fff, #fbbf24, #fff);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShine 3s ease-in-out infinite;
+  }
+
+  @keyframes textShine {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   .hero-content p {
@@ -93,18 +174,41 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    z-index: 2;
   }
 
   /* Features Section */
   .features {
     padding: 4em 0;
-    background-color: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    position: relative;
+  }
+
+  .features::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: repeat;
+    background-size: 150px 75px;
+    opacity: 0.08;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .features h2 {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 3rem;
+    background: linear-gradient(45deg, #14532d, #15803d, #16a34a);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .features-grid {
@@ -116,13 +220,50 @@ body {
   .feature-card {
     text-align: center;
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 10px 30px rgba(30, 58, 138, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80px 40px;
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .feature-card:hover::before {
+    left: 100%;
   }
 
   .feature-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(30, 58, 138, 0.2);
+    border-color: rgba(59, 130, 246, 0.3);
   }
 
   .feature-image {
@@ -132,7 +273,23 @@ body {
   /* About Preview Section */
   .about-preview {
     padding: 4em 0;
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: relative;
+  }
+
+  .about-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: repeat;
+    background-size: 150px 75px;
+    opacity: 0.06;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .about-preview .container {
@@ -143,8 +300,12 @@ body {
   }
 
   .about-content h2 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 1.5rem;
+    background: linear-gradient(45deg, #14532d, #15803d, #16a34a);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .about-content p {
@@ -156,13 +317,33 @@ body {
   /* Services Preview Section */
   .services-preview {
     padding: 4em 0;
-    background-color: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    position: relative;
+  }
+
+  .services-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: repeat;
+    background-size: 150px 75px;
+    opacity: 0.08;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .services-preview h2 {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 3rem;
+    background: linear-gradient(45deg, #14532d, #15803d, #16a34a);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .services-grid {
@@ -175,13 +356,50 @@ body {
   .service-card {
     text-align: center;
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 10px 30px rgba(30, 58, 138, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80px 40px;
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .service-card:hover::before {
+    left: 100%;
   }
 
   .service-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(30, 58, 138, 0.2);
+    border-color: rgba(139, 92, 246, 0.3);
   }
 
   .service-image {
@@ -195,13 +413,33 @@ body {
   /* Testimonials Section */
   .testimonials {
     padding: 4em 0;
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: relative;
+  }
+
+  .testimonials::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: repeat;
+    background-size: 150px 75px;
+    opacity: 0.06;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .testimonials h2 {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 3rem;
+    background: linear-gradient(45deg, #14532d, #15803d, #16a34a);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .testimonials-grid {
@@ -211,11 +449,52 @@ body {
   }
 
   .testimonial-card {
-    background-color: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(30, 58, 138, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.1);
     text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('linqxfitness-logo.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80px 40px;
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .testimonial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(245, 87, 108, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .testimonial-card:hover::before {
+    left: 100%;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(30, 58, 138, 0.2);
+    border-color: rgba(245, 87, 108, 0.3);
   }
 
   .testimonial-image {
@@ -233,20 +512,44 @@ body {
     display: block;
     margin-top: 1rem;
     font-weight: bold;
-    color: #667eea;
+    background: linear-gradient(45deg, #14532d, #15803d);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   /* Call to Action Section */
   .cta {
     padding: 4em 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 25%, #15803d 50%, #166534 75%, #14532d 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: white;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .cta .container {
+    position: relative;
+    z-index: 2;
   }
 
   .cta h2 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   .cta p {
@@ -266,82 +569,344 @@ body {
 
   /* Buttons */
   .btn-primary {
-    background-color: #ffd700;
+    background: linear-gradient(45deg, #fbbf24, #f59e0b, #fbbf24);
+    background-size: 200% 200%;
+    animation: buttonShine 3s ease-in-out infinite;
     color: #1e1e2f;
-    padding: 12px 24px;
+    padding: 15px 30px;
     border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  @keyframes buttonShine {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   .btn-primary:hover {
-    background-color: #ffed4e;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.5);
+    background: linear-gradient(45deg, #f59e0b, #fbbf24, #f59e0b);
   }
 
   .btn-secondary {
-    background-color: transparent;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     color: white;
-    padding: 12px 24px;
+    padding: 15px 30px;
     border: 2px solid white;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   .btn-secondary:hover {
-    background-color: white;
+    background: white;
     color: #1e1e2f;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
   }
 
   .btn-outline {
-    background-color: transparent;
-    color: #667eea;
-    padding: 12px 24px;
-    border: 2px solid #667eea;
-    border-radius: 5px;
-    font-size: 1rem;
+    background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    color: #3b82f6;
+    padding: 15px 30px;
+    border: 2px solid #3b82f6;
+    border-radius: 50px;
+    font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   .btn-outline:hover {
-    background-color: #667eea;
+    background: linear-gradient(45deg, #3b82f6, #1e3a8a);
     color: white;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
   }
 
-  /* Image Placeholders */
+  /* Hero Visual Elements */
+  .hero-visual {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .fitness-icon {
+    font-size: 3rem;
+    margin: 0.5rem;
+    animation: bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  }
+
+  .fitness-icon:nth-child(1) { animation-delay: 0s; }
+  .fitness-icon:nth-child(2) { animation-delay: 0.5s; }
+  .fitness-icon:nth-child(3) { animation-delay: 1s; }
+  .fitness-icon:nth-child(4) { animation-delay: 1.5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+
+  /* Feature Visual Elements */
+  .feature-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    min-height: 150px;
+    justify-content: center;
+  }
+
+  .feature-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.3));
+  }
+
+  .feature-visual h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #3b82f6;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  /* Service Visual Elements */
+  .service-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    min-height: 150px;
+    justify-content: center;
+  }
+
+  .service-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: rotate 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(139, 92, 246, 0.3));
+  }
+
+  .service-visual h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #8b5cf6;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  @keyframes rotate {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+  }
+
+  /* Trainer Visual Elements */
+  .trainer-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 20px;
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    min-height: 250px;
+    justify-content: center;
+  }
+
+  .trainer-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    animation: wave 2s ease-in-out infinite;
+    filter: drop-shadow(0 6px 12px rgba(30, 58, 138, 0.3));
+  }
+
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    75% { transform: rotate(-10deg); }
+  }
+
+  .trainer-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .stat-item:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #14532d, #15803d);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  /* Testimonial Visual Elements */
+  .testimonial-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    min-height: 150px;
+    justify-content: center;
+  }
+
+  .client-avatar {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: glow 2s ease-in-out infinite alternate;
+    filter: drop-shadow(0 4px 8px rgba(245, 87, 108, 0.3));
+  }
+
+  @keyframes glow {
+    from { filter: drop-shadow(0 4px 8px rgba(245, 87, 108, 0.3)); }
+    to { filter: drop-shadow(0 4px 12px rgba(245, 87, 108, 0.6)); }
+  }
+
+  .rating {
+    font-size: 1.2rem;
+    color: #fbbf24;
+    animation: twinkle 1.5s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Image Placeholders (fallback) */
   .image-placeholder {
-    background-color: #e9ecef;
-    border: 2px dashed #adb5bd;
-    border-radius: 10px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    border: 2px dashed #94a3b8;
+    border-radius: 20px;
     padding: 2rem;
     text-align: center;
-    color: #6c757d;
+    color: #64748b;
     font-weight: bold;
     min-height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .image-placeholder:hover::before {
+    left: 100%;
+  }
+
+  .image-placeholder:hover {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    transform: translateY(-2px);
   }
 
   /* Footer */
   footer {
-    background-color: #1e1e2f;
+    background: linear-gradient(135deg, #14532d 0%, #166534 50%, #14532d 100%);
     color: white;
     padding: 2em 0 1em 0;
     margin-top: auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('linqxfitness-logo.svg') repeat;
+    background-size: 100px 50px;
+    opacity: 0.1;
+    z-index: 1;
+  }
+
+  footer .container {
+    position: relative;
+    z-index: 2;
   }
 
   .footer-content {
@@ -351,10 +916,36 @@ body {
     margin-bottom: 2rem;
   }
 
+  .footer-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer-logo {
+    height: 35px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+  }
+
+  .footer-logo:hover {
+    filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
+    transform: scale(1.1);
+  }
+
   .footer-section h3,
   .footer-section h4 {
     margin-bottom: 1rem;
-    color: #ffd700;
+    background: linear-gradient(45deg, #fbbf24, #f59e0b);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .footer-section .footer-logo-container h3 {
+    margin-bottom: 0;
   }
 
   .footer-section ul {
@@ -373,7 +964,10 @@ body {
   }
 
   .footer-section ul li a:hover {
-    color: #ffd700;
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    transform: translateX(5px);
+    transition: all 0.3s ease;
   }
 
   .footer-bottom {
@@ -391,7 +985,7 @@ body {
     }
 
     .hero-content h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
     }
 
     .about-preview .container {
@@ -415,4 +1009,175 @@ body {
     .testimonials-grid {
       grid-template-columns: 1fr;
     }
+
+    .hero-visual {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .fitness-icon {
+      font-size: 2.5rem;
+    }
+
+    .feature-icon,
+    .service-icon {
+      font-size: 3rem;
+    }
+
+    .trainer-icon {
+      font-size: 4rem;
+    }
+
+    .trainer-stats {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat-item {
+      min-width: 120px;
+      flex: 1;
+    }
+
+    .client-avatar {
+      font-size: 3rem;
+    }
+
+    .features h2,
+    .services-preview h2,
+    .testimonials h2,
+    .about-content h2 {
+      font-size: 2.2rem;
+    }
+
+    .cta h2 {
+      font-size: 2.2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-content h1 {
+      font-size: 2rem;
+    }
+
+    .features h2,
+    .services-preview h2,
+    .testimonials h2,
+    .about-content h2 {
+      font-size: 1.8rem;
+    }
+
+    .cta h2 {
+      font-size: 1.8rem;
+    }
+
+    .feature-icon,
+    .service-icon {
+      font-size: 2.5rem;
+    }
+
+    .trainer-icon {
+      font-size: 3rem;
+    }
+
+    .client-avatar {
+      font-size: 2.5rem;
+    }
+
+    .trainer-stats {
+      flex-direction: column;
+    }
+
+    .stat-item {
+      width: 100%;
+    }
+  }
+
+  /* Additional Layout Improvements */
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Enhanced scrolling experience */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #1e3a8a, #6d28d9);
+  }
+
+  /* Loading animation for images */
+  .feature-visual,
+  .service-visual,
+  .trainer-visual,
+  .testimonial-visual {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  .feature-visual:nth-child(1) { animation-delay: 0.1s; }
+  .feature-visual:nth-child(2) { animation-delay: 0.2s; }
+  .feature-visual:nth-child(3) { animation-delay: 0.3s; }
+
+  .service-visual:nth-child(1) { animation-delay: 0.1s; }
+  .service-visual:nth-child(2) { animation-delay: 0.2s; }
+  .service-visual:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Enhanced focus states for accessibility */
+  .btn-primary:focus,
+  .btn-secondary:focus,
+  .btn-outline:focus {
+    outline: 3px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* Improved text readability */
+  p {
+    line-height: 1.7;
+  }
+
+  /* Enhanced section spacing */
+  section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle section dividers */
+  .features::before,
+  .services-preview::before,
+  .testimonials::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
   }
