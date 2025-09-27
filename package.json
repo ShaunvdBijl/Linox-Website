@@ -12,7 +12,10 @@
     "dev": "npx serve . -l 3000",
     "deploy": "npm run build && npm run deploy:netlify",
     "deploy:netlify": "npx netlify deploy --prod --dir .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "security-check": "node scripts/security-check.js",
+    "pre-commit": "npm run security-check",
+    "setup-secure": "node setup-secure-config.js"
   },
   "keywords": [
     "soccer",
