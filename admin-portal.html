@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal - LINQXFITNESS</title>
+  <link rel="stylesheet" href="HomePage.css" />
+  <style>
+    /* Admin-specific styles */
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #166534 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(20, 83, 45, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .admin-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('linqxfitness-logo.svg');
+      background-repeat: repeat;
+      background-size: 100px 50px;
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .admin-header-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(20, 83, 45, 0.1);
+      border: 1px solid rgba(20, 83, 45, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('linqxfitness-logo.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 60px 30px;
+      opacity: 0.05;
+      z-index: 0;
+    }
+
+    .stat-card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(45deg, #14532d, #15803d);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .admin-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px 12px 45px;
+      border: 2px solid #e2e8f0;
+      border-radius: 50px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #15803d;
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 1.2rem;
+    }
+
+    .filter-select {
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 50px;
+      background: white;
+      font-size: 1rem;
+      min-width: 150px;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: #15803d;
+    }
+
+    .customers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .customer-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 5px 15px rgba(20, 83, 45, 0.1);
+      border: 1px solid rgba(20, 83, 45, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .customer-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('linqxfitness-logo.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 80px 40px;
+      opacity: 0.03;
+      z-index: 0;
+    }
+
+    .customer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(20, 83, 45, 0.15);
+    }
+
+    .customer-card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .customer-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .customer-avatar {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(45deg, #14532d, #15803d);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .customer-info h3 {
+      margin: 0;
+      color: #14532d;
+      font-size: 1.2rem;
+    }
+
+    .customer-info p {
+      margin: 0;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .customer-details {
+      margin-bottom: 1rem;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .detail-label {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .detail-value {
+      color: #14532d;
+      font-weight: 600;
+    }
+
+    .customer-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #15803d, #16a34a);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(21, 128, 61, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(45deg, #fbbf24, #f59e0b);
+      color: #14532d;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(251, 191, 36, 0.3);
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(21, 128, 61, 0.1);
+      color: #15803d;
+    }
+
+    .status-pending {
+      background: rgba(251, 191, 36, 0.1);
+      color: #f59e0b;
+    }
+
+    .status-inactive {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .no-customers {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #64748b;
+    }
+
+    .no-customers-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 1rem;
+      }
+
+      .admin-header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .admin-controls {
+        flex-direction: column;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .customers-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <div class="logo-container">
+          <img src="linqxfitness-logo.svg" alt="LINQXFITNESS Logo" class="nav-logo">
+          <h1><a href="home.html" style="color: white; text-decoration: none;">LINQXFITNESS</a></h1>
+        </div>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="admin-portal.html" style="color: #fbbf24;">Admin Portal</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="admin-container">
+      <!-- Admin Header -->
+      <div class="admin-header">
+        <div class="admin-header-content">
+          <div>
+            <h1 style="margin: 0; font-size: 2.5rem;">Admin Portal</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Manage customers, schedules, and training programs</p>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 1.1rem; font-weight: 600;">Welcome, Admin</div>
+            <div style="opacity: 0.8;">LINQXFITNESS Management</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Stats -->
+      <div class="admin-stats">
+        <div class="stat-card">
+          <div class="stat-card-content">
+            <div class="stat-number" id="totalCustomers">0</div>
+            <div class="stat-label">Total Customers</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-content">
+            <div class="stat-number" id="activeCustomers">0</div>
+            <div class="stat-label">Active Members</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-content">
+            <div class="stat-number" id="pendingCustomers">0</div>
+            <div class="stat-label">Pending Approval</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-content">
+            <div class="stat-number" id="newThisWeek">0</div>
+            <div class="stat-label">New This Week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Controls -->
+      <div class="admin-controls">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search customers by name, email, or phone...">
+        </div>
+        <select class="filter-select" id="statusFilter">
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="pending">Pending</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select class="filter-select" id="sortBy">
+          <option value="name">Sort by Name</option>
+          <option value="date">Sort by Join Date</option>
+          <option value="status">Sort by Status</option>
+        </select>
+      </div>
+
+      <!-- Customers Grid -->
+      <div id="customersGrid" class="customers-grid">
+        <!-- Customer cards will be populated here -->
+      </div>
+
+      <!-- No Customers Message -->
+      <div id="noCustomers" class="no-customers" style="display: none;">
+        <div class="no-customers-icon">👥</div>
+        <h3>No customers found</h3>
+        <p>Try adjusting your search or filter criteria</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-logo-container">
+            <img src="linqxfitness-logo.svg" alt="LINQXFITNESS Logo" class="footer-logo">
+            <h3>LINQXFITNESS</h3>
+          </div>
+          <p>Developing soccer excellence through specialized training and professional coaching.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Admin Tools</h4>
+          <ul>
+            <li><a href="admin-portal.html">Customer Management</a></li>
+            <li><a href="#">Schedule Management</a></li>
+            <li><a href="#">Training Programs</a></li>
+            <li><a href="#">Reports & Analytics</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Actions</h4>
+          <ul>
+            <li><a href="#">Add New Customer</a></li>
+            <li><a href="#">Bulk Operations</a></li>
+            <li><a href="#">Export Data</a></li>
+            <li><a href="#">System Settings</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 LINQXFITNESS. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth-utils.js"></script>
+  <script src="admin-portal.js"></script>
+</body>
+</html>

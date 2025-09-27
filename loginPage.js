@@ -120,7 +120,12 @@ async function authenticateUser(loginData) {
         showLoginSuccess();
         
         setTimeout(() => {
-            window.location.href = 'dashboard.html';
+            // Redirect admin users to admin portal, regular users to dashboard
+            if (user.isAdmin) {
+                window.location.href = 'admin-portal.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
         }, 2000);
         
     } catch (error) {
@@ -135,8 +140,12 @@ async function checkExistingSession() {
     try {
         const session = await loadSecureSession();
         if (session) {
-            // User is already logged in, redirect to dashboard
-            window.location.href = 'dashboard.html';
+            // User is already logged in, redirect based on role
+            if (session.isAdmin) {
+                window.location.href = 'admin-portal.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
         }
     } catch (error) {
         console.error('Session check failed:', error);
