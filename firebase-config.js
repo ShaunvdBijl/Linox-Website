@@ -4,7 +4,7 @@
 // Firebase configuration object
 // Your actual Firebase project configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAYAvE3jO6I3CQOxD-vnTMaUmGAirp_5iM",
+  apiKey: "YOUR_NEW_API_KEY_HERE",
   authDomain: "linox-website.firebaseapp.com",
   projectId: "linox-website",
   storageBucket: "linox-website.firebasestorage.app",
