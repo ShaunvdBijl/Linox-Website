@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Test - LINQXFITNESS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; color: #856404; }
+        .info { background: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Firebase Backend Test</h1>
+        <p>This page will test your Firebase setup and identify any issues.</p>
+
+        <div id="connectionTest" class="test-section">
+            <h3>1. Firebase Connection Test</h3>
+            <div id="connectionResult">Testing...</div>
+        </div>
+
+        <div id="authTest" class="test-section">
+            <h3>2. Authentication Test</h3>
+            <div id="authResult">Not tested yet</div>
+            <input type="email" id="testEmail" placeholder="admin@linoxfitness.com" value="admin@linoxfitness.com">
+            <input type="password" id="testPassword" placeholder="Admin123!" value="Admin123!">
+            <button onclick="testAuth()">Test Admin Login</button>
+            <button onclick="testSignup()">Test Signup</button>
+        </div>
+
+        <div id="databaseTest" class="test-section">
+            <h3>3. Database Test</h3>
+            <div id="databaseResult">Not tested yet</div>
+            <button onclick="testDatabase()">Test Database Connection</button>
+            <button onclick="testCreateUser()">Create Test User</button>
+        </div>
+
+        <div id="setupGuide" class="test-section">
+            <h3>4. Firebase Console Setup Guide</h3>
+            <div id="setupResult" class="info">
+                <strong>If any tests fail, complete these steps:</strong><br><br>
+                1. Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a><br>
+                2. Select your "linox-website" project<br>
+                3. Enable Authentication:<br>
+                   &nbsp;&nbsp;• Click "Authentication" → "Get started"<br>
+                   &nbsp;&nbsp;• Go to "Sign-in method" tab<br>
+                   &nbsp;&nbsp;• Enable "Email/Password" provider<br>
+                4. Enable Firestore Database:<br>
+                   &nbsp;&nbsp;• Click "Firestore Database" → "Create database"<br>
+                   &nbsp;&nbsp;• Choose "Start in test mode"<br>
+                5. Enable Storage:<br>
+                   &nbsp;&nbsp;• Click "Storage" → "Get started"<br>
+                   &nbsp;&nbsp;• Choose "Start in test mode"
+            </div>
+        </div>
+
+        <div id="logSection">
+            <h3>📋 Test Log</h3>
+            <div id="testLog" class="log">Starting tests...\n</div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDocs, collection, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYAvE3jO6I3CQOxD-vnTMaUmGAirp_5iM",
+            authDomain: "linox-website.firebaseapp.com",
+            projectId: "linox-website",
+            storageBucket: "linox-website.firebasestorage.app",
+            messagingSenderId: "559179347351",
+            appId: "1:559179347351:web:1158b072023b4a7a6500d2",
+            measurementId: "G-FN0BHTE93G"
+        };
+
+        let app, auth, db;
+
+        function log(message) {
+            const logElement = document.getElementById('testLog');
+            logElement.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function updateResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `test-section ${type}`;
+        }
+
+        // Test 1: Firebase Connection
+        async function testConnection() {
+            try {
+                log('Testing Firebase connection...');
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                
+                log('✅ Firebase initialized successfully');
+                updateResult('connectionResult', '✅ Firebase connected successfully!', 'success');
+                return true;
+            } catch (error) {
+                log('❌ Firebase connection failed: ' + error.message);
+                updateResult('connectionResult', '❌ Firebase connection failed: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        // Test 2: Authentication
+        async function testAuth() {
+            try {
+                log('Testing authentication...');
+                const email = document.getElementById('testEmail').value;
+                const password = document.getElementById('testPassword').value;
+                
+                if (!email || !password) {
+                    throw new Error('Please enter email and password');
+                }
+
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                log('✅ Authentication successful for: ' + userCredential.user.email);
+                updateResult('authResult', '✅ Authentication successful!', 'success');
+                return true;
+            } catch (error) {
+                log('❌ Authentication failed: ' + error.message);
+                let errorMsg = '❌ Authentication failed: ' + error.message;
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMsg += '\n💡 User not found. Try creating an account first.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMsg += '\n💡 Wrong password. Check your credentials.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg += '\n💡 Invalid email format.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMsg += '\n💡 Too many failed attempts. Try again later.';
+                }
+                
+                updateResult('authResult', errorMsg, 'error');
+                return false;
+            }
+        }
+
+        // Test 3: Database
+        async function testDatabase() {
+            try {
+                log('Testing database connection...');
+                const testCollection = collection(db, 'test');
+                const testQuery = query(testCollection);
+                const snapshot = await getDocs(testQuery);
+                
+                log('✅ Database connection successful');
+                updateResult('databaseResult', '✅ Database connection successful!', 'success');
+                return true;
+            } catch (error) {
+                log('❌ Database connection failed: ' + error.message);
+                let errorMsg = '❌ Database connection failed: ' + error.message;
+                
+                if (error.code === 'permission-denied') {
+                    errorMsg += '\n💡 Permission denied. Check Firestore security rules.';
+                } else if (error.code === 'unavailable') {
+                    errorMsg += '\n💡 Service unavailable. Check if Firestore is enabled.';
+                }
+                
+                updateResult('databaseResult', errorMsg, 'error');
+                return false;
+            }
+        }
+
+        // Test 4: Create Test User
+        async function testSignup() {
+            try {
+                log('Testing user creation...');
+                const email = 'test@example.com';
+                const password = 'Test123!';
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                log('✅ User created successfully: ' + userCredential.user.email);
+                updateResult('authResult', '✅ User creation successful!', 'success');
+                return true;
+            } catch (error) {
+                log('❌ User creation failed: ' + error.message);
+                let errorMsg = '❌ User creation failed: ' + error.message;
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMsg += '\n💡 Email already in use.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMsg += '\n💡 Password is too weak.';
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMsg += '\n💡 Email/password accounts not enabled. Enable in Firebase Console.';
+                }
+                
+                updateResult('authResult', errorMsg, 'error');
+                return false;
+            }
+        }
+
+        // Test 5: Create Test User in Database
+        async function testCreateUser() {
+            try {
+                log('Testing database write...');
+                const testUser = {
+                    name: 'Test User',
+                    email: 'test@example.com',
+                    createdAt: new Date(),
+                    isTest: true
+                };
+                
+                await setDoc(doc(db, 'users', 'test-user-id'), testUser);
+                log('✅ Database write successful');
+                updateResult('databaseResult', '✅ Database write successful!', 'success');
+                return true;
+            } catch (error) {
+                log('❌ Database write failed: ' + error.message);
+                let errorMsg = '❌ Database write failed: ' + error.message;
+                
+                if (error.code === 'permission-denied') {
+                    errorMsg += '\n💡 Permission denied. Check Firestore security rules.';
+                }
+                
+                updateResult('databaseResult', errorMsg, 'error');
+                return false;
+            }
+        }
+
+        // Run initial connection test
+        document.addEventListener('DOMContentLoaded', async () => {
+            await testConnection();
+        });
+
+        // Make functions globally available
+        window.testAuth = testAuth;
+        window.testSignup = testSignup;
+        window.testDatabase = testDatabase;
+        window.testCreateUser = testCreateUser;
+    </script>
+</body>
+</html>
