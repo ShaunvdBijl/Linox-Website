@@ -1,0 +1,41 @@
+{
+  "name": "linoxfitness-website",
+  "version": "1.0.0",
+  "description": "LINQXFITNESS - Soccer Training and Fitness Management System",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "npx postcss HomePage.css -o dist/HomePage.css",
+    "build:js": "npx rollup -c",
+    "dev": "npx serve . -l 3000",
+    "deploy": "npm run build && npm run deploy:netlify",
+    "deploy:netlify": "npx netlify deploy --prod --dir .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "soccer",
+    "fitness",
+    "training",
+    "management",
+    "firebase",
+    "admin-portal"
+  ],
+  "author": "LINQXFITNESS",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^10.7.1"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.0",
+    "rollup": "^4.9.1",
+    "netlify-cli": "^17.16.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

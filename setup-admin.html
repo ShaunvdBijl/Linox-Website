@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Setup - LINQXFITNESS</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .setup-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .setup-container h1 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .setup-container p {
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .setup-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            margin: 10px;
+        }
+
+        .setup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .setup-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .admin-credentials {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .admin-credentials h3 {
+            color: #92400e;
+            margin-top: 0;
+        }
+
+        .admin-credentials p {
+            margin: 8px 0;
+            color: #92400e;
+            font-weight: 600;
+        }
+
+        .admin-credentials code {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .navigation-links {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <h1>🔐 Admin Setup</h1>
+        <p>Set up the default admin account for LINQXFITNESS</p>
+        
+        <div id="statusDiv"></div>
+        
+        <button id="setupBtn" class="setup-btn" onclick="setupAdminAccount()">
+            Create Admin Account
+        </button>
+
+        <div id="adminCredentials" class="admin-credentials" style="display: none;">
+            <h3>👑 Admin Account Created</h3>
+            <p><strong>Email:</strong> <code>admin@linoxfitness.com</code></p>
+            <p><strong>Password:</strong> <code>Admin123!</code></p>
+            <p><strong>Access:</strong> Full admin privileges</p>
+        </div>
+
+        <div class="navigation-links">
+            <a href="loginPage-firebase.html" class="nav-link">🔑 Login Page</a>
+            <a href="admin-portal-firebase.html" class="nav-link">🏆 Admin Portal</a>
+            <a href="home.html" class="nav-link">🏠 Home Page</a>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDocs, query, where, collection } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYAvE3jO6I3CQOxD-vnTMaUmGAirp_5iM",
+            authDomain: "linox-website.firebaseapp.com",
+            projectId: "linox-website",
+            storageBucket: "linox-website.firebasestorage.app",
+            messagingSenderId: "559179347351",
+            appId: "1:559179347351:web:1158b072023b4a7a6500d2",
+            measurementId: "G-FN0BHTE93G"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let setupComplete = false;
+
+        async function setupAdminAccount() {
+            const setupBtn = document.getElementById('setupBtn');
+            const statusDiv = document.getElementById('statusDiv');
+            const credentialsDiv = document.getElementById('adminCredentials');
+
+            if (setupComplete) {
+                showStatus('Admin account already exists!', 'info');
+                credentialsDiv.style.display = 'block';
+                return;
+            }
+
+            setupBtn.disabled = true;
+            setupBtn.textContent = 'Creating Admin Account...';
+            
+            try {
+                showStatus('Creating admin account...', 'info');
+
+                // Check if admin account already exists
+                const adminQuery = query(collection(db, 'users'), where('email', '==', 'admin@linoxfitness.com'));
+                const adminSnapshot = await getDocs(adminQuery);
+                
+                if (!adminSnapshot.empty) {
+                    showStatus('Admin account already exists!', 'info');
+                    credentialsDiv.style.display = 'block';
+                    setupBtn.textContent = 'Admin Account Exists';
+                    setupComplete = true;
+                    return;
+                }
+
+                // Create admin user account
+                const userCredential = await createUserWithEmailAndPassword(auth, 'admin@linoxfitness.com', 'Admin123!');
+                const user = userCredential.user;
+
+                // Update user profile
+                await updateProfile(user, {
+                    displayName: 'Admin User'
+                });
+
+                // Create admin user document in Firestore
+                const adminProfile = {
+                    uid: user.uid,
+                    firstName: 'Admin',
+                    lastName: 'User',
+                    email: 'admin@linoxfitness.com',
+                    phone: '',
+                    fitnessGoal: 'General Fitness',
+                    experience: 'Advanced',
+                    trainingLevel: 'Advanced',
+                    goals: ['System Administration', 'User Management'],
+                    isAdmin: true,
+                    createdAt: new Date(),
+                    lastLogin: null,
+                    isActive: true,
+                    profileComplete: true,
+                    emergencyContact: {},
+                    medicalInfo: {}
+                };
+
+                await setDoc(doc(db, 'users', user.uid), adminProfile);
+
+                // Create admin customer record
+                const adminCustomerData = {
+                    firstName: 'Admin',
+                    lastName: 'User',
+                    email: 'admin@linoxfitness.com',
+                    phone: '',
+                    status: 'active',
+                    trainingLevel: 'Advanced',
+                    goals: ['System Administration'],
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    isActive: true
+                };
+
+                await setDoc(doc(db, 'customers', user.uid), adminCustomerData);
+
+                showStatus('✅ Admin account created successfully!', 'success');
+                credentialsDiv.style.display = 'block';
+                setupBtn.textContent = 'Admin Account Created';
+                setupBtn.disabled = true;
+                setupComplete = true;
+
+            } catch (error) {
+                console.error('Admin setup error:', error);
+                
+                let errorMessage = 'Failed to create admin account. ';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage += 'Admin account already exists.';
+                    showStatus('Admin account already exists!', 'info');
+                    credentialsDiv.style.display = 'block';
+                    setupBtn.textContent = 'Admin Account Exists';
+                    setupBtn.disabled = true;
+                    setupComplete = true;
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage += 'Password is too weak.';
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage += 'Email/password accounts are not enabled.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                showStatus('❌ ' + errorMessage, 'error');
+                setupBtn.disabled = false;
+                setupBtn.textContent = 'Create Admin Account';
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusDiv');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        // Check if admin already exists on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const adminQuery = query(collection(db, 'users'), where('email', '==', 'admin@linoxfitness.com'));
+                const adminSnapshot = await getDocs(adminQuery);
+                
+                if (!adminSnapshot.empty) {
+                    showStatus('Admin account already exists!', 'info');
+                    document.getElementById('adminCredentials').style.display = 'block';
+                    document.getElementById('setupBtn').textContent = 'Admin Account Exists';
+                    document.getElementById('setupBtn').disabled = true;
+                    setupComplete = true;
+                }
+            } catch (error) {
+                console.log('Admin check:', error.message);
+            }
+        });
+
+        // Make setupAdminAccount globally available
+        window.setupAdminAccount = setupAdminAccount;
+    </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LINQXFITNESS</title>
+    <link rel="stylesheet" href="loginPage.css">
+    <style>
+        /* Additional Firebase-specific styles */
+        .firebase-loading {
+            display: none;
+            text-align: center;
+            color: #1e3a8a;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .firebase-error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #fca5a5;
+            display: none;
+        }
+
+        .firebase-success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #86efac;
+            display: none;
+        }
+
+        .admin-notice {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .test-accounts {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .test-accounts h3 {
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .account-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #10b981;
+        }
+
+        .account-card.admin {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+
+        .account-card h4 {
+            margin: 0 0 8px 0;
+            color: #1e3a8a;
+            font-size: 1.1rem;
+        }
+
+        .account-card p {
+            margin: 4px 0;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .account-card .role {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .account-card.admin .role {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-brand">
+            <div class="logo-container">
+                <img src="linqxfitness-logo.svg" alt="LINQXFITNESS Logo" class="nav-logo">
+            </div>
+            <h1>LINQXFITNESS</h1>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="loginPage.html" class="active">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome Back, Player</h1>
+                <p>Access your training dashboard and continue your soccer journey with LINQXFITNESS</p>
+            </div>
+        </section>
+
+        <!-- Login Form -->
+        <section class="login-container">
+            <div class="login-form">
+                <h2>Sign In to Your Account</h2>
+                
+                <!-- Firebase Error/Success Messages -->
+                <div id="firebaseError" class="firebase-error"></div>
+                <div id="firebaseSuccess" class="firebase-success"></div>
+                
+                <!-- Loading Indicator -->
+                <div id="firebaseLoading" class="firebase-loading">
+                    🔄 Connecting to Firebase...
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" required placeholder="Enter your password">
+                            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <label for="rememberMe">Remember me</label>
+                        </div>
+                        <a href="#" id="forgotPassword" class="forgot-password">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" id="loginBtn" class="btn-primary">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Test Accounts -->
+                <div class="test-accounts">
+                    <h3>🧪 Test Accounts</h3>
+                    
+                    <div class="account-card admin">
+                        <h4>👑 Admin Account</h4>
+                        <p><strong>Email:</strong> admin@linoxfitness.com</p>
+                        <p><strong>Password:</strong> Admin123!</p>
+                        <span class="role">Admin Access</span>
+                        <small style="color: #1e3a8a; font-weight: bold;">→ Access to Admin Portal</small>
+                    </div>
+
+                    <div class="account-card">
+                        <h4>⚽ Player Account</h4>
+                        <p><strong>Email:</strong> test@linoxfitness.com</p>
+                        <p><strong>Password:</strong> Test123!</p>
+                        <span class="role">Player</span>
+                        <small style="color: #166534; font-weight: bold;">→ Access to Player Dashboard</small>
+                    </div>
+                </div>
+
+                <!-- Admin Notice -->
+                <div class="admin-notice">
+                    🔐 <strong>Admin Portal:</strong> Use the admin account above to access the full customer management system
+                </div>
+
+                <div class="social-login">
+                    <p>Don't have an account?</p>
+                    <a href="signUp.html" class="btn-outline">Create New Account</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta">
+            <h2>Ready to Continue Your Training?</h2>
+            <p>Join thousands of players who have improved their game with our professional coaching</p>
+            <div class="cta-grid">
+                <div class="cta-item">
+                    <h3>Training Programs</h3>
+                    <p>Structured workouts designed for your skill level</p>
+                </div>
+                <div class="cta-item">
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your improvement with detailed analytics</p>
+                </div>
+                <div class="cta-item">
+                    <h3>Expert Coaching</h3>
+                    <p>Get personalized feedback from professional coaches</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo-container">
+                    <img src="linqxfitness-logo.svg" alt="LINQXFITNESS Logo" class="footer-logo">
+                </div>
+                <h3>LINQXFITNESS</h3>
+                <p>Where Hardwork Meets Talent</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="loginPage.html">Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>📧 info@linoxfitness.com</p>
+                <p>📞 (555) 123-4567</p>
+                <p>📍 123 Soccer Street, Sports City</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 LINQXFITNESS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, query, where, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYAvE3jO6I3CQOxD-vnTMaUmGAirp_5iM",
+            authDomain: "linox-website.firebaseapp.com",
+            projectId: "linox-website",
+            storageBucket: "linox-website.firebasestorage.app",
+            messagingSenderId: "559179347351",
+            appId: "1:559179347351:web:1158b072023b4a7a6500d2",
+            measurementId: "G-FN0BHTE93G"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Login Page Class
+        class LoginPageFirebase {
+            constructor() {
+                this.init();
+            }
+
+            async init() {
+                await this.checkExistingSession();
+                this.setupEventListeners();
+                this.initializeDefaultAccounts();
+            }
+
+            async checkExistingSession() {
+                // Check if user is already authenticated
+                return new Promise((resolve) => {
+                    onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            try {
+                                // Get user profile from Firestore
+                                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                                if (userDoc.exists()) {
+                                    const userData = userDoc.data();
+                                    
+                                    if (userData.isAdmin) {
+                                        window.location.href = 'admin-portal-firebase.html';
+                                    } else {
+                                        window.location.href = 'dashboard.html';
+                                    }
+                                } else {
+                                    // User exists in auth but not in Firestore, redirect to dashboard
+                                    window.location.href = 'dashboard.html';
+                                }
+                            } catch (error) {
+                                console.error('Error checking user profile:', error);
+                                window.location.href = 'dashboard.html';
+                            }
+                        }
+                        resolve();
+                    });
+                });
+            }
+
+            setupEventListeners() {
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleLogin();
+                    });
+                }
+
+                const forgotPasswordLink = document.getElementById('forgotPassword');
+                if (forgotPasswordLink) {
+                    forgotPasswordLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.handleForgotPassword();
+                    });
+                }
+            }
+
+            async handleLogin() {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+
+                if (!email || !password) {
+                    this.showError('Please fill in all fields');
+                    return;
+                }
+
+                this.showLoading(true);
+
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    // Get user profile from Firestore
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        
+                        if (userData.isAdmin) {
+                            this.showSuccess('Welcome back, Admin! Redirecting...');
+                            setTimeout(() => {
+                                window.location.href = 'admin-portal-firebase.html';
+                            }, 1500);
+                        } else {
+                            this.showSuccess('Welcome back! Redirecting...');
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 1500);
+                        }
+                    } else {
+                        // User exists in auth but not in Firestore
+                        this.showSuccess('Welcome back! Redirecting...');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    let errorMessage = 'Login failed. Please try again.';
+                    
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No account found with this email address.';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Incorrect password. Please try again.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Please enter a valid email address.';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'Too many failed attempts. Please try again later.';
+                    }
+                    
+                    this.showError(errorMessage);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async handleForgotPassword() {
+                const email = prompt('Enter your email address:');
+                if (!email) return;
+
+                if (!this.isValidEmail(email)) {
+                    this.showError('Please enter a valid email address');
+                    return;
+                }
+
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    this.showSuccess('Password reset email sent. Please check your inbox.');
+                } catch (error) {
+                    console.error('Password reset error:', error);
+                    let errorMessage = 'Failed to send password reset email';
+                    
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No account found with this email address.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Please enter a valid email address.';
+                    }
+                    
+                    this.showError(errorMessage);
+                }
+            }
+
+            async initializeDefaultAccounts() {
+                // This will be handled by the signup system
+                // Default accounts will be created when users sign up
+                console.log('Login page initialized with Firebase');
+            }
+
+            isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            showLoading(show) {
+                const loginBtn = document.getElementById('loginBtn');
+                const loadingDiv = document.getElementById('firebaseLoading');
+                
+                if (loginBtn) {
+                    loginBtn.disabled = show;
+                    loginBtn.textContent = show ? 'Signing In...' : 'Sign In';
+                }
+                
+                if (loadingDiv) {
+                    loadingDiv.style.display = show ? 'block' : 'none';
+                }
+            }
+
+            showSuccess(message) {
+                this.hideMessages();
+                const successDiv = document.getElementById('firebaseSuccess');
+                if (successDiv) {
+                    successDiv.textContent = message;
+                    successDiv.style.display = 'block';
+                }
+            }
+
+            showError(message) {
+                this.hideMessages();
+                const errorDiv = document.getElementById('firebaseError');
+                if (errorDiv) {
+                    errorDiv.textContent = message;
+                    errorDiv.style.display = 'block';
+                }
+            }
+
+            hideMessages() {
+                const errorDiv = document.getElementById('firebaseError');
+                const successDiv = document.getElementById('firebaseSuccess');
+                
+                if (errorDiv) errorDiv.style.display = 'none';
+                if (successDiv) successDiv.style.display = 'none';
+            }
+        }
+
+        // Initialize login page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new LoginPageFirebase();
+        });
+
+        // Password toggle function
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // Make togglePassword globally available
+        window.togglePassword = togglePassword;
+    </script>
+</body>
+</html>

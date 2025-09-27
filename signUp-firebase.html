@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - LINQXFITNESS</title>
+    <link rel="stylesheet" href="signUp.css">
+    <style>
+        /* Additional Firebase-specific styles */
+        .firebase-loading {
+            display: none;
+            text-align: center;
+            color: #1e3a8a;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .firebase-error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #fca5a5;
+            display: none;
+        }
+
+        .firebase-success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #86efac;
+            display: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+
+        .strength-weak { color: #ef4444; }
+        .strength-medium { color: #f59e0b; }
+        .strength-strong { color: #10b981; }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .terms-checkbox input {
+            margin-top: 3px;
+        }
+
+        .terms-checkbox label {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .terms-checkbox a {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-brand">
+            <div class="logo-container">
+                <img src="linqxfitness-logo.svg" alt="LINQXFITNESS Logo" class="nav-logo">
+            </div>
+            <h1>LINQXFITNESS</h1>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="loginPage.html">Login</a></li>
+                <li><a href="signUp.html" class="active">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Join the LINQXFITNESS Family</h1>
+                <p>Start your soccer journey today with professional training and personalized coaching</p>
+            </div>
+        </section>
+
+        <!-- Signup Form -->
+        <section class="signup-container">
+            <div class="signup-form">
+                <h2>Create Your Account</h2>
+                
+                <!-- Firebase Error/Success Messages -->
+                <div id="firebaseError" class="firebase-error"></div>
+                <div id="firebaseSuccess" class="firebase-success"></div>
+                
+                <!-- Loading Indicator -->
+                <div id="firebaseLoading" class="firebase-loading">
+                    🔄 Creating your account...
+                </div>
+
+                <form id="signupForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required placeholder="Enter your first name">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Enter your last name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email address">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                        <div id="passwordStrength" class="password-strength"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password *</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fitnessGoal">Fitness Goal</label>
+                            <select id="fitnessGoal" name="fitnessGoal">
+                                <option value="">Select your goal</option>
+                                <option value="Improve Ball Control">Improve Ball Control</option>
+                                <option value="Increase Speed">Increase Speed</option>
+                                <option value="Build Endurance">Build Endurance</option>
+                                <option value="Tactical Awareness">Tactical Awareness</option>
+                                <option value="Physical Conditioning">Physical Conditioning</option>
+                                <option value="General Fitness">General Fitness</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience">Experience Level</label>
+                            <select id="experience" name="experience">
+                                <option value="">Select your level</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="trainingLevel">Training Level</label>
+                        <select id="trainingLevel" name="trainingLevel">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goals">Specific Goals (comma-separated)</label>
+                        <textarea id="goals" name="goals" placeholder="e.g., Improve shooting accuracy, Better ball control, Increase stamina" rows="3"></textarea>
+                    </div>
+
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="termsAccepted" name="termsAccepted" required>
+                        <label for="termsAccepted">
+                            I agree to the <a href="#" onclick="showTerms()">Terms of Service</a> and <a href="#" onclick="showPrivacy()">Privacy Policy</a> *
+                        </label>
+                    </div>
+
+                    <button type="submit" id="signupBtn" class="btn-primary">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="login-link">
+                    <p>Already have an account? <a href="loginPage-firebase.html">Sign in here</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <h2>Why Choose LINQXFITNESS?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚽</div>
+                    <h3>Professional Training</h3>
+                    <p>Expert coaches with years of experience in soccer development</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your improvement with detailed analytics and reports</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Personalized Plans</h3>
+                    <p>Custom workout plans tailored to your skill level and goals</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo-container">
+                    <img src="linqxfitness-logo.svg" alt="LINQXFITNESS Logo" class="footer-logo">
+                </div>
+                <h3>LINQXFITNESS</h3>
+                <p>Where Hardwork Meets Talent</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="loginPage.html">Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>📧 info@linoxfitness.com</p>
+                <p>📞 (555) 123-4567</p>
+                <p>📍 123 Soccer Street, Sports City</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 LINQXFITNESS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDocs, query, where, collection } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYAvE3jO6I3CQOxD-vnTMaUmGAirp_5iM",
+            authDomain: "linox-website.firebaseapp.com",
+            projectId: "linox-website",
+            storageBucket: "linox-website.firebasestorage.app",
+            messagingSenderId: "559179347351",
+            appId: "1:559179347351:web:1158b072023b4a7a6500d2",
+            measurementId: "G-FN0BHTE93G"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Signup Page Class
+        class SignupPageFirebase {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupPasswordStrength();
+                this.createDefaultAdminAccount();
+            }
+
+            setupEventListeners() {
+                const signupForm = document.getElementById('signupForm');
+                if (signupForm) {
+                    signupForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleSignup();
+                    });
+                }
+
+                // Real-time password strength checking
+                const passwordInput = document.getElementById('password');
+                if (passwordInput) {
+                    passwordInput.addEventListener('input', () => {
+                        this.checkPasswordStrength();
+                    });
+                }
+
+                // Real-time password confirmation checking
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+                if (confirmPasswordInput) {
+                    confirmPasswordInput.addEventListener('input', () => {
+                        this.checkPasswordMatch();
+                    });
+                }
+            }
+
+            setupPasswordStrength() {
+                this.passwordStrengthElement = document.getElementById('passwordStrength');
+            }
+
+            checkPasswordStrength() {
+                const password = document.getElementById('password').value;
+                const strength = this.calculatePasswordStrength(password);
+                
+                if (password.length === 0) {
+                    this.passwordStrengthElement.textContent = '';
+                    return;
+                }
+
+                this.passwordStrengthElement.textContent = `Password strength: ${strength.text}`;
+                this.passwordStrengthElement.className = `password-strength strength-${strength.level}`;
+            }
+
+            calculatePasswordStrength(password) {
+                let score = 0;
+                let feedback = [];
+
+                // Length check
+                if (password.length >= 8) score++;
+                else feedback.push('At least 8 characters');
+
+                // Contains lowercase
+                if (/[a-z]/.test(password)) score++;
+                else feedback.push('Include lowercase letters');
+
+                // Contains uppercase
+                if (/[A-Z]/.test(password)) score++;
+                else feedback.push('Include uppercase letters');
+
+                // Contains numbers
+                if (/\d/.test(password)) score++;
+                else feedback.push('Include numbers');
+
+                // Contains special characters
+                if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+                else feedback.push('Include special characters');
+
+                if (score <= 2) {
+                    return { level: 'weak', text: 'Weak' };
+                } else if (score <= 4) {
+                    return { level: 'medium', text: 'Medium' };
+                } else {
+                    return { level: 'strong', text: 'Strong' };
+                }
+            }
+
+            checkPasswordMatch() {
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (confirmPassword.length === 0) return;
+
+                if (password !== confirmPassword) {
+                    document.getElementById('confirmPassword').setCustomValidity('Passwords do not match');
+                } else {
+                    document.getElementById('confirmPassword').setCustomValidity('');
+                }
+            }
+
+            async handleSignup() {
+                const formData = new FormData(document.getElementById('signupForm'));
+                const userData = {
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    phone: formData.get('phone'),
+                    fitnessGoal: formData.get('fitnessGoal'),
+                    experience: formData.get('experience'),
+                    trainingLevel: formData.get('trainingLevel'),
+                    goals: formData.get('goals') ? formData.get('goals').split(',').map(g => g.trim()).filter(g => g) : [],
+                    termsAccepted: formData.get('termsAccepted')
+                };
+
+                // Validate form data
+                if (!this.validateSignupData(userData)) {
+                    return;
+                }
+
+                this.showLoading(true);
+
+                try {
+                    // Create user account
+                    const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+                    const user = userCredential.user;
+
+                    // Update user profile
+                    await updateProfile(user, {
+                        displayName: `${userData.firstName} ${userData.lastName}`
+                    });
+
+                    // Create user document in Firestore
+                    const userProfile = {
+                        uid: user.uid,
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        email: userData.email,
+                        phone: userData.phone || '',
+                        fitnessGoal: userData.fitnessGoal || '',
+                        experience: userData.experience || '',
+                        trainingLevel: userData.trainingLevel || 'Beginner',
+                        goals: userData.goals,
+                        isAdmin: false, // Regular users are not admin
+                        createdAt: new Date(),
+                        lastLogin: null,
+                        isActive: true,
+                        profileComplete: true,
+                        emergencyContact: {},
+                        medicalInfo: {}
+                    };
+
+                    await setDoc(doc(db, 'users', user.uid), userProfile);
+
+                    // Also create a customer record
+                    const customerData = {
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        email: userData.email,
+                        phone: userData.phone || '',
+                        status: 'pending',
+                        trainingLevel: userData.trainingLevel || 'Beginner',
+                        goals: userData.goals,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                        isActive: true
+                    };
+
+                    await setDoc(doc(db, 'customers', user.uid), customerData);
+
+                    this.showSuccess('Account created successfully! Redirecting to login...');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'loginPage-firebase.html';
+                    }, 2000);
+
+                } catch (error) {
+                    console.error('Signup error:', error);
+                    let errorMessage = 'Signup failed. Please try again.';
+                    
+                    if (error.code === 'auth/email-already-in-use') {
+                        errorMessage = 'An account with this email already exists. Please try logging in instead.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Please enter a valid email address.';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage = 'Password is too weak. Please choose a stronger password.';
+                    } else if (error.code === 'auth/operation-not-allowed') {
+                        errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+                    }
+                    
+                    this.showError(errorMessage);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            validateSignupData(userData) {
+                if (!userData.firstName || !userData.lastName || !userData.email || !userData.password) {
+                    this.showError('Please fill in all required fields');
+                    return false;
+                }
+
+                if (!this.isValidEmail(userData.email)) {
+                    this.showError('Please enter a valid email address');
+                    return false;
+                }
+
+                if (userData.password.length < 8) {
+                    this.showError('Password must be at least 8 characters long');
+                    return false;
+                }
+
+                if (userData.password !== document.getElementById('confirmPassword').value) {
+                    this.showError('Passwords do not match');
+                    return false;
+                }
+
+                if (!userData.termsAccepted) {
+                    this.showError('Please accept the terms and conditions');
+                    return false;
+                }
+
+                return true;
+            }
+
+            async createDefaultAdminAccount() {
+                // Check if admin account already exists
+                try {
+                    const adminQuery = query(collection(db, 'users'), where('email', '==', 'admin@linoxfitness.com'));
+                    const adminSnapshot = await getDocs(adminQuery);
+                    
+                    if (adminSnapshot.empty) {
+                        // Create default admin account
+                        console.log('Creating default admin account...');
+                        // This will be handled by the admin setup process
+                    }
+                } catch (error) {
+                    console.log('Admin account check:', error.message);
+                }
+            }
+
+            isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            showLoading(show) {
+                const signupBtn = document.getElementById('signupBtn');
+                const loadingDiv = document.getElementById('firebaseLoading');
+                
+                if (signupBtn) {
+                    signupBtn.disabled = show;
+                    signupBtn.textContent = show ? 'Creating Account...' : 'Create Account';
+                }
+                
+                if (loadingDiv) {
+                    loadingDiv.style.display = show ? 'block' : 'none';
+                }
+            }
+
+            showSuccess(message) {
+                this.hideMessages();
+                const successDiv = document.getElementById('firebaseSuccess');
+                if (successDiv) {
+                    successDiv.textContent = message;
+                    successDiv.style.display = 'block';
+                }
+            }
+
+            showError(message) {
+                this.hideMessages();
+                const errorDiv = document.getElementById('firebaseError');
+                if (errorDiv) {
+                    errorDiv.textContent = message;
+                    errorDiv.style.display = 'block';
+                }
+            }
+
+            hideMessages() {
+                const errorDiv = document.getElementById('firebaseError');
+                const successDiv = document.getElementById('firebaseSuccess');
+                
+                if (errorDiv) errorDiv.style.display = 'none';
+                if (successDiv) successDiv.style.display = 'none';
+            }
+        }
+
+        // Initialize signup page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new SignupPageFirebase();
+        });
+
+        // Password toggle function
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // Terms and Privacy functions
+        function showTerms() {
+            alert('Terms of Service: By using LINQXFITNESS, you agree to follow our training guidelines and respect other members.');
+        }
+
+        function showPrivacy() {
+            alert('Privacy Policy: We respect your privacy and will only use your information to provide training services.');
+        }
+
+        // Make functions globally available
+        window.togglePassword = togglePassword;
+        window.showTerms = showTerms;
+        window.showPrivacy = showPrivacy;
+    </script>
+</body>
+</html>
