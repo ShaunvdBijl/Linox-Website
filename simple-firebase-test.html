@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Firebase Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Simple Firebase Test</h1>
+        <p>This will test Firebase step by step to identify the exact issue.</p>
+        
+        <div id="results"></div>
+        
+        <button onclick="testFirebase()">🧪 Test Firebase</button>
+        <button onclick="testAuth()">🔐 Test Authentication</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+        
+        <div id="log" class="log">Ready to test...\n</div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AQ.Ab8RN6KgqvLt8-m4-nu8_m9YwNxwJEPkY-2VQitKApmH9h4EAA",
+            authDomain: "linox-website.firebaseapp.com",
+            projectId: "linox-website",
+            storageBucket: "linox-website.firebasestorage.app",
+            messagingSenderId: "559179347351",
+            appId: "1:559179347351:web:1158b072023b4a7a6500d2",
+            measurementId: "G-FN0BHTE93G"
+        };
+
+        let app, auth, db;
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `${timestamp}: ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function showResult(message, type) {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = type;
+            resultDiv.textContent = message;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        async function testFirebase() {
+            try {
+                log('🔥 Initializing Firebase...');
+                app = initializeApp(firebaseConfig);
+                log('✅ Firebase app initialized');
+                
+                auth = getAuth(app);
+                log('✅ Firebase Auth initialized');
+                
+                db = getFirestore(app);
+                log('✅ Firestore initialized');
+                
+                showResult('✅ Firebase initialization successful!', 'success');
+                
+            } catch (error) {
+                log(`❌ Firebase initialization failed: ${error.message}`);
+                showResult(`❌ Firebase initialization failed: ${error.message}`, 'error');
+                console.error('Firebase error:', error);
+            }
+        }
+
+        async function testAuth() {
+            if (!auth) {
+                showResult('❌ Please initialize Firebase first', 'error');
+                return;
+            }
+
+            try {
+                log('🔐 Testing authentication...');
+                
+                // Test with a simple email/password
+                const testEmail = 'test@example.com';
+                const testPassword = 'Test123!';
+                
+                log('Attempting to create user...');
+                const userCredential = await createUserWithEmailAndPassword(auth, testEmail, testPassword);
+                log(`✅ User created: ${userCredential.user.email}`);
+                
+                showResult('✅ Authentication test successful!', 'success');
+                
+            } catch (error) {
+                log(`❌ Authentication failed: ${error.message}`);
+                log(`Error code: ${error.code}`);
+                showResult(`❌ Authentication failed: ${error.message}`, 'error');
+                console.error('Auth error:', error);
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('log').textContent = 'Ready to test...\n';
+        }
+
+        // Make functions globally available
+        window.testFirebase = testFirebase;
+        window.testAuth = testAuth;
+        window.clearResults = clearResults;
+    </script>
+</body>
+</html>
