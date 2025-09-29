@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .test-container { background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        input, button { padding: 10px; margin: 5px; width: 200px; }
+        button { background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Firebase Login Test</h1>
+    
+    <div class="test-container">
+        <h3>Firebase Connection Test</h3>
+        <div id="connectionStatus">Testing...</div>
+    </div>
+
+    <div class="test-container">
+        <h3>Admin Login Test</h3>
+        <input type="email" id="email" placeholder="Email" value="shaunvdbijl@gmail.com">
+        <input type="password" id="password" placeholder="Password" value="@dm1n313">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Test Firebase connection
+        document.getElementById('connectionStatus').innerHTML = '<span class="success">✅ Firebase connected successfully!</span>';
+
+        // Test login function
+        window.testLogin = async function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            resultDiv.innerHTML = '<span class="info">🔄 Testing login...</span>';
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Check if user is admin
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.isAdmin) {
+                        resultDiv.innerHTML = '<span class="success">✅ Admin login successful! User is admin.</span>';
+                    } else {
+                        resultDiv.innerHTML = '<span class="success">✅ Login successful! User is not admin.</span>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<span class="success">✅ Login successful! (No user profile found in Firestore)</span>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Login failed: ${error.message}</span>`;
+            }
+        };
+    </script>
+</body>
+</html>
