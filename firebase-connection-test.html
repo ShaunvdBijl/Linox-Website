@@ -20,18 +20,31 @@
     
     <div id="results"></div>
 
+    <!-- Load secure configuration -->
+    <script src="./secure-config.js"></script>
+    <script src="./config.js"></script>
+    
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         
-        const firebaseConfig = {
-            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
-            authDomain: "linox-soccer.firebaseapp.com",
-            projectId: "linox-soccer",
-            storageBucket: "linox-soccer.firebasestorage.app",
-            messagingSenderId: "313058607377",
-            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
-            measurementId: "G-QQJD06D5RK"
-        };
+        // Wait for config to load, then use it
+        function getFirebaseConfig() {
+            if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY_HERE") {
+                return window.firebaseConfig;
+            } else {
+                // Return placeholder config if secure config not available
+                console.warn('⚠️ Using placeholder configuration. Please ensure config.js exists with real API keys.');
+                return {
+                    apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+                    authDomain: "your-project.firebaseapp.com",
+                    projectId: "your-project-id",
+                    storageBucket: "your-project.appspot.com",
+                    messagingSenderId: "123456789",
+                    appId: "1:123456789:web:abcdef123456",
+                    measurementId: "G-XXXXXXXXXX"
+                };
+            }
+        }
 
         function showResult(message, type) {
             const resultsDiv = document.getElementById('results');
@@ -45,6 +58,7 @@
             try {
                 showResult('🔥 Attempting to initialize Firebase...', 'success');
                 
+                const firebaseConfig = getFirebaseConfig();
                 const app = initializeApp(firebaseConfig);
                 
                 showResult('✅ Firebase initialized successfully!', 'success');

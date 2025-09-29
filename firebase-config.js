@@ -2,16 +2,25 @@
 // This file contains Firebase initialization and configuration
 
 // Firebase configuration object
-// Your actual Firebase project configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
-  authDomain: "linox-soccer.firebaseapp.com",
-  projectId: "linox-soccer",
-  storageBucket: "linox-soccer.firebasestorage.app",
-  messagingSenderId: "313058607377",
-  appId: "1:313058607377:web:784530fe05a04272dd4cb0",
-  measurementId: "G-QQJD06D5RK"
-};
+// This will load from config.js (which is gitignored) or use placeholders
+let firebaseConfig;
+
+try {
+  // Try to load from secure config file (not tracked by Git)
+  firebaseConfig = require('./config.js');
+} catch (error) {
+  // Fallback to placeholder values if config.js doesn't exist
+  console.warn('⚠️ config.js not found. Using placeholder configuration.');
+  firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456",
+    measurementId: "G-XXXXXXXXXX"
+  };
+}
 
 // Initialize Firebase
 import { initializeApp } from 'firebase/app';
