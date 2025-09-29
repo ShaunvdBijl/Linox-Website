@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "npx serve .",
-    "build": "npm run build:css && npm run build:js",
+    "build": "node build.js && npm run build:css && npm run build:js",
     "build:css": "npx postcss HomePage.css -o dist/HomePage.css",
     "build:js": "npx rollup -c",
     "dev": "npx serve . -l 3000",

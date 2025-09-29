@@ -20,16 +20,18 @@
     
     <div id="results"></div>
 
-    <!-- Load secure configuration -->
-    <script src="./secure-config.js"></script>
+    <!-- Load Firebase configuration -->
+    <script src="./config-browser.js"></script>
     <script src="./config.js"></script>
     
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         
-        // Wait for config to load, then use it
+        // Get Firebase configuration for browser environment
         function getFirebaseConfig() {
+            // Check if we have the secure config loaded
             if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY_HERE") {
+                console.log('✅ Using secure Firebase configuration');
                 return window.firebaseConfig;
             } else {
                 // Return placeholder config if secure config not available
