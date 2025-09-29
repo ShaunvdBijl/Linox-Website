@@ -174,7 +174,207 @@
     </div>
   </footer>
 
-  <script src="auth-utils.js"></script>
-  <script src="signUp.js"></script>
+  <!-- Load Firebase configuration -->
+  <script src="./config-browser.js"></script>
+  <script src="./config.js"></script>
+  
+  <!-- Firebase CDN -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Load Firebase configuration securely
+    let firebaseConfig;
+    try {
+      if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY_HERE") {
+        firebaseConfig = window.firebaseConfig;
+        console.log('✅ Using secure Firebase configuration');
+      } else {
+        throw new Error('Secure config not available');
+      }
+    } catch (error) {
+      console.warn('⚠️ Using placeholder configuration. Please ensure config.js exists with real API keys.');
+      firebaseConfig = {
+        apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+        authDomain: "your-project.firebaseapp.com",
+        projectId: "your-project-id",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:123456789:web:abcdef123456",
+        measurementId: "G-XXXXXXXXXX"
+      };
+    }
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Signup functionality
+    class SignUpFirebase {
+      constructor() {
+        this.init();
+      }
+
+      async init() {
+        await this.checkExistingSession();
+        this.setupEventListeners();
+      }
+
+      async checkExistingSession() {
+        return new Promise((resolve) => {
+          onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  
+                  if (userData.isAdmin) {
+                    window.location.href = 'admin-portal-firebase.html';
+                  } else {
+                    window.location.href = 'dashboard.html';
+                  }
+                } else {
+                  window.location.href = 'dashboard.html';
+                }
+              } catch (error) {
+                console.error('Error checking user profile:', error);
+                window.location.href = 'dashboard.html';
+              }
+            }
+            resolve();
+          });
+        });
+      }
+
+      setupEventListeners() {
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+          signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleSignup();
+          });
+        }
+      }
+
+      async handleSignup() {
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const fitnessGoals = document.getElementById('fitnessGoals').value;
+        const experience = document.getElementById('experience').value;
+        const terms = document.getElementById('terms').checked;
+
+        // Validation
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !fitnessGoals || !experience) {
+          alert('Please fill in all required fields');
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert('Passwords do not match');
+          return;
+        }
+
+        if (password.length < 8) {
+          alert('Password must be at least 8 characters long');
+          return;
+        }
+
+        if (!terms) {
+          alert('Please accept the Terms of Service');
+          return;
+        }
+
+        try {
+          // Create user account
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          // Create user profile in Firestore
+          const userProfile = {
+            uid: user.uid,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone || '',
+            fitnessGoals: fitnessGoals,
+            experience: experience,
+            isAdmin: false,
+            createdAt: serverTimestamp(),
+            lastLogin: serverTimestamp()
+          };
+
+          await setDoc(doc(db, 'users', user.uid), userProfile);
+
+          // Also create customer profile
+          const customerProfile = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone || '',
+            trainingLevel: experience,
+            status: 'active',
+            createdAt: serverTimestamp(),
+            lastActivity: 'Never',
+            profilePhoto: null
+          };
+
+          await setDoc(doc(db, 'customers', user.uid), customerProfile);
+
+          alert('Account created successfully! Welcome to LINQXFITNESS!');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+
+        } catch (error) {
+          console.error('Signup error:', error);
+          let errorMessage = 'Signup failed. Please try again.';
+          
+          if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'An account with this email already exists.';
+          } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'Password is too weak. Please choose a stronger password.';
+          } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Please enter a valid email address.';
+          }
+          
+          alert(errorMessage);
+        }
+      }
+    }
+
+    // Initialize signup page when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      new SignUpFirebase();
+    });
+
+    // Password toggle functions
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+      } else {
+        passwordInput.type = 'password';
+      }
+    }
+
+    function toggleConfirmPasswordVisibility() {
+      const confirmPasswordInput = document.getElementById('confirmPassword');
+      
+      if (confirmPasswordInput.type === 'password') {
+        confirmPasswordInput.type = 'text';
+      } else {
+        confirmPasswordInput.type = 'password';
+      }
+    }
+  </script>
 </body>
 </html>

@@ -257,6 +257,10 @@
         </div>
     </footer>
 
+    <!-- Load Firebase configuration -->
+    <script src="./config-browser.js"></script>
+    <script src="./config.js"></script>
+    
     <!-- Firebase CDN -->
     <script type="module">
         // Import Firebase modules
@@ -265,16 +269,27 @@
         import { getFirestore, collection, getDocs, query, where, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AQ.Ab8RN6KgqvLt8-m4-nu8_m9YwNxwJEPkY-2VQitKApmH9h4EAA",
-            authDomain: "linox-website.firebaseapp.com",
-            projectId: "linox-website",
-            storageBucket: "linox-website.firebasestorage.app",
-            messagingSenderId: "559179347351",
-            appId: "1:559179347351:web:1158b072023b4a7a6500d2",
-            measurementId: "G-FN0BHTE93G"
-        };
+        // Load Firebase configuration securely
+        let firebaseConfig;
+        try {
+            if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY_HERE") {
+                firebaseConfig = window.firebaseConfig;
+                console.log('✅ Using secure Firebase configuration');
+            } else {
+                throw new Error('Secure config not available');
+            }
+        } catch (error) {
+            console.warn('⚠️ Using placeholder configuration. Please ensure config.js exists with real API keys.');
+            firebaseConfig = {
+                apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+                authDomain: "your-project.firebaseapp.com",
+                projectId: "your-project-id",
+                storageBucket: "your-project.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:abcdef123456",
+                measurementId: "G-XXXXXXXXXX"
+            };
+        }
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);

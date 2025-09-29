@@ -149,7 +149,161 @@
     </div>
   </footer>
 
-  <script src="auth-utils.js"></script>
-  <script src="loginPage.js"></script>
+  <!-- Load Firebase configuration -->
+  <script src="./config-browser.js"></script>
+  <script src="./config.js"></script>
+  
+  <!-- Firebase CDN -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Load Firebase configuration securely
+    let firebaseConfig;
+    try {
+      if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY_HERE") {
+        firebaseConfig = window.firebaseConfig;
+        console.log('✅ Using secure Firebase configuration');
+      } else {
+        throw new Error('Secure config not available');
+      }
+    } catch (error) {
+      console.warn('⚠️ Using placeholder configuration. Please ensure config.js exists with real API keys.');
+      firebaseConfig = {
+        apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+        authDomain: "your-project.firebaseapp.com",
+        projectId: "your-project-id",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:123456789:web:abcdef123456",
+        measurementId: "G-XXXXXXXXXX"
+      };
+    }
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Login functionality
+    class LoginPageFirebase {
+      constructor() {
+        this.init();
+      }
+
+      async init() {
+        await this.checkExistingSession();
+        this.setupEventListeners();
+      }
+
+      async checkExistingSession() {
+        return new Promise((resolve) => {
+          onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  
+                  if (userData.isAdmin) {
+                    window.location.href = 'admin-portal-firebase.html';
+                  } else {
+                    window.location.href = 'dashboard.html';
+                  }
+                } else {
+                  window.location.href = 'dashboard.html';
+                }
+              } catch (error) {
+                console.error('Error checking user profile:', error);
+                window.location.href = 'dashboard.html';
+              }
+            }
+            resolve();
+          });
+        });
+      }
+
+      setupEventListeners() {
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+          loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleLogin();
+          });
+        }
+      }
+
+      async handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        if (!email || !password) {
+          alert('Please fill in all fields');
+          return;
+        }
+
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          
+          // Get user profile from Firestore
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            if (userData.isAdmin) {
+              alert('Welcome back, Admin! Redirecting...');
+              setTimeout(() => {
+                window.location.href = 'admin-portal-firebase.html';
+              }, 1500);
+            } else {
+              alert('Welcome back! Redirecting...');
+              setTimeout(() => {
+                window.location.href = 'dashboard.html';
+              }, 1500);
+            }
+          } else {
+            alert('Welcome back! Redirecting...');
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 1500);
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          let errorMessage = 'Login failed. Please try again.';
+          
+          if (error.code === 'auth/user-not-found') {
+            errorMessage = 'No account found with this email address.';
+          } else if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Incorrect password. Please try again.';
+          } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Please enter a valid email address.';
+          } else if (error.code === 'auth/too-many-requests') {
+            errorMessage = 'Too many failed attempts. Please try again later.';
+          }
+          
+          alert(errorMessage);
+        }
+      }
+    }
+
+    // Initialize login page when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      new LoginPageFirebase();
+    });
+
+    // Password toggle function
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('loginPassword');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+      } else {
+        passwordInput.type = 'password';
+      }
+    }
+  </script>
 </body>
 </html>
