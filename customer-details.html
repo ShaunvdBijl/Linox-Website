@@ -73,6 +73,112 @@
       background: #764ba2;
       transform: translateY(-2px);
     }
+
+    .customer-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .customer-header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2.5rem;
+    }
+
+    .customer-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    .detail-value {
+      color: #555;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-active {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-inactive {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #f8f9fa;
+      border: 4px solid #667eea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #667eea;
+      margin: 0 auto 1rem auto;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-edit, .btn-message, .btn-notes {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-edit {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background: #218838;
+    }
+
+    .btn-message {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-message:hover {
+      background: #138496;
+    }
+
+    .btn-notes {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .btn-notes:hover {
+      background: #e0a800;
+    }
   </style>
 </head>
 <body>
@@ -92,58 +198,135 @@
     <div class="admin-container">
       <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
       
-      <div class="admin-header">
-        <h1>Customer Details</h1>
-        <p>View detailed information about the selected customer</p>
+      <!-- Customer Header with Profile -->
+      <div class="customer-header" id="customerHeader">
+        <div class="profile-photo" id="profilePhoto">👤</div>
+        <h1 id="customerFullName">Loading Customer...</h1>
+        <p id="customerEmailHeader">Loading...</p>
       </div>
 
       <div class="customer-details">
         <div id="customerInfo">
           <div class="detail-grid">
             <div class="detail-section">
-              <h3>Personal Information</h3>
+              <h3>📋 Personal Information</h3>
               <div class="detail-item">
-                <span class="detail-label">Name:</span> <span id="customerName">Loading...</span>
+                <span class="detail-label">Full Name:</span> <span class="detail-value" id="customerName">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Email:</span> <span id="customerEmail">Loading...</span>
+                <span class="detail-label">Email:</span> <span class="detail-value" id="customerEmail">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Phone:</span> <span id="customerPhone">Loading...</span>
+                <span class="detail-label">Phone:</span> <span class="detail-value" id="customerPhone">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Join Date:</span> <span id="joinDate">Loading...</span>
-              </div>
-            </div>
-
-            <div class="detail-section">
-              <h3>Training Information</h3>
-              <div class="detail-item">
-                <span class="detail-label">Training Level:</span> <span id="trainingLevel">Loading...</span>
+                <span class="detail-label">Date of Birth:</span> <span class="detail-value" id="dateOfBirth">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Status:</span> <span id="customerStatus">Loading...</span>
+                <span class="detail-label">Gender:</span> <span class="detail-value" id="gender">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Last Activity:</span> <span id="lastActivity">Loading...</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Total Sessions:</span> <span id="totalSessions">Loading...</span>
+                <span class="detail-label">Address:</span> <span class="detail-value" id="address">Loading...</span>
               </div>
             </div>
 
             <div class="detail-section">
-              <h3>Fitness Goals</h3>
+              <h3>🏃‍♂️ Training Information</h3>
               <div class="detail-item">
-                <span class="detail-label">Primary Goal:</span> <span id="primaryGoal">Loading...</span>
+                <span class="detail-label">Training Level:</span> <span class="detail-value" id="trainingLevel">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Experience Level:</span> <span id="experienceLevel">Loading...</span>
+                <span class="detail-label">Status:</span> <span class="detail-value" id="customerStatus">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Notes:</span> <span id="customerNotes">No special notes</span>
+                <span class="detail-label">Registration Date:</span> <span class="detail-value" id="registrationDate">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Last Activity:</span> <span class="detail-value" id="lastActivity">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Total Sessions:</span> <span class="detail-value" id="totalSessions">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Preferred Trainer:</span> <span class="detail-value" id="preferredTrainer">Loading...</span>
               </div>
             </div>
+
+            <div class="detail-section">
+              <h3>🎯 Fitness Goals & Health</h3>
+              <div class="detail-item">
+                <span class="detail-label">Primary Goal:</span> <span class="detail-value" id="primaryGoal">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Experience Level:</span> <span class="detail-value" id="experienceLevel">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Current Weight:</span> <span class="detail-value" id="currentWeight">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Target Weight:</span> <span class="detail-value" id="targetWeight">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Height:</span> <span class="detail-value" id="height">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Medical Conditions:</span> <span class="detail-value" id="medicalConditions">None reported</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h3>💳 Membership & Billing</h3>
+              <div class="detail-item">
+                <span class="detail-label">Membership Type:</span> <span class="detail-value" id="membershipType">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Payment Status:</span> <span class="detail-value" id="paymentStatus">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Next Payment Due:</span> <span class="detail-value" id="nextPayment">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Total Spent:</span> <span class="detail-value" id="totalSpent">Loading...</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h3>📊 Progress & Statistics</h3>
+              <div class="detail-item">
+                <span class="detail-label">Workouts Completed:</span> <span class="detail-value" id="workoutsCompleted">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Average Session Rating:</span> <span class="detail-value" id="averageRating">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Favorite Class:</span> <span class="detail-value" id="favoriteClass">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Achievement Badges:</span> <span class="detail-value" id="achievements">Loading...</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h3>📝 Notes & Communication</h3>
+              <div class="detail-item">
+                <span class="detail-label">Admin Notes:</span> <span class="detail-value" id="adminNotes">No notes available</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Last Contact:</span> <span class="detail-value" id="lastContact">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Communication Preferences:</span> <span class="detail-value" id="commPreferences">Loading...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn-edit" onclick="editCustomer()">✏️ Edit Customer</button>
+            <button class="btn-message" onclick="sendMessage()">💬 Send Message</button>
+            <button class="btn-notes" onclick="addNote()">📝 Add Note</button>
+            <a href="customer-schedule.html?id=" + customerId class="btn-primary" id="scheduleLink">📅 Manage Schedule</a>
+            <a href="customer-exercises.html?id=" + customerId class="btn-primary" id="exercisesLink">🏋️ Exercise Plan</a>
           </div>
         </div>
       </div>
@@ -155,55 +338,191 @@
     const urlParams = new URLSearchParams(window.location.search);
     const customerId = urlParams.get('id');
 
-    // Sample customer data (in real app, this would come from a database)
+    // Enhanced sample customer data (replace with actual data source)
     const sampleCustomers = [
       {
         id: '1',
-        name: 'John Smith',
-        email: 'john.smith@email.com',
-        phone: '(555) 123-4567',
-        joinDate: '2024-01-15',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        phone: '+1 (555) 123-4567',
+        dateOfBirth: '1985-03-15',
+        gender: 'Male',
+        address: '123 Main St, Anytown, ST 12345',
+        registrationDate: '2024-01-15',
         trainingLevel: 'Intermediate',
         status: 'Active',
-        lastActivity: '2024-10-01',
+        lastActivity: '2024-02-15',
         totalSessions: 24,
         primaryGoal: 'Weight Loss',
-        experienceLevel: '6 months - 2 years',
-        notes: 'Prefers morning sessions, has knee issues'
+        experienceLevel: '2 years',
+        currentWeight: '180 lbs',
+        targetWeight: '165 lbs',
+        height: '5\'10"',
+        medicalConditions: 'None reported',
+        membershipType: 'Premium Monthly',
+        paymentStatus: 'Current',
+        nextPayment: '2024-03-15',
+        totalSpent: '$1,200.00',
+        workoutsCompleted: 24,
+        averageRating: '4.8/5',
+        favoriteClass: 'HIIT Training',
+        achievements: '🏆 30-Day Challenge, 🎯 Weight Loss Goal',
+        adminNotes: 'Excellent progress, very motivated client',
+        lastContact: '2024-02-15',
+        commPreferences: 'Email preferred, SMS for reminders',
+        preferredTrainer: 'Sarah Johnson'
       },
       {
         id: '2',
-        name: 'Sarah Johnson',
-        email: 'sarah.johnson@email.com',
-        phone: '(555) 234-5678',
-        joinDate: '2024-02-20',
+        firstName: 'Jane',
+        lastName: 'Smith',
+        email: 'jane.smith@example.com',
+        phone: '+1 (555) 987-6543',
+        dateOfBirth: '1990-07-22',
+        gender: 'Female',
+        address: '456 Oak Ave, Another City, ST 67890',
+        registrationDate: '2024-02-01',
+        trainingLevel: 'Beginner',
+        status: 'Active',
+        lastActivity: '2024-02-14',
+        totalSessions: 12,
+        primaryGoal: 'Muscle Building',
+        experienceLevel: '6 months',
+        currentWeight: '140 lbs',
+        targetWeight: '145 lbs',
+        height: '5\'6"',
+        medicalConditions: 'Previous knee injury - modify exercises',
+        membershipType: 'Standard Monthly',
+        paymentStatus: 'Current',
+        nextPayment: '2024-03-01',
+        totalSpent: '$600.00',
+        workoutsCompleted: 12,
+        averageRating: '4.5/5',
+        favoriteClass: 'Strength Training',
+        achievements: '🎖️ First Month Complete',
+        adminNotes: 'Has knee injury - modify exercises. Making good progress',
+        lastContact: '2024-02-14',
+        commPreferences: 'Phone calls preferred',
+        preferredTrainer: 'Mike Chen'
+      },
+      {
+        id: '3',
+        firstName: 'Alex',
+        lastName: 'Johnson',
+        email: 'alex.johnson@example.com',
+        phone: '+1 (555) 456-7890',
+        dateOfBirth: '1992-11-08',
+        gender: 'Non-binary',
+        address: '789 Pine St, Fitness City, ST 54321',
+        registrationDate: '2023-11-15',
         trainingLevel: 'Advanced',
         status: 'Active',
-        lastActivity: '2024-10-02',
-        totalSessions: 18,
-        primaryGoal: 'Muscle Building',
-        experienceLevel: '2+ years',
-        notes: 'Competitive athlete, very motivated'
+        lastActivity: '2024-02-16',
+        totalSessions: 68,
+        primaryGoal: 'Athletic Performance',
+        experienceLevel: '5+ years',
+        currentWeight: '170 lbs',
+        targetWeight: '175 lbs',
+        height: '6\'0"',
+        medicalConditions: 'None reported',
+        membershipType: 'Premium Annual',
+        paymentStatus: 'Current',
+        nextPayment: '2024-11-15',
+        totalSpent: '$3,400.00',
+        workoutsCompleted: 68,
+        averageRating: '5.0/5',
+        favoriteClass: 'CrossFit',
+        achievements: '🏆 Member of the Month (Jan 2024), 🎯 50 Session Milestone, 💪 Strength Challenge Winner',
+        adminNotes: 'Elite athlete, excellent form, helps other members',
+        lastContact: '2024-02-16',
+        commPreferences: 'Email and app notifications',
+        preferredTrainer: 'Lisa Rodriguez'
       }
     ];
 
     function loadCustomerDetails() {
+      if (!customerId) {
+        document.getElementById('customerInfo').innerHTML = '<p>No customer ID provided</p>';
+        return;
+      }
+
       const customer = sampleCustomers.find(c => c.id === customerId);
-      
-      if (customer) {
-        document.getElementById('customerName').textContent = customer.name;
-        document.getElementById('customerEmail').textContent = customer.email;
-        document.getElementById('customerPhone').textContent = customer.phone;
-        document.getElementById('joinDate').textContent = customer.joinDate;
-        document.getElementById('trainingLevel').textContent = customer.trainingLevel;
-        document.getElementById('customerStatus').textContent = customer.status;
-        document.getElementById('lastActivity').textContent = customer.lastActivity;
-        document.getElementById('totalSessions').textContent = customer.totalSessions;
-        document.getElementById('primaryGoal').textContent = customer.primaryGoal;
-        document.getElementById('experienceLevel').textContent = customer.experienceLevel;
-        document.getElementById('customerNotes').textContent = customer.notes;
-      } else {
-        document.getElementById('customerInfo').innerHTML = '<p>Customer not found.</p>';
+      if (!customer) {
+        document.getElementById('customerInfo').innerHTML = '<p>Customer not found</p>';
+        return;
+      }
+
+      // Update header
+      document.getElementById('customerFullName').textContent = `${customer.firstName} ${customer.lastName}`;
+      document.getElementById('customerEmailHeader').textContent = customer.email;
+      document.getElementById('profilePhoto').textContent = getInitials(customer.firstName, customer.lastName);
+
+      // Populate all customer details
+      document.getElementById('customerName').textContent = `${customer.firstName} ${customer.lastName}`;
+      document.getElementById('customerEmail').textContent = customer.email;
+      document.getElementById('customerPhone').textContent = customer.phone;
+      document.getElementById('dateOfBirth').textContent = formatDate(customer.dateOfBirth);
+      document.getElementById('gender').textContent = customer.gender;
+      document.getElementById('address').textContent = customer.address;
+      document.getElementById('registrationDate').textContent = formatDate(customer.registrationDate);
+      document.getElementById('trainingLevel').textContent = customer.trainingLevel;
+      document.getElementById('customerStatus').innerHTML = `<span class="status-badge status-${customer.status.toLowerCase()}">${customer.status}</span>`;
+      document.getElementById('lastActivity').textContent = formatDate(customer.lastActivity);
+      document.getElementById('totalSessions').textContent = customer.totalSessions;
+      document.getElementById('preferredTrainer').textContent = customer.preferredTrainer;
+      document.getElementById('primaryGoal').textContent = customer.primaryGoal;
+      document.getElementById('experienceLevel').textContent = customer.experienceLevel;
+      document.getElementById('currentWeight').textContent = customer.currentWeight;
+      document.getElementById('targetWeight').textContent = customer.targetWeight;
+      document.getElementById('height').textContent = customer.height;
+      document.getElementById('medicalConditions').textContent = customer.medicalConditions;
+      document.getElementById('membershipType').textContent = customer.membershipType;
+      document.getElementById('paymentStatus').innerHTML = `<span class="status-badge status-${customer.paymentStatus.toLowerCase()}">${customer.paymentStatus}</span>`;
+      document.getElementById('nextPayment').textContent = formatDate(customer.nextPayment);
+      document.getElementById('totalSpent').textContent = customer.totalSpent;
+      document.getElementById('workoutsCompleted').textContent = customer.workoutsCompleted;
+      document.getElementById('averageRating').textContent = customer.averageRating;
+      document.getElementById('favoriteClass').textContent = customer.favoriteClass;
+      document.getElementById('achievements').textContent = customer.achievements;
+      document.getElementById('adminNotes').textContent = customer.adminNotes;
+      document.getElementById('lastContact').textContent = formatDate(customer.lastContact);
+      document.getElementById('commPreferences').textContent = customer.commPreferences;
+
+      // Update action button links
+      document.getElementById('scheduleLink').href = `customer-schedule.html?id=${customerId}`;
+      document.getElementById('exercisesLink').href = `customer-exercises.html?id=${customerId}`;
+    }
+
+    // Helper function to get initials
+    function getInitials(firstName, lastName) {
+      return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+    }
+
+    // Helper function to format dates
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+
+    // Action button functions
+    function editCustomer() {
+      alert('Edit customer functionality will be implemented here');
+    }
+
+    function sendMessage() {
+      alert('Send message functionality will be implemented here');
+    }
+
+    function addNote() {
+      const note = prompt('Add a note about this customer:');
+      if (note) {
+        alert(`Note added: "${note}"`);
       }
     }
 
