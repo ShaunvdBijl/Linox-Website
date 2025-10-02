@@ -671,44 +671,71 @@
 
             async checkAdminAuth() {
                 // Check if user is authenticated and is admin
-                return new Promise((resolve) => {
-                    onAuthStateChanged(auth, async (user) => {
+                return new Promise((resolve, reject) => {
+                    console.log('🔍 Checking admin authentication...');
+                    
+                    // Add a small delay to ensure Firebase auth has initialized
+                    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                        console.log('🔐 Auth state changed:', user ? `User: ${user.email}` : 'No user');
+                        
                         if (!user) {
-                            alert('Access denied. Please log in.');
-                            window.location.href = 'loginPage.html';
+                            // Give Firebase a moment to load the session
+                            // If still no user after a delay, then redirect
+                            setTimeout(() => {
+                                const currentUser = auth.currentUser;
+                                if (!currentUser) {
+                                    console.error('❌ No authenticated user found');
+                                    alert('Access denied. Please log in.');
+                                    window.location.href = 'loginPage.html';
+                                    reject('No user');
+                                }
+                            }, 500);
                             return;
                         }
 
-                        // Check if user is admin by looking at their profile
+                        // User is authenticated, now check if they're admin
                         try {
+                            console.log('✅ User authenticated, checking admin status...');
+                            
                             // Use doc() to get the user document by UID (document ID)
                             const userDocRef = doc(db, 'users', user.uid);
                             const userDocSnap = await getDoc(userDocRef);
                             
                             if (!userDocSnap.exists()) {
-                                console.error('User document not found in Firestore');
-                                alert('Access denied. Admin privileges required.');
+                                console.error('❌ User document not found in Firestore for UID:', user.uid);
+                                alert('Access denied. Admin privileges required. User profile not found.');
                                 window.location.href = 'dashboard.html';
+                                unsubscribe();
+                                reject('No user document');
                                 return;
                             }
 
                             const userData = userDocSnap.data();
-                            console.log('User data:', userData);
+                            console.log('📄 User data loaded:', {
+                                email: userData.email,
+                                isAdmin: userData.isAdmin,
+                                isActive: userData.isActive
+                            });
                             
                             if (!userData.isAdmin) {
-                                console.log('User is not admin');
+                                console.error('❌ User is not admin');
                                 alert('Access denied. Admin privileges required.');
                                 window.location.href = 'dashboard.html';
+                                unsubscribe();
+                                reject('Not admin');
                                 return;
                             }
 
-                            console.log('Admin access granted');
+                            console.log('✅ Admin access granted!');
                             this.currentUser = user;
+                            unsubscribe(); // Stop listening once we've verified
                             resolve();
                         } catch (error) {
-                            console.error('Auth check error:', error);
+                            console.error('❌ Auth check error:', error);
                             alert('Authentication error. Please try again.');
                             window.location.href = 'loginPage.html';
+                            unsubscribe();
+                            reject(error);
                         }
                     });
                 });
