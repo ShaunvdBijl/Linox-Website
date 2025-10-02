@@ -609,10 +609,6 @@
         </div>
     </div>
 
-    <!-- Load Firebase configuration -->
-    <script src="./config-browser.js"></script>
-    <script src="./config.js"></script>
-    
     <!-- Firebase CDN -->
     <script type="module">
         // Import Firebase modules
@@ -620,38 +616,25 @@
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getStorage } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
-        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
 
-        // Load Firebase configuration securely
-        let firebaseConfig;
-        try {
-            // Try to load from secure config
-            if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY_HERE") {
-                firebaseConfig = window.firebaseConfig;
-                console.log('✅ Using secure Firebase configuration');
-            } else {
-                throw new Error('Secure config not available');
-            }
-        } catch (error) {
-            // Fallback to placeholder values
-            console.warn('⚠️ Using placeholder configuration. Please ensure config.js exists with real API keys.');
-            firebaseConfig = {
-                apiKey: "YOUR_FIREBASE_API_KEY_HERE",
-                authDomain: "your-project.firebaseapp.com",
-                projectId: "your-project-id",
-                storageBucket: "your-project.appspot.com",
-                messagingSenderId: "123456789",
-                appId: "1:123456789:web:abcdef123456",
-                measurementId: "G-XXXXXXXXXX"
-            };
-        }
+        // Firebase configuration - hardcoded for linox-soccer project
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        console.log('✅ Using Firebase configuration for linox-soccer project');
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
-        const analytics = getAnalytics(app);
 
         // Admin Portal Class
         class AdminPortalFirebase {
