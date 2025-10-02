@@ -1,6 +1,6 @@
 [build]
-  # Build command for Netlify
-  command = "npm run build"
+  # No build command needed - static HTML site
+  command = "echo 'No build needed - deploying static files'"
   
   # Directory to publish (current directory)
   publish = "."
@@ -9,8 +9,8 @@
   # Node.js version
   NODE_VERSION = "18"
 
-# Redirect rules for SPA (if needed)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Don't redirect - these are direct HTML pages, not a SPA
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
