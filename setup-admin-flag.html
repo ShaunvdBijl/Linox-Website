@@ -245,8 +245,16 @@
                 <small style="color: #666;">⚠️ Enter the ACTUAL password you use to login (not the one shown on login page if it doesn't work)</small>
             </div>
 
+            <div class="form-group">
+                <label for="isAdmin">Account Type</label>
+                <select id="isAdmin" style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem;">
+                    <option value="true">Admin (Full access)</option>
+                    <option value="false">Regular User (Student/Client)</option>
+                </select>
+            </div>
+
             <div class="btn-group">
-                <button type="submit" class="btn" id="setupBtn">🚀 Setup Admin Access</button>
+                <button type="submit" class="btn" id="setupBtn">🚀 Setup User Profile</button>
                 <button type="button" class="btn btn-secondary" id="listBtn" onclick="listAllUsers()">📋 List All Users</button>
             </div>
         </form>
@@ -291,6 +299,7 @@
 
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const isAdmin = document.getElementById('isAdmin').value === 'true';
             const setupBtn = document.getElementById('setupBtn');
             const statusBox = document.getElementById('statusBox');
 
@@ -312,13 +321,13 @@
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
 
-                // Step 3: Create or update user document with admin flag
-                showStatus('Step 3/3: Setting admin access...', 'info');
+                // Step 3: Create or update user document
+                showStatus(`Step 3/3: Setting up ${isAdmin ? 'admin' : 'user'} profile...`, 'info');
                 
                 const userData = {
                     uid: user.uid,
                     email: user.email,
-                    isAdmin: true,
+                    isAdmin: isAdmin,
                     isActive: true,
                     updatedAt: new Date()
                 };
@@ -326,30 +335,37 @@
                 if (userDoc.exists()) {
                     // Update existing document
                     const existingData = userDoc.data();
-                    userData.firstName = existingData.firstName || 'Admin';
+                    userData.firstName = existingData.firstName || (isAdmin ? 'Admin' : 'Test');
                     userData.lastName = existingData.lastName || 'User';
                     userData.createdAt = existingData.createdAt || new Date();
+                    userData.fitnessGoal = existingData.fitnessGoal || 'General Fitness';
+                    userData.experience = existingData.experience || 'Beginner';
+                    userData.trainingLevel = existingData.trainingLevel || 'Beginner';
+                    userData.goals = existingData.goals || [];
+                    userData.profileComplete = existingData.profileComplete || true;
                 } else {
                     // Create new document
-                    userData.firstName = 'Admin';
+                    userData.firstName = isAdmin ? 'Admin' : 'Test';
                     userData.lastName = 'User';
                     userData.createdAt = new Date();
-                    userData.fitnessGoal = 'General Fitness';
-                    userData.experience = 'Advanced';
-                    userData.trainingLevel = 'Advanced';
-                    userData.goals = ['System Administration'];
+                    userData.fitnessGoal = isAdmin ? 'General Fitness' : 'Weight Loss';
+                    userData.experience = isAdmin ? 'Advanced' : 'Beginner';
+                    userData.trainingLevel = isAdmin ? 'Advanced' : 'Beginner';
+                    userData.goals = isAdmin ? ['System Administration'] : ['Get Fit', 'Stay Healthy'];
                     userData.profileComplete = true;
                 }
 
                 await setDoc(userDocRef, userData, { merge: true });
 
+                const accountType = isAdmin ? 'Admin' : 'Regular User';
                 showStatus(`
-                    <h3 style="margin: 0 0 1rem 0;">🎉 Admin Access Setup Complete!</h3>
+                    <h3 style="margin: 0 0 1rem 0;">🎉 User Profile Setup Complete!</h3>
                     <p><strong>Email:</strong> ${user.email}</p>
                     <p><strong>UID:</strong> ${user.uid}</p>
-                    <p><strong>Admin Status:</strong> ✅ TRUE</p>
+                    <p><strong>Account Type:</strong> ${isAdmin ? '👑 ADMIN' : '👤 REGULAR USER'}</p>
+                    <p><strong>Admin Status:</strong> ${isAdmin ? '✅ TRUE' : '❌ FALSE'}</p>
                     <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
-                        You can now <a href="loginPage.html" style="color: #667eea; font-weight: bold;">login with these credentials</a> and access the admin portal!
+                        You can now <a href="loginPage.html" style="color: #667eea; font-weight: bold;">login with these credentials</a> and access ${isAdmin ? 'the admin portal' : 'your dashboard'}!
                     </p>
                 `, 'success');
 
