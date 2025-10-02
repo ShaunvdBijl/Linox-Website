@@ -5,6 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book Session - LinoxFitness</title>
   <link rel="stylesheet" href="HomePage.css" />
+  <style>
+    /* Book Session Specific Styles */
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-view-bookings {
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+      display: block;
+      margin-top: 1rem;
+    }
+
+    /* Fix button visibility issues */
+    .btn-primary {
+      background-color: #ffd700 !important;
+      color: #1e1e2f !important;
+      border: 2px solid #ffd700;
+    }
+
+    .btn-primary:hover {
+      background-color: #ffed4e !important;
+      color: #1e1e2f !important;
+    }
+
+    .btn-secondary {
+      background-color: #667eea !important;
+      color: white !important;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background-color: #764ba2 !important;
+      color: white !important;
+    }
+
+    /* Ensure proper contrast for all buttons */
+    .nav-menu a {
+      color: white !important;
+    }
+
+    .nav-menu a:hover {
+      color: #fbbf24 !important;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -28,7 +88,7 @@
     <section class="hero" style="min-height: 40vh;">
       <div class="hero-content">
         <div style="margin-bottom: 20px;">
-          <a href="dashboard.html" style="background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s;">
+          <a href="dashboard.html" class="btn-back">
             ← Back to Dashboard
           </a>
         </div>
@@ -216,7 +276,7 @@
                 Yoga & Flexibility
               </div>
             </div>
-            <a href="schedule.html" class="btn-outline" style="width: 100%; text-align: center; box-sizing: border-box; display: block;">View All Bookings</a>
+            <a href="schedule.html" class="btn-outline btn-view-bookings">View All Bookings</a>
           </div>
         </div>
       </div>
@@ -330,11 +390,140 @@
     window.bookSession = function(type, session) {
       selectedSession = session;
       
-      // Show alert that this redirects to class schedule
-      if (confirm(`You selected: ${session}\n\nFor group classes and sessions, please use our new Class Schedule page where you can see all available times and book directly!\n\nWould you like to go to the Class Schedule page now?`)) {
-        window.location.href = 'schedule.html';
+      if (type === 'personal') {
+        // For personal training, show the booking modal directly
+        showBookingModal();
+      } else {
+        // For group classes and specialized programs, redirect to schedule
+        if (confirm(`You selected: ${session}\n\nFor group classes and sessions, please use our new Class Schedule page where you can see all available times and book directly!\n\nWould you like to go to the Class Schedule page now?`)) {
+          window.location.href = 'schedule.html';
+        }
       }
     };
+
+    // Show booking modal for personal training
+    function showBookingModal() {
+      const sessionDetails = getSessionDetails();
+      const modal = document.getElementById('bookingModal');
+      const detailsDiv = document.getElementById('bookingDetails');
+      
+      detailsDiv.innerHTML = `
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+          <h4 style="margin: 0 0 0.5rem 0; color: #667eea;">Session Details</h4>
+          <p><strong>Type:</strong> ${sessionDetails.name}</p>
+          <p><strong>Duration:</strong> ${sessionDetails.duration}</p>
+          <p><strong>Price:</strong> ${sessionDetails.price}</p>
+        </div>
+        <div style="background: #e8f4fd; padding: 1rem; border-radius: 8px;">
+          <h4 style="margin: 0 0 0.5rem 0; color: #0056b3;">What's Included</h4>
+          <ul style="margin: 0; padding-left: 1.5rem;">
+            ${sessionDetails.includes.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+      
+      modal.style.display = 'flex';
+    }
+
+    // Get session details
+    function getSessionDetails() {
+      const sessionDetails = {
+        'personal': {
+          'one-on-one': {
+            name: 'One-on-One Personal Training',
+            duration: '60 minutes',
+            price: '$75',
+            includes: ['Personalized workout plan', 'Form correction', 'Progress tracking', 'Nutrition tips']
+          },
+          'express': {
+            name: '30-Minute Express Training',
+            duration: '30 minutes',
+            price: '$45',
+            includes: ['Quick intense workout', 'Basic form guidance', 'Workout summary']
+          },
+          'nutrition': {
+            name: 'Nutrition Consultation',
+            duration: '45 minutes',
+            price: '$60',
+            includes: ['Personalized meal plan', 'Macro calculations', 'Supplement recommendations', 'Lifestyle coaching']
+          }
+        }
+      };
+      
+      return sessionDetails[selectedSessionType][selectedSession];
+    }
+
+    // Confirm booking
+    window.confirmBooking = function() {
+      const button = event.target;
+      const originalText = button.textContent;
+      
+      button.textContent = 'Processing...';
+      button.disabled = true;
+      
+      // Simulate booking process
+      setTimeout(() => {
+        // Save booking to localStorage (in a real app, this would go to a database)
+        const booking = {
+          id: Date.now(),
+          type: selectedSessionType,
+          session: selectedSession,
+          details: getSessionDetails(),
+          status: 'confirmed',
+          timestamp: new Date().toISOString()
+        };
+        
+        // Get existing bookings
+        const existingBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+        existingBookings.push(booking);
+        localStorage.setItem('userBookings', JSON.stringify(existingBookings));
+        
+        // Show success message
+        closeBookingModal();
+        showSuccessMessage('Personal training session booked! Check your email for details.');
+        
+        // Reset selections
+        selectedSession = '';
+        
+        // Redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 2000);
+        
+      }, 2000);
+    };
+
+    // Close booking modal
+    window.closeBookingModal = function() {
+      document.getElementById('bookingModal').style.display = 'none';
+    };
+
+    // Show success message
+    function showSuccessMessage(message) {
+      const successDiv = document.createElement('div');
+      successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #d4edda;
+        color: #155724;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #c3e6cb;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 300px;
+      `;
+      successDiv.textContent = message;
+      
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => {
+        if (successDiv.parentNode) {
+          successDiv.remove();
+        }
+      }, 4000);
+    }
 
     // Logout
     window.logout = async function() {
