@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Management - LINQXFITNESS Admin</title>
+    <link rel="stylesheet" href="HomePage.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-header h1 {
+            color: white;
+            margin: 0;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .admin-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .admin-nav button, .admin-nav a {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .admin-nav button:hover, .admin-nav a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .form-card, .schedule-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-card h2, .schedule-card h2 {
+            color: #1e3a8a;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .week-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .week-navigation h3 {
+            margin: 0;
+            color: #1e3a8a;
+        }
+
+        .week-nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .schedule-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .schedule-item {
+            background: #f8f9fa;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .schedule-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .schedule-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .schedule-item-title {
+            font-weight: bold;
+            color: #1e3a8a;
+            font-size: 1.1rem;
+        }
+
+        .schedule-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .schedule-item-details {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .schedule-item-meta {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .capacity-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .capacity-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .capacity-full {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state h3 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 400px;
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <h1>📅 Schedule Management</h1>
+            <div class="admin-nav">
+                <a href="admin-portal-firebase.html">← Back to Admin Portal</a>
+                <button onclick="window.location.reload()">🔄 Refresh</button>
+                <button onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Add/Edit Schedule Form -->
+            <div class="form-card">
+                <h2 id="formTitle">➕ Add New Class/Session</h2>
+                <form id="scheduleForm">
+                    <input type="hidden" id="scheduleId">
+                    
+                    <div class="form-group">
+                        <label for="scheduleDate">Date *</label>
+                        <input type="date" id="scheduleDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startTime">Start Time *</label>
+                        <input type="time" id="startTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endTime">End Time *</label>
+                        <input type="time" id="endTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activity">Activity/Class Name *</label>
+                        <input type="text" id="activity" placeholder="e.g., Morning HIIT, Weight Training" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="trainer">Trainer Name *</label>
+                        <input type="text" id="trainer" placeholder="e.g., Coach Sarah" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., Main Gym, Studio A">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxCapacity">Max Capacity *</label>
+                        <input type="number" id="maxCapacity" min="1" value="15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Brief description of the class..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        ➕ Add Class
+                    </button>
+                    
+                    <button type="button" class="btn-secondary" id="cancelBtn" style="display: none; width: 100%; margin-top: 10px;" onclick="resetForm()">
+                        Cancel Edit
+                    </button>
+                </form>
+            </div>
+
+            <!-- Schedule List -->
+            <div class="schedule-card">
+                <div class="week-navigation">
+                    <h3 id="weekDisplay">Loading...</h3>
+                    <div class="week-nav-buttons">
+                        <button class="btn-secondary" onclick="changeWeek(-1)">← Previous Week</button>
+                        <button class="btn-secondary" onclick="changeWeek(0)">This Week</button>
+                        <button class="btn-secondary" onclick="changeWeek(1)">Next Week →</button>
+                    </div>
+                </div>
+
+                <div id="scheduleList" class="schedule-list">
+                    <div class="loading">Loading schedules</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        console.log('✅ Firebase initialized for Schedule Management');
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Current week offset (0 = this week, 1 = next week, -1 = previous week)
+        let currentWeekOffset = 0;
+        let currentUser = null;
+
+        // Check admin authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                alert('Access denied. Please log in.');
+                window.location.href = 'loginPage.html';
+                return;
+            }
+
+            currentUser = user;
+            console.log('✅ Admin authenticated:', user.email);
+            
+            // Set default date to today
+            document.getElementById('scheduleDate').valueAsDate = new Date();
+            
+            // Load schedules for current week
+            await loadSchedules();
+        });
+
+        // Get week date range
+        function getWeekRange(offset = 0) {
+            const now = new Date();
+            const currentDay = now.getDay();
+            const diff = now.getDate() - currentDay + (currentDay === 0 ? -6 : 1); // Monday as first day
+            
+            const monday = new Date(now.setDate(diff + (offset * 7)));
+            monday.setHours(0, 0, 0, 0);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23, 59, 59, 999);
+            
+            return { start: monday, end: sunday };
+        }
+
+        // Format date for display
+        function formatDateDisplay(date) {
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Change week
+        window.changeWeek = function(offset) {
+            if (offset === 0) {
+                currentWeekOffset = 0;
+            } else {
+                currentWeekOffset += offset;
+            }
+            loadSchedules();
+        };
+
+        // Load schedules for current week
+        async function loadSchedules() {
+            const scheduleList = document.getElementById('scheduleList');
+            const weekDisplay = document.getElementById('weekDisplay');
+            
+            try {
+                scheduleList.innerHTML = '<div class="loading">Loading schedules</div>';
+                
+                const { start, end } = getWeekRange(currentWeekOffset);
+                weekDisplay.textContent = `${formatDateDisplay(start)} - ${formatDateDisplay(end)}`;
+                
+                const schedulesRef = collection(db, 'schedules');
+                const q = query(
+                    schedulesRef,
+                    where('date', '>=', start.toISOString().split('T')[0]),
+                    where('date', '<=', end.toISOString().split('T')[0]),
+                    orderBy('date'),
+                    orderBy('startTime')
+                );
+                
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    scheduleList.innerHTML = `
+                        <div class="empty-state">
+                            <h3>📭 No Classes Scheduled</h3>
+                            <p>Add your first class using the form on the left.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                snapshot.forEach(doc => {
+                    const schedule = doc.data();
+                    const bookedCount = schedule.bookedUsers ? schedule.bookedUsers.length : 0;
+                    const spotsLeft = schedule.maxCapacity - bookedCount;
+                    const isFull = spotsLeft <= 0;
+                    
+                    const date = new Date(schedule.date);
+                    const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    
+                    html += `
+                        <div class="schedule-item">
+                            <div class="schedule-item-header">
+                                <div>
+                                    <div class="schedule-item-title">${schedule.activity}</div>
+                                </div>
+                                <div class="schedule-item-actions">
+                                    <button class="btn-secondary" onclick="editSchedule('${doc.id}', ${JSON.stringify(schedule).replace(/"/g, '&quot;')})">
+                                        ✏️ Edit
+                                    </button>
+                                    <button class="btn-danger" onclick="deleteSchedule('${doc.id}', '${schedule.activity}')">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="schedule-item-details">
+                                📅 ${dateStr}<br>
+                                🕐 ${schedule.startTime} - ${schedule.endTime}<br>
+                                👤 Trainer: ${schedule.trainer}<br>
+                                ${schedule.location ? `📍 ${schedule.location}<br>` : ''}
+                                ${schedule.description ? `📝 ${schedule.description}<br>` : ''}
+                            </div>
+                            <div class="schedule-item-meta">
+                                <span class="capacity-badge ${isFull ? 'capacity-full' : 'capacity-available'}">
+                                    ${isFull ? '🔴 FULL' : `✅ ${spotsLeft} spots left`} (${bookedCount}/${schedule.maxCapacity})
+                                </span>
+                                <span>${bookedCount > 0 ? `${bookedCount} booked` : 'No bookings yet'}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                scheduleList.innerHTML = html;
+                console.log(`✅ Loaded ${snapshot.size} schedules`);
+                
+            } catch (error) {
+                console.error('❌ Error loading schedules:', error);
+                scheduleList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>❌ Error Loading Schedules</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('scheduleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const scheduleId = document.getElementById('scheduleId').value;
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = scheduleId ? 'Updating...' : 'Adding...';
+            
+            try {
+                const scheduleData = {
+                    date: document.getElementById('scheduleDate').value,
+                    startTime: document.getElementById('startTime').value,
+                    endTime: document.getElementById('endTime').value,
+                    activity: document.getElementById('activity').value,
+                    trainer: document.getElementById('trainer').value,
+                    location: document.getElementById('location').value || '',
+                    maxCapacity: parseInt(document.getElementById('maxCapacity').value),
+                    description: document.getElementById('description').value || '',
+                    bookedUsers: [],
+                    status: 'active',
+                    updatedAt: new Date(),
+                    updatedBy: currentUser.uid
+                };
+                
+                if (scheduleId) {
+                    // Update existing schedule
+                    await updateDoc(doc(db, 'schedules', scheduleId), scheduleData);
+                    showNotification('✅ Class updated successfully!', 'success');
+                    console.log('✅ Schedule updated:', scheduleId);
+                } else {
+                    // Add new schedule
+                    scheduleData.createdAt = new Date();
+                    scheduleData.createdBy = currentUser.uid;
+                    await addDoc(collection(db, 'schedules'), scheduleData);
+                    showNotification('✅ Class added successfully!', 'success');
+                    console.log('✅ New schedule created');
+                }
+                
+                resetForm();
+                await loadSchedules();
+                
+            } catch (error) {
+                console.error('❌ Error saving schedule:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        // Edit schedule
+        window.editSchedule = function(id, schedule) {
+            document.getElementById('scheduleId').value = id;
+            document.getElementById('scheduleDate').value = schedule.date;
+            document.getElementById('startTime').value = schedule.startTime;
+            document.getElementById('endTime').value = schedule.endTime;
+            document.getElementById('activity').value = schedule.activity;
+            document.getElementById('trainer').value = schedule.trainer;
+            document.getElementById('location').value = schedule.location || '';
+            document.getElementById('maxCapacity').value = schedule.maxCapacity;
+            document.getElementById('description').value = schedule.description || '';
+            
+            document.getElementById('formTitle').textContent = '✏️ Edit Class/Session';
+            document.getElementById('submitBtn').textContent = '💾 Update Class';
+            document.getElementById('cancelBtn').style.display = 'block';
+            
+            // Scroll to form
+            document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // Delete schedule
+        window.deleteSchedule = async function(id, activityName) {
+            if (!confirm(`Are you sure you want to delete "${activityName}"?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                await deleteDoc(doc(db, 'schedules', id));
+                showNotification('✅ Class deleted successfully!', 'success');
+                console.log('✅ Schedule deleted:', id);
+                await loadSchedules();
+            } catch (error) {
+                console.error('❌ Error deleting schedule:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            }
+        };
+
+        // Reset form
+        window.resetForm = function() {
+            document.getElementById('scheduleForm').reset();
+            document.getElementById('scheduleId').value = '';
+            document.getElementById('formTitle').textContent = '➕ Add New Class/Session';
+            document.getElementById('submitBtn').textContent = '➕ Add Class';
+            document.getElementById('cancelBtn').style.display = 'none';
+            document.getElementById('scheduleDate').valueAsDate = new Date();
+        };
+
+        // Logout
+        window.logout = async function() {
+            try {
+                await signOut(auth);
+                window.location.href = 'loginPage.html';
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                alert('Error logging out. Please try again.');
+            }
+        };
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
+
