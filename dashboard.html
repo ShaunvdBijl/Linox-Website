@@ -211,7 +211,204 @@
     </div>
   </footer>
 
-  <script src="auth-utils.js"></script>
-  <script src="dashboard.js"></script>
+  <!-- Firebase CDN -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+      authDomain: "linox-soccer.firebaseapp.com",
+      projectId: "linox-soccer",
+      storageBucket: "linox-soccer.firebasestorage.app",
+      messagingSenderId: "313058607377",
+      appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+      measurementId: "G-QQJD06D5RK"
+    };
+
+    console.log('✅ Using Firebase configuration for linox-soccer project');
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Check authentication on page load
+    let authCheckDone = false;
+    
+    onAuthStateChanged(auth, async (user) => {
+      console.log('🔐 Auth state changed:', user ? `User: ${user.email}` : 'No user');
+      
+      if (authCheckDone) {
+        console.log('Auth check already completed, skipping');
+        return;
+      }
+      
+      if (!user) {
+        // Give Firebase a moment to initialize
+        setTimeout(() => {
+          const currentUser = auth.currentUser;
+          if (!currentUser) {
+            console.log('❌ No user authenticated, redirecting to login');
+            window.location.href = 'loginPage.html';
+          }
+        }, 500);
+        return;
+      }
+
+      authCheckDone = true;
+      
+      try {
+        console.log('✅ User authenticated, loading profile...');
+        
+        // Load user profile from Firestore
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        let userData = null;
+        if (userDocSnap.exists()) {
+          userData = userDocSnap.data();
+          console.log('📄 User data loaded:', userData);
+        } else {
+          console.warn('⚠️ User document not found, using basic data');
+          userData = {
+            firstName: user.displayName?.split(' ')[0] || 'User',
+            lastName: user.displayName?.split(' ')[1] || '',
+            email: user.email
+          };
+        }
+        
+        // Update dashboard with user info
+        document.getElementById('userName').textContent = userData.firstName || 'User';
+        
+        // Store user data for other pages
+        localStorage.setItem('userName', `${userData.firstName} ${userData.lastName}`);
+        localStorage.setItem('userEmail', userData.email);
+        
+        console.log('✅ Dashboard loaded successfully');
+        
+      } catch (error) {
+        console.error('❌ Error loading user data:', error);
+      }
+    });
+
+    // Logout function
+    window.logout = async function() {
+      try {
+        console.log('🚪 Logging out...');
+        await signOut(auth);
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log('✅ Logged out successfully');
+        window.location.href = 'loginPage.html';
+      } catch (error) {
+        console.error('❌ Logout error:', error);
+        alert('Error logging out. Please try again.');
+      }
+    };
+
+    // Dashboard functionality
+    function markWorkoutComplete() {
+      const button = event.target;
+      const originalText = button.textContent;
+      
+      button.textContent = 'Completing...';
+      button.disabled = true;
+      
+      setTimeout(() => {
+        button.textContent = '✓ Completed!';
+        button.style.backgroundColor = '#28a745';
+        button.style.borderColor = '#28a745';
+        
+        showSuccessMessage('Workout marked as complete! Great job!');
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+          button.style.backgroundColor = '';
+          button.style.borderColor = '';
+        }, 3000);
+      }, 1500);
+    }
+
+    function viewFullPlan() {
+      window.location.href = 'workout-plans.html';
+    }
+
+    function showSuccessMessage(message) {
+      const successDiv = document.createElement('div');
+      successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #d4edda;
+        color: #155724;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #c3e6cb;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      `;
+      successDiv.textContent = message;
+      
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => {
+        if (successDiv.parentNode) {
+          successDiv.remove();
+        }
+      }, 3000);
+    }
+
+    // Make functions available globally
+    window.markWorkoutComplete = markWorkoutComplete;
+    window.viewFullPlan = viewFullPlan;
+
+    // Add hover effects
+    document.addEventListener('DOMContentLoaded', function() {
+      const interactiveElements = document.querySelectorAll('.feature-card, .btn-primary, .btn-secondary, .btn-outline');
+      
+      interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', function() {
+          this.style.transform = 'translateY(-2px)';
+          this.style.transition = 'transform 0.3s ease';
+        });
+        
+        element.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateY(0)';
+        });
+      });
+    });
+
+    // Add CSS
+    const style = document.createElement('style');
+    style.textContent = `
+      .nav-menu a.active {
+        color: #ffd700 !important;
+        font-weight: bold;
+      }
+      
+      .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .btn-primary, .btn-secondary, .btn-outline {
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary:hover, .btn-secondary:hover, .btn-outline:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 </body>
 </html>
