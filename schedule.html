@@ -349,12 +349,12 @@
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="nav-brand">
-                <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
-            </div>
-            <ul class="nav-menu">
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+      </div>
+      <ul class="nav-menu">
                 <li><a href="dashboard.html">Dashboard</a></li>
                 <li><a href="schedule.html" class="active">Class Schedule</a></li>
                 <li><a href="my-workout-plan.html">My Workout</a></li>
@@ -362,18 +362,18 @@
                 <li><a href="progress.html">Progress</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="#" onclick="logout()">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+      </ul>
+    </nav>
+  </header>
 
-    <main>
+  <main>
         <div class="container-custom">
             <!-- Header -->
             <div class="schedule-header">
                 <h1>📅 Weekly Class Schedule</h1>
                 <p>Book your spot in our group fitness classes</p>
             </div>
-
+            
             <!-- Week Navigation -->
             <div class="week-navigation">
                 <div class="week-display" id="weekDisplay">Loading...</div>
@@ -383,7 +383,7 @@
                     <button class="btn-nav" onclick="changeWeek(1)">Next →</button>
                 </div>
             </div>
-
+            
             <!-- Filters -->
             <div class="filters">
                 <h3>🔍 Filter by Activity:</h3>
@@ -395,23 +395,23 @@
                     <button class="filter-tag" onclick="filterByActivity('Cardio')">Cardio</button>
                 </div>
             </div>
-
+            
             <!-- Loading State -->
             <div id="loadingState" class="loading">
                 Loading schedule...
             </div>
-
+            
             <!-- Schedule Grid -->
             <div id="scheduleGrid" class="day-grid" style="display: none;">
                 <!-- Days will be populated here -->
             </div>
-
+            
             <!-- Empty State -->
             <div id="emptyState" class="empty-state" style="display: none;">
                 <h2>📭 No Classes This Week</h2>
                 <p>There are no classes scheduled for this week yet.</p>
                 <p>Check back later or contact your trainer!</p>
-            </div>
+          </div>
         </div>
     </main>
 
@@ -429,29 +429,29 @@
                 <!-- Action buttons will be populated -->
             </div>
         </div>
-    </div>
+      </div>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>LinoxFitness</h3>
-                    <p>Transforming lives through personalized fitness and nutrition guidance.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>LinoxFitness</h3>
+          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
                         <li><a href="dashboard.html">Dashboard</a></li>
                         <li><a href="schedule.html">Class Schedule</a></li>
                         <li><a href="my-workout-plan.html">My Workout</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
-            </div>
+          </ul>
         </div>
-    </footer>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 
     <!-- Firebase CDN -->
     <script type="module">
@@ -546,12 +546,11 @@
                     `${formatDate(start)} - ${formatDate(end)}`;
                 
                 const schedulesRef = collection(db, 'schedules');
+                // Simplified query - sort client-side to avoid composite index requirement
                 const q = query(
                     schedulesRef,
                     where('date', '>=', start.toISOString().split('T')[0]),
-                    where('date', '<=', end.toISOString().split('T')[0]),
-                    orderBy('date'),
-                    orderBy('startTime')
+                    where('date', '<=', end.toISOString().split('T')[0])
                 );
                 
                 const snapshot = await getDocs(q);
@@ -559,6 +558,14 @@
                 
                 snapshot.forEach(doc => {
                     allSchedules.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort results client-side by date and time
+                allSchedules.sort((a, b) => {
+                    if (a.date !== b.date) {
+                        return a.date.localeCompare(b.date);
+                    }
+                    return a.startTime.localeCompare(b.startTime);
                 });
                 
                 console.log(`✅ Loaded ${allSchedules.length} classes`);

@@ -510,17 +510,29 @@
                 weekDisplay.textContent = `${formatDateDisplay(start)} - ${formatDateDisplay(end)}`;
                 
                 const schedulesRef = collection(db, 'schedules');
+                // Simplified query - sort client-side to avoid composite index requirement
                 const q = query(
                     schedulesRef,
                     where('date', '>=', start.toISOString().split('T')[0]),
-                    where('date', '<=', end.toISOString().split('T')[0]),
-                    orderBy('date'),
-                    orderBy('startTime')
+                    where('date', '<=', end.toISOString().split('T')[0])
                 );
                 
                 const snapshot = await getDocs(q);
                 
-                if (snapshot.empty) {
+                // Sort results client-side
+                const schedules = [];
+                snapshot.forEach(doc => {
+                    schedules.push({ id: doc.id, ...doc.data() });
+                });
+                
+                schedules.sort((a, b) => {
+                    if (a.date !== b.date) {
+                        return a.date.localeCompare(b.date);
+                    }
+                    return a.startTime.localeCompare(b.startTime);
+                });
+                
+                if (schedules.length === 0) {
                     scheduleList.innerHTML = `
                         <div class="empty-state">
                             <h3>📭 No Classes Scheduled</h3>
@@ -531,8 +543,7 @@
                 }
                 
                 let html = '';
-                snapshot.forEach(doc => {
-                    const schedule = doc.data();
+                schedules.forEach(schedule => {
                     const bookedCount = schedule.bookedUsers ? schedule.bookedUsers.length : 0;
                     const spotsLeft = schedule.maxCapacity - bookedCount;
                     const isFull = spotsLeft <= 0;
@@ -547,10 +558,10 @@
                                     <div class="schedule-item-title">${schedule.activity}</div>
                                 </div>
                                 <div class="schedule-item-actions">
-                                    <button class="btn-secondary" onclick="editSchedule('${doc.id}', ${JSON.stringify(schedule).replace(/"/g, '&quot;')})">
+                                    <button class="btn-secondary" onclick="editSchedule('${schedule.id}', ${JSON.stringify(schedule).replace(/"/g, '&quot;')})">
                                         ✏️ Edit
                                     </button>
-                                    <button class="btn-danger" onclick="deleteSchedule('${doc.id}', '${schedule.activity}')">
+                                    <button class="btn-danger" onclick="deleteSchedule('${schedule.id}', '${schedule.activity}')">
                                         🗑️ Delete
                                     </button>
                                 </div>
@@ -573,7 +584,7 @@
                 });
                 
                 scheduleList.innerHTML = html;
-                console.log(`✅ Loaded ${snapshot.size} schedules`);
+                console.log(`✅ Loaded ${schedules.length} schedules`);
                 
             } catch (error) {
                 console.error('❌ Error loading schedules:', error);
