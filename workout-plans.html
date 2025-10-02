@@ -14,8 +14,9 @@
       </div>
       <ul class="nav-menu">
         <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="schedule.html">Class Schedule</a></li>
+        <li><a href="my-workout-plan.html" class="active">My Workout</a></li>
         <li><a href="book-session.html">Book Session</a></li>
-        <li><a href="workout-plans.html" class="active">Workout Plans</a></li>
         <li><a href="progress.html">Progress</a></li>
         <li><a href="profile.html">Profile</a></li>
         <li><a href="#" onclick="logout()">Logout</a></li>
@@ -257,7 +258,44 @@
     </div>
   </footer>
 
-  <script src="auth-utils.js"></script>
-  <script src="workout-plans.js"></script>
+  <script type="module">
+    // Redirect to the new Firebase-integrated workout plan page
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+      authDomain: "linox-soccer.firebaseapp.com",
+      projectId: "linox-soccer",
+      storageBucket: "linox-soccer.firebasestorage.app",
+      messagingSenderId: "313058607377",
+      appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+      measurementId: "G-QQJD06D5RK"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Check auth and redirect
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = 'loginPage.html';
+      } else {
+        // Redirect to the new workout plan page
+        window.location.href = 'my-workout-plan.html';
+      }
+    });
+
+    // Logout function
+    window.logout = async function() {
+      try {
+        const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+        await signOut(auth);
+        window.location.href = 'loginPage.html';
+      } catch (error) {
+        console.error('❌ Logout error:', error);
+      }
+    };
+  </script>
 </body>
 </html>
