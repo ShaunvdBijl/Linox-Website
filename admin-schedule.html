@@ -68,6 +68,7 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
         }
 
         .form-card h2, .schedule-card h2 {
@@ -79,6 +80,7 @@
 
         .form-group {
             margin-bottom: 20px;
+            width: 100%;
         }
 
         .form-group label {
@@ -97,6 +99,8 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
+            box-sizing: border-box;
+            max-width: 100%;
         }
 
         .form-group input:focus,
@@ -122,6 +126,7 @@
             cursor: pointer;
             width: 100%;
             transition: transform 0.2s;
+            box-sizing: border-box;
         }
 
         .btn-primary:hover:not(:disabled) {
