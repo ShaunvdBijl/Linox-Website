@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommend Exercises - LINQXFITNESS Admin</title>
+  <link rel="stylesheet" href="HomePage.css">
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #166534 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .exercise-management {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .exercise-section {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+
+    .exercise-section h3 {
+      margin: 0 0 1rem 0;
+      color: #14532d;
+    }
+
+    .exercise-item {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .exercise-info {
+      flex: 1;
+    }
+
+    .exercise-name {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .exercise-details {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+
+    .btn-back {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .btn-back:hover {
+      background: #764ba2;
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary:hover {
+      background: #764ba2;
+    }
+
+    .btn-add {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+
+    .btn-add:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="admin-portal.html" style="color: white; text-decoration: none;">LINQXFITNESS Admin</a></h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="admin-portal.html">Dashboard</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="admin-container">
+      <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
+      
+      <div class="admin-header">
+        <h1>Recommend Exercises</h1>
+        <p>Manage and recommend exercises for the selected customer</p>
+      </div>
+
+      <div class="exercise-management">
+        <div class="exercise-grid">
+          <div class="exercise-section">
+            <h3>Current Recommendations</h3>
+            <button class="btn-add" onclick="addNewRecommendation()">+ Add New Recommendation</button>
+            <div id="currentRecommendations">
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Squats</div>
+                  <div class="exercise-details">3 sets x 12 reps, Focus on form</div>
+                </div>
+                <button class="btn-primary" onclick="editRecommendation('squats')">Edit</button>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Push-ups</div>
+                  <div class="exercise-details">2 sets x 8 reps, Modified for knee issues</div>
+                </div>
+                <button class="btn-primary" onclick="editRecommendation('pushups')">Edit</button>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Plank</div>
+                  <div class="exercise-details">Hold for 30 seconds, 3 sets</div>
+                </div>
+                <button class="btn-primary" onclick="editRecommendation('plank')">Edit</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="exercise-section">
+            <h3>Exercise Library</h3>
+            <div id="exerciseLibrary">
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Burpees</div>
+                  <div class="exercise-details">Full body cardio exercise</div>
+                </div>
+                <button class="btn-primary" onclick="recommendExercise('burpees')">Recommend</button>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Lunges</div>
+                  <div class="exercise-details">Lower body strength exercise</div>
+                </div>
+                <button class="btn-primary" onclick="recommendExercise('lunges')">Recommend</button>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Mountain Climbers</div>
+                  <div class="exercise-details">High-intensity cardio exercise</div>
+                </div>
+                <button class="btn-primary" onclick="recommendExercise('mountain-climbers')">Recommend</button>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Dead Bug</div>
+                  <div class="exercise-details">Core stability exercise</div>
+                </div>
+                <button class="btn-primary" onclick="recommendExercise('dead-bug')">Recommend</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="exercise-section">
+            <h3>Customer Progress</h3>
+            <div id="customerProgress">
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Strength Level</div>
+                  <div class="exercise-details">Intermediate - Good form, can increase weight</div>
+                </div>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Cardio Endurance</div>
+                  <div class="exercise-details">Beginner - Needs improvement</div>
+                </div>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Flexibility</div>
+                  <div class="exercise-details">Good - Maintain current routine</div>
+                </div>
+              </div>
+              <div class="exercise-item">
+                <div class="exercise-info">
+                  <div class="exercise-name">Injuries/Concerns</div>
+                  <div class="exercise-details">Knee issues - Avoid high impact</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-section">
+          <h3>Recommendation Notes</h3>
+          <textarea id="recommendationNotes" style="width: 100%; height: 100px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical;" placeholder="Add notes about exercise recommendations...">Customer responds well to bodyweight exercises. Avoid high-impact movements due to knee concerns. Focus on building core strength and improving cardio endurance gradually.</textarea>
+          <button class="btn-primary" onclick="saveRecommendationNotes()" style="margin-top: 1rem;">Save Notes</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Get customer ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get('id');
+
+    function addNewRecommendation() {
+      alert('Add New Recommendation functionality would open a form to create custom exercise recommendations.');
+    }
+
+    function editRecommendation(exerciseId) {
+      alert(`Edit recommendation for ${exerciseId} - would open editing form.`);
+    }
+
+    function recommendExercise(exerciseId) {
+      if (confirm(`Add ${exerciseId} to customer's recommendations?`)) {
+        alert(`${exerciseId} added to recommendations successfully!`);
+      }
+    }
+
+    function saveRecommendationNotes() {
+      const notes = document.getElementById('recommendationNotes').value;
+      alert('Recommendation notes saved successfully!');
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'loginPage.html';
+    }
+
+    // Load customer exercise recommendations when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Managing exercise recommendations for customer ID:', customerId);
+    });
+  </script>
+</body>
+</html>

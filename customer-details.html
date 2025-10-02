@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Details - LINQXFITNESS Admin</title>
+  <link rel="stylesheet" href="HomePage.css">
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #166534 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .customer-details {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-section {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+
+    .detail-section h3 {
+      margin: 0 0 1rem 0;
+      color: #14532d;
+    }
+
+    .detail-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .detail-label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .btn-back {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .btn-back:hover {
+      background: #764ba2;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="admin-portal.html" style="color: white; text-decoration: none;">LINQXFITNESS Admin</a></h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="admin-portal.html">Dashboard</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="admin-container">
+      <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
+      
+      <div class="admin-header">
+        <h1>Customer Details</h1>
+        <p>View detailed information about the selected customer</p>
+      </div>
+
+      <div class="customer-details">
+        <div id="customerInfo">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h3>Personal Information</h3>
+              <div class="detail-item">
+                <span class="detail-label">Name:</span> <span id="customerName">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Email:</span> <span id="customerEmail">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Phone:</span> <span id="customerPhone">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Join Date:</span> <span id="joinDate">Loading...</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h3>Training Information</h3>
+              <div class="detail-item">
+                <span class="detail-label">Training Level:</span> <span id="trainingLevel">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Status:</span> <span id="customerStatus">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Last Activity:</span> <span id="lastActivity">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Total Sessions:</span> <span id="totalSessions">Loading...</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h3>Fitness Goals</h3>
+              <div class="detail-item">
+                <span class="detail-label">Primary Goal:</span> <span id="primaryGoal">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Experience Level:</span> <span id="experienceLevel">Loading...</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Notes:</span> <span id="customerNotes">No special notes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Get customer ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get('id');
+
+    // Sample customer data (in real app, this would come from a database)
+    const sampleCustomers = [
+      {
+        id: '1',
+        name: 'John Smith',
+        email: 'john.smith@email.com',
+        phone: '(555) 123-4567',
+        joinDate: '2024-01-15',
+        trainingLevel: 'Intermediate',
+        status: 'Active',
+        lastActivity: '2024-10-01',
+        totalSessions: 24,
+        primaryGoal: 'Weight Loss',
+        experienceLevel: '6 months - 2 years',
+        notes: 'Prefers morning sessions, has knee issues'
+      },
+      {
+        id: '2',
+        name: 'Sarah Johnson',
+        email: 'sarah.johnson@email.com',
+        phone: '(555) 234-5678',
+        joinDate: '2024-02-20',
+        trainingLevel: 'Advanced',
+        status: 'Active',
+        lastActivity: '2024-10-02',
+        totalSessions: 18,
+        primaryGoal: 'Muscle Building',
+        experienceLevel: '2+ years',
+        notes: 'Competitive athlete, very motivated'
+      }
+    ];
+
+    function loadCustomerDetails() {
+      const customer = sampleCustomers.find(c => c.id === customerId);
+      
+      if (customer) {
+        document.getElementById('customerName').textContent = customer.name;
+        document.getElementById('customerEmail').textContent = customer.email;
+        document.getElementById('customerPhone').textContent = customer.phone;
+        document.getElementById('joinDate').textContent = customer.joinDate;
+        document.getElementById('trainingLevel').textContent = customer.trainingLevel;
+        document.getElementById('customerStatus').textContent = customer.status;
+        document.getElementById('lastActivity').textContent = customer.lastActivity;
+        document.getElementById('totalSessions').textContent = customer.totalSessions;
+        document.getElementById('primaryGoal').textContent = customer.primaryGoal;
+        document.getElementById('experienceLevel').textContent = customer.experienceLevel;
+        document.getElementById('customerNotes').textContent = customer.notes;
+      } else {
+        document.getElementById('customerInfo').innerHTML = '<p>Customer not found.</p>';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'loginPage.html';
+    }
+
+    // Load customer details when page loads
+    document.addEventListener('DOMContentLoaded', loadCustomerDetails);
+  </script>
+</body>
+</html>

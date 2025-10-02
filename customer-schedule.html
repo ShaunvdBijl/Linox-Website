@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Customer Schedule - LINQXFITNESS Admin</title>
+  <link rel="stylesheet" href="HomePage.css">
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #166534 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .schedule-management {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .schedule-section {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+
+    .schedule-section h3 {
+      margin: 0 0 1rem 0;
+      color: #14532d;
+    }
+
+    .session-item {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-back {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .btn-back:hover {
+      background: #764ba2;
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #764ba2;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-brand">
+        <h1><a href="admin-portal.html" style="color: white; text-decoration: none;">LINQXFITNESS Admin</a></h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="admin-portal.html">Dashboard</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="admin-container">
+      <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
+      
+      <div class="admin-header">
+        <h1>Manage Customer Schedule</h1>
+        <p>View and manage training sessions for the selected customer</p>
+      </div>
+
+      <div class="schedule-management">
+        <div class="schedule-grid">
+          <div class="schedule-section">
+            <h3>Upcoming Sessions</h3>
+            <div id="upcomingSessions">
+              <div class="session-item">
+                <strong>Personal Training</strong><br>
+                Tomorrow, 9:00 AM<br>
+                <span style="color: #28a745;">Confirmed</span>
+              </div>
+              <div class="session-item">
+                <strong>HIIT Cardio Class</strong><br>
+                Friday, 6:00 PM<br>
+                <span style="color: #28a745;">Confirmed</span>
+              </div>
+              <div class="session-item">
+                <strong>Yoga & Flexibility</strong><br>
+                Sunday, 10:00 AM<br>
+                <span style="color: #ffc107;">Pending</span>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="addNewSession()">Add New Session</button>
+          </div>
+
+          <div class="schedule-section">
+            <h3>Session History</h3>
+            <div id="sessionHistory">
+              <div class="session-item">
+                <strong>Strength Training</strong><br>
+                Last Monday, 10:00 AM<br>
+                <span style="color: #28a745;">Completed</span>
+              </div>
+              <div class="session-item">
+                <strong>Cardio Workout</strong><br>
+                Last Wednesday, 7:00 PM<br>
+                <span style="color: #28a745;">Completed</span>
+              </div>
+              <div class="session-item">
+                <strong>Personal Training</strong><br>
+                Last Friday, 2:00 PM<br>
+                <span style="color: #dc3545;">Cancelled</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-section">
+            <h3>Quick Actions</h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <button class="btn-primary" onclick="rescheduleSession()">Reschedule Session</button>
+              <button class="btn-primary" onclick="cancelSession()">Cancel Session</button>
+              <button class="btn-primary" onclick="sendReminder()">Send Reminder</button>
+              <button class="btn-primary" onclick="viewProgress()">View Progress</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="schedule-section">
+          <h3>Training Notes</h3>
+          <textarea id="trainingNotes" style="width: 100%; height: 100px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical;" placeholder="Add training notes for this customer...">Customer shows great progress in strength training. Focus on improving cardio endurance. Knee issues require modified exercises.</textarea>
+          <button class="btn-primary" onclick="saveNotes()" style="margin-top: 1rem;">Save Notes</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Get customer ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get('id');
+
+    function addNewSession() {
+      alert('Add New Session functionality would open a scheduling form here.');
+    }
+
+    function rescheduleSession() {
+      alert('Reschedule Session functionality would open a rescheduling form here.');
+    }
+
+    function cancelSession() {
+      if (confirm('Are you sure you want to cancel the selected session?')) {
+        alert('Session cancelled successfully.');
+      }
+    }
+
+    function sendReminder() {
+      alert('Reminder sent to customer via email and SMS.');
+    }
+
+    function viewProgress() {
+      alert('View Progress would show detailed progress charts and metrics.');
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('trainingNotes').value;
+      alert('Training notes saved successfully!');
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'loginPage.html';
+    }
+
+    // Load customer schedule when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Managing schedule for customer ID:', customerId);
+    });
+  </script>
+</body>
+</html>
