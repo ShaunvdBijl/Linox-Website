@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - LinoxFitness</title>
+    <link rel="stylesheet" href="HomePage.css">
+    <style>
+        .container-custom {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .profile-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-card h2 {
+            color: #1e3a8a;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group input:disabled {
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-sizing: border-box;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-sizing: border-box;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item strong {
+            color: #1e3a8a;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            margin: 0;
+            color: #666;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 400px;
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="schedule.html">Class Schedule</a></li>
+                <li><a href="my-workout-plan.html">My Workout</a></li>
+                <li><a href="book-session.html">Book Session</a></li>
+                <li><a href="progress.html">Progress</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container-custom">
+            <!-- Header -->
+            <div class="profile-header">
+                <div class="profile-avatar" id="avatarInitials">JD</div>
+                <h1 id="profileName">John Doe</h1>
+                <p id="profileEmail" style="opacity: 0.9;">john@example.com</p>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="profile-card">
+                <h2>👤 Personal Information</h2>
+                <form id="personalInfoForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" placeholder="+1 (555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dateOfBirth">Date of Birth</label>
+                            <input type="date" id="dateOfBirth">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="savePersonalBtn">💾 Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Fitness Information -->
+            <div class="profile-card">
+                <h2>💪 Fitness Profile</h2>
+                <form id="fitnessInfoForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fitnessGoal">Primary Fitness Goal *</label>
+                            <select id="fitnessGoal" required>
+                                <option value="">-- Select Goal --</option>
+                                <option value="Weight Loss">Weight Loss</option>
+                                <option value="Muscle Gain">Muscle Gain</option>
+                                <option value="General Fitness">General Fitness</option>
+                                <option value="Athletic Performance">Athletic Performance</option>
+                                <option value="Flexibility">Flexibility</option>
+                                <option value="Endurance">Endurance</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trainingLevel">Training Level *</label>
+                            <select id="trainingLevel" required>
+                                <option value="">-- Select Level --</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="medicalConditions">Medical Conditions / Injuries</label>
+                            <textarea id="medicalConditions" placeholder="Please list any medical conditions, injuries, or limitations..."></textarea>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="additionalNotes">Additional Notes</label>
+                            <textarea id="additionalNotes" placeholder="Any other information your trainer should know..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="saveFitnessBtn">💾 Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Account Information -->
+            <div class="profile-card">
+                <h2>🔐 Account Information</h2>
+                <div class="info-item">
+                    <strong>Account Status</strong>
+                    <p id="accountStatus">Active ✅</p>
+                </div>
+                <div class="info-item">
+                    <strong>Member Since</strong>
+                    <p id="memberSince">Loading...</p>
+                </div>
+                <div class="info-item">
+                    <strong>Last Login</strong>
+                    <p id="lastLogin">Just now</p>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn-secondary" onclick="alert('Password reset functionality coming soon!')">
+                        🔑 Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LinoxFitness</h3>
+                    <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="my-workout-plan.html">My Workout</a></li>
+                        <li><a href="progress.html">Progress</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let userData = null;
+
+        // Auth check
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'loginPage.html';
+                return;
+            }
+            
+            currentUser = user;
+            console.log('✅ User authenticated:', user.email);
+            await loadUserProfile();
+        });
+
+        // Load user profile
+        async function loadUserProfile() {
+            try {
+                const userDocRef = doc(db, 'users', currentUser.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    userData = userDoc.data();
+                    console.log('✅ Profile loaded:', userData);
+                    displayProfile();
+                } else {
+                    // Create basic profile
+                    userData = {
+                        email: currentUser.email,
+                        firstName: currentUser.displayName?.split(' ')[0] || '',
+                        lastName: currentUser.displayName?.split(' ')[1] || ''
+                    };
+                    displayProfile();
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading profile:', error);
+                alert('Error loading profile: ' + error.message);
+            }
+        }
+
+        // Display profile
+        function displayProfile() {
+            // Update header
+            const fullName = `${userData.firstName || 'User'} ${userData.lastName || ''}`.trim();
+            document.getElementById('profileName').textContent = fullName;
+            document.getElementById('profileEmail').textContent = userData.email || currentUser.email;
+            
+            // Update avatar with initials
+            const initials = `${(userData.firstName || 'U')[0]}${(userData.lastName || '')[0] || ''}`.toUpperCase();
+            document.getElementById('avatarInitials').textContent = initials;
+            
+            // Fill form fields
+            document.getElementById('firstName').value = userData.firstName || '';
+            document.getElementById('lastName').value = userData.lastName || '';
+            document.getElementById('email').value = userData.email || currentUser.email;
+            document.getElementById('phone').value = userData.phone || '';
+            document.getElementById('dateOfBirth').value = userData.dateOfBirth || '';
+            
+            document.getElementById('fitnessGoal').value = userData.fitnessGoal || '';
+            document.getElementById('trainingLevel').value = userData.trainingLevel || '';
+            document.getElementById('medicalConditions').value = userData.medicalConditions || '';
+            document.getElementById('additionalNotes').value = userData.additionalNotes || '';
+            
+            // Account info
+            document.getElementById('accountStatus').textContent = userData.isActive !== false ? 'Active ✅' : 'Inactive ❌';
+            
+            if (userData.createdAt) {
+                const createdDate = userData.createdAt.toDate ? userData.createdAt.toDate() : new Date(userData.createdAt);
+                document.getElementById('memberSince').textContent = createdDate.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+            } else {
+                document.getElementById('memberSince').textContent = 'Recently joined';
+            }
+        }
+
+        // Save personal info
+        document.getElementById('personalInfoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const saveBtn = document.getElementById('savePersonalBtn');
+            const originalText = saveBtn.textContent;
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            
+            try {
+                const updates = {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    dateOfBirth: document.getElementById('dateOfBirth').value,
+                    updatedAt: new Date()
+                };
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), updates);
+                
+                userData = { ...userData, ...updates };
+                displayProfile();
+                
+                showNotification('✅ Personal information updated successfully!', 'success');
+                console.log('✅ Profile updated');
+                
+            } catch (error) {
+                console.error('❌ Error updating profile:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
+        });
+
+        // Save fitness info
+        document.getElementById('fitnessInfoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const saveBtn = document.getElementById('saveFitnessBtn');
+            const originalText = saveBtn.textContent;
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            
+            try {
+                const updates = {
+                    fitnessGoal: document.getElementById('fitnessGoal').value,
+                    trainingLevel: document.getElementById('trainingLevel').value,
+                    medicalConditions: document.getElementById('medicalConditions').value.trim(),
+                    additionalNotes: document.getElementById('additionalNotes').value.trim(),
+                    updatedAt: new Date()
+                };
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), updates);
+                
+                userData = { ...userData, ...updates };
+                
+                showNotification('✅ Fitness profile updated successfully!', 'success');
+                console.log('✅ Fitness profile updated');
+                
+            } catch (error) {
+                console.error('❌ Error updating fitness profile:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
+        });
+
+        // Logout
+        window.logout = async function() {
+            try {
+                await signOut(auth);
+                window.location.href = 'loginPage.html';
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                alert('Error logging out');
+            }
+        };
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
+
