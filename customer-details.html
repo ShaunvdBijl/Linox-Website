@@ -333,165 +333,141 @@
     </div>
   </main>
 
-  <script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+      authDomain: "linox-soccer.firebaseapp.com",
+      projectId: "linox-soccer",
+      storageBucket: "linox-soccer.firebasestorage.app",
+      messagingSenderId: "313058607377",
+      appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+      measurementId: "G-QQJD06D5RK"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Make functions globally available
+    window.firebaseDb = db;
+    window.firebaseAuth = auth;
+  </script>
+
+  <script type="module">
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
     // Get customer ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const customerId = urlParams.get('id');
 
-    // Enhanced sample customer data (replace with actual data source)
-    const sampleCustomers = [
-      {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        phone: '+1 (555) 123-4567',
-        dateOfBirth: '1985-03-15',
-        gender: 'Male',
-        address: '123 Main St, Anytown, ST 12345',
-        registrationDate: '2024-01-15',
-        trainingLevel: 'Intermediate',
-        status: 'Active',
-        lastActivity: '2024-02-15',
-        totalSessions: 24,
-        primaryGoal: 'Weight Loss',
-        experienceLevel: '2 years',
-        currentWeight: '180 lbs',
-        targetWeight: '165 lbs',
-        height: '5\'10"',
-        medicalConditions: 'None reported',
-        membershipType: 'Premium Monthly',
-        paymentStatus: 'Current',
-        nextPayment: '2024-03-15',
-        totalSpent: '$1,200.00',
-        workoutsCompleted: 24,
-        averageRating: '4.8/5',
-        favoriteClass: 'HIIT Training',
-        achievements: '🏆 30-Day Challenge, 🎯 Weight Loss Goal',
-        adminNotes: 'Excellent progress, very motivated client',
-        lastContact: '2024-02-15',
-        commPreferences: 'Email preferred, SMS for reminders',
-        preferredTrainer: 'Sarah Johnson'
-      },
-      {
-        id: '2',
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@example.com',
-        phone: '+1 (555) 987-6543',
-        dateOfBirth: '1990-07-22',
-        gender: 'Female',
-        address: '456 Oak Ave, Another City, ST 67890',
-        registrationDate: '2024-02-01',
-        trainingLevel: 'Beginner',
-        status: 'Active',
-        lastActivity: '2024-02-14',
-        totalSessions: 12,
-        primaryGoal: 'Muscle Building',
-        experienceLevel: '6 months',
-        currentWeight: '140 lbs',
-        targetWeight: '145 lbs',
-        height: '5\'6"',
-        medicalConditions: 'Previous knee injury - modify exercises',
-        membershipType: 'Standard Monthly',
-        paymentStatus: 'Current',
-        nextPayment: '2024-03-01',
-        totalSpent: '$600.00',
-        workoutsCompleted: 12,
-        averageRating: '4.5/5',
-        favoriteClass: 'Strength Training',
-        achievements: '🎖️ First Month Complete',
-        adminNotes: 'Has knee injury - modify exercises. Making good progress',
-        lastContact: '2024-02-14',
-        commPreferences: 'Phone calls preferred',
-        preferredTrainer: 'Mike Chen'
-      },
-      {
-        id: '3',
-        firstName: 'Alex',
-        lastName: 'Johnson',
-        email: 'alex.johnson@example.com',
-        phone: '+1 (555) 456-7890',
-        dateOfBirth: '1992-11-08',
-        gender: 'Non-binary',
-        address: '789 Pine St, Fitness City, ST 54321',
-        registrationDate: '2023-11-15',
-        trainingLevel: 'Advanced',
-        status: 'Active',
-        lastActivity: '2024-02-16',
-        totalSessions: 68,
-        primaryGoal: 'Athletic Performance',
-        experienceLevel: '5+ years',
-        currentWeight: '170 lbs',
-        targetWeight: '175 lbs',
-        height: '6\'0"',
-        medicalConditions: 'None reported',
-        membershipType: 'Premium Annual',
-        paymentStatus: 'Current',
-        nextPayment: '2024-11-15',
-        totalSpent: '$3,400.00',
-        workoutsCompleted: 68,
-        averageRating: '5.0/5',
-        favoriteClass: 'CrossFit',
-        achievements: '🏆 Member of the Month (Jan 2024), 🎯 50 Session Milestone, 💪 Strength Challenge Winner',
-        adminNotes: 'Elite athlete, excellent form, helps other members',
-        lastContact: '2024-02-16',
-        commPreferences: 'Email and app notifications',
-        preferredTrainer: 'Lisa Rodriguez'
+    // Firebase data fetching functions
+    async function getCustomerFromFirebase(customerId) {
+      try {
+        if (!window.firebaseDb) {
+          throw new Error('Firebase not initialized');
+        }
+        
+        const customerRef = doc(window.firebaseDb, 'customers', customerId);
+        const customerSnap = await getDoc(customerRef);
+        
+        if (customerSnap.exists()) {
+          return { success: true, customer: { id: customerSnap.id, ...customerSnap.data() } };
+        } else {
+          return { success: false, error: 'Customer not found' };
+        }
+      } catch (error) {
+        console.error('Error fetching customer from Firebase:', error);
+        return { success: false, error: error.message };
       }
-    ];
+    }
 
-    function loadCustomerDetails() {
+    async function loadCustomerDetails() {
       if (!customerId) {
         document.getElementById('customerInfo').innerHTML = '<p>No customer ID provided</p>';
         return;
       }
 
-      const customer = sampleCustomers.find(c => c.id === customerId);
-      if (!customer) {
-        document.getElementById('customerInfo').innerHTML = '<p>Customer not found</p>';
-        return;
+      // Show loading state
+      document.getElementById('customerFullName').textContent = 'Loading Customer...';
+      document.getElementById('customerEmailHeader').textContent = 'Please wait...';
+      document.getElementById('profilePhoto').textContent = '⏳';
+
+      try {
+        // Wait for Firebase to be initialized
+        let attempts = 0;
+        while (!window.firebaseDb && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+
+        if (!window.firebaseDb) {
+          throw new Error('Firebase initialization timeout');
+        }
+
+        // Fetch customer data from Firebase
+        const result = await getCustomerFromFirebase(customerId);
+        
+        if (!result.success) {
+          document.getElementById('customerInfo').innerHTML = `<p>Error: ${result.error}</p>`;
+          return;
+        }
+
+        const customer = result.customer;
+        
+        // Update header
+        document.getElementById('customerFullName').textContent = `${customer.firstName || customer.name || 'Unknown'} ${customer.lastName || ''}`;
+        document.getElementById('customerEmailHeader').textContent = customer.email || 'No email';
+        document.getElementById('profilePhoto').textContent = getInitials(
+          customer.firstName || customer.name || 'U', 
+          customer.lastName || 'N'
+        );
+
+        // Populate all customer details with fallbacks for missing data
+        document.getElementById('customerName').textContent = `${customer.firstName || customer.name || 'Unknown'} ${customer.lastName || ''}`;
+        document.getElementById('customerEmail').textContent = customer.email || 'Not provided';
+        document.getElementById('customerPhone').textContent = customer.phone || 'Not provided';
+        document.getElementById('dateOfBirth').textContent = formatDate(customer.dateOfBirth);
+        document.getElementById('gender').textContent = customer.gender || 'Not specified';
+        document.getElementById('address').textContent = customer.address || 'Not provided';
+        document.getElementById('registrationDate').textContent = formatDate(customer.createdAt || customer.registrationDate);
+        document.getElementById('trainingLevel').textContent = customer.trainingLevel || 'Not specified';
+        document.getElementById('customerStatus').innerHTML = `<span class="status-badge status-${(customer.status || customer.isActive ? 'active' : 'inactive').toLowerCase()}">${customer.status || (customer.isActive ? 'Active' : 'Inactive')}</span>`;
+        document.getElementById('lastActivity').textContent = formatDate(customer.lastActivity || customer.updatedAt);
+        document.getElementById('totalSessions').textContent = customer.totalSessions || '0';
+        document.getElementById('preferredTrainer').textContent = customer.preferredTrainer || 'Not assigned';
+        document.getElementById('primaryGoal').textContent = customer.primaryGoal || 'Not specified';
+        document.getElementById('experienceLevel').textContent = customer.experienceLevel || 'Not specified';
+        document.getElementById('currentWeight').textContent = customer.currentWeight || 'Not recorded';
+        document.getElementById('targetWeight').textContent = customer.targetWeight || 'Not set';
+        document.getElementById('height').textContent = customer.height || 'Not recorded';
+        document.getElementById('medicalConditions').textContent = customer.medicalConditions || 'None reported';
+        document.getElementById('membershipType').textContent = customer.membershipType || 'Not specified';
+        document.getElementById('paymentStatus').innerHTML = `<span class="status-badge status-${(customer.paymentStatus || 'current').toLowerCase()}">${customer.paymentStatus || 'Current'}</span>`;
+        document.getElementById('nextPayment').textContent = formatDate(customer.nextPayment);
+        document.getElementById('totalSpent').textContent = customer.totalSpent || '$0.00';
+        document.getElementById('workoutsCompleted').textContent = customer.workoutsCompleted || '0';
+        document.getElementById('averageRating').textContent = customer.averageRating || 'No ratings yet';
+        document.getElementById('favoriteClass').textContent = customer.favoriteClass || 'Not specified';
+        document.getElementById('achievements').textContent = customer.achievements || 'No achievements yet';
+        document.getElementById('adminNotes').textContent = customer.adminNotes || 'No notes available';
+        document.getElementById('lastContact').textContent = formatDate(customer.lastContact);
+        document.getElementById('commPreferences').textContent = customer.commPreferences || 'Not specified';
+
+        // Update action button links
+        document.getElementById('scheduleLink').href = `customer-schedule.html?id=${customerId}`;
+        document.getElementById('exercisesLink').href = `customer-exercises.html?id=${customerId}`;
+
+      } catch (error) {
+        console.error('Error loading customer details:', error);
+        document.getElementById('customerInfo').innerHTML = `<p>Error loading customer data: ${error.message}</p>`;
       }
-
-      // Update header
-      document.getElementById('customerFullName').textContent = `${customer.firstName} ${customer.lastName}`;
-      document.getElementById('customerEmailHeader').textContent = customer.email;
-      document.getElementById('profilePhoto').textContent = getInitials(customer.firstName, customer.lastName);
-
-      // Populate all customer details
-      document.getElementById('customerName').textContent = `${customer.firstName} ${customer.lastName}`;
-      document.getElementById('customerEmail').textContent = customer.email;
-      document.getElementById('customerPhone').textContent = customer.phone;
-      document.getElementById('dateOfBirth').textContent = formatDate(customer.dateOfBirth);
-      document.getElementById('gender').textContent = customer.gender;
-      document.getElementById('address').textContent = customer.address;
-      document.getElementById('registrationDate').textContent = formatDate(customer.registrationDate);
-      document.getElementById('trainingLevel').textContent = customer.trainingLevel;
-      document.getElementById('customerStatus').innerHTML = `<span class="status-badge status-${customer.status.toLowerCase()}">${customer.status}</span>`;
-      document.getElementById('lastActivity').textContent = formatDate(customer.lastActivity);
-      document.getElementById('totalSessions').textContent = customer.totalSessions;
-      document.getElementById('preferredTrainer').textContent = customer.preferredTrainer;
-      document.getElementById('primaryGoal').textContent = customer.primaryGoal;
-      document.getElementById('experienceLevel').textContent = customer.experienceLevel;
-      document.getElementById('currentWeight').textContent = customer.currentWeight;
-      document.getElementById('targetWeight').textContent = customer.targetWeight;
-      document.getElementById('height').textContent = customer.height;
-      document.getElementById('medicalConditions').textContent = customer.medicalConditions;
-      document.getElementById('membershipType').textContent = customer.membershipType;
-      document.getElementById('paymentStatus').innerHTML = `<span class="status-badge status-${customer.paymentStatus.toLowerCase()}">${customer.paymentStatus}</span>`;
-      document.getElementById('nextPayment').textContent = formatDate(customer.nextPayment);
-      document.getElementById('totalSpent').textContent = customer.totalSpent;
-      document.getElementById('workoutsCompleted').textContent = customer.workoutsCompleted;
-      document.getElementById('averageRating').textContent = customer.averageRating;
-      document.getElementById('favoriteClass').textContent = customer.favoriteClass;
-      document.getElementById('achievements').textContent = customer.achievements;
-      document.getElementById('adminNotes').textContent = customer.adminNotes;
-      document.getElementById('lastContact').textContent = formatDate(customer.lastContact);
-      document.getElementById('commPreferences').textContent = customer.commPreferences;
-
-      // Update action button links
-      document.getElementById('scheduleLink').href = `customer-schedule.html?id=${customerId}`;
-      document.getElementById('exercisesLink').href = `customer-exercises.html?id=${customerId}`;
     }
 
     // Helper function to get initials
@@ -531,8 +507,11 @@
       window.location.href = 'loginPage.html';
     }
 
-    // Load customer details when page loads
-    document.addEventListener('DOMContentLoaded', loadCustomerDetails);
+    // Load customer details when page loads and Firebase is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // Wait a bit for Firebase to initialize, then load customer details
+      setTimeout(loadCustomerDetails, 500);
+    });
   </script>
 </body>
 </html>
