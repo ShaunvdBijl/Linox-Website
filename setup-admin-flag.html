@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Admin Flag - LinoxFitness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #1e1e2f;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: #e8f4fd;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box h3 {
+            color: #0056b3;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .status-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            min-height: 60px;
+            display: none;
+        }
+
+        .status-box.show {
+            display: block;
+        }
+
+        .status-box.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .status-box.error {
+            background: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        .status-box.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .user-list {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-email {
+            font-weight: bold;
+            color: #1e1e2f;
+        }
+
+        .user-uid {
+            font-size: 0.85rem;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .admin-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        pre {
+            background: #1e1e2f;
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <h1>👑 Setup Admin Access</h1>
+        <p class="description">This tool will help you set up admin access for your Firebase accounts.</p>
+
+        <div class="info-box">
+            <h3>🎯 What This Tool Does:</h3>
+            <p>1. Logs you in with your credentials</p>
+            <p>2. Creates/updates your user profile in Firestore</p>
+            <p>3. Sets the <code>isAdmin: true</code> flag</p>
+            <p>4. Lists all users in the database</p>
+        </div>
+
+        <form id="setupForm">
+            <div class="form-group">
+                <label for="email">Your Email Address</label>
+                <input type="email" id="email" required placeholder="shaunvdbijl@gmail.com" value="shaunvdbijl@gmail.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Your Password</label>
+                <input type="password" id="password" required placeholder="Enter your actual password">
+                <small style="color: #666;">⚠️ Enter the ACTUAL password you use to login (not the one shown on login page if it doesn't work)</small>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn" id="setupBtn">🚀 Setup Admin Access</button>
+                <button type="button" class="btn btn-secondary" id="listBtn" onclick="listAllUsers()">📋 List All Users</button>
+            </div>
+        </form>
+
+        <div id="statusBox" class="status-box"></div>
+
+        <div id="userList" class="user-list"></div>
+
+        <div class="back-link">
+            <a href="loginPage.html">← Back to Login</a>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Make functions available globally
+        window.listAllUsers = listAllUsers;
+
+        // Handle form submission
+        document.getElementById('setupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const setupBtn = document.getElementById('setupBtn');
+            const statusBox = document.getElementById('statusBox');
+
+            setupBtn.textContent = '🔄 Setting up...';
+            setupBtn.disabled = true;
+            showStatus('Logging you in...', 'info');
+
+            try {
+                // Step 1: Sign in
+                showStatus('Step 1/3: Authenticating...', 'info');
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                showStatus(`✅ Logged in as ${user.email} (UID: ${user.uid})`, 'success');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Step 2: Check if user document exists
+                showStatus('Step 2/3: Checking Firestore...', 'info');
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                // Step 3: Create or update user document with admin flag
+                showStatus('Step 3/3: Setting admin access...', 'info');
+                
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    isAdmin: true,
+                    isActive: true,
+                    updatedAt: new Date()
+                };
+
+                if (userDoc.exists()) {
+                    // Update existing document
+                    const existingData = userDoc.data();
+                    userData.firstName = existingData.firstName || 'Admin';
+                    userData.lastName = existingData.lastName || 'User';
+                    userData.createdAt = existingData.createdAt || new Date();
+                } else {
+                    // Create new document
+                    userData.firstName = 'Admin';
+                    userData.lastName = 'User';
+                    userData.createdAt = new Date();
+                    userData.fitnessGoal = 'General Fitness';
+                    userData.experience = 'Advanced';
+                    userData.trainingLevel = 'Advanced';
+                    userData.goals = ['System Administration'];
+                    userData.profileComplete = true;
+                }
+
+                await setDoc(userDocRef, userData, { merge: true });
+
+                showStatus(`
+                    <h3 style="margin: 0 0 1rem 0;">🎉 Admin Access Setup Complete!</h3>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>UID:</strong> ${user.uid}</p>
+                    <p><strong>Admin Status:</strong> ✅ TRUE</p>
+                    <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                        You can now <a href="loginPage.html" style="color: #667eea; font-weight: bold;">login with these credentials</a> and access the admin portal!
+                    </p>
+                `, 'success');
+
+                setupBtn.textContent = '✅ Setup Complete';
+
+                // Auto-list users
+                setTimeout(() => listAllUsers(), 1000);
+
+            } catch (error) {
+                console.error('Setup error:', error);
+                
+                let errorMessage = '❌ Setup failed: ';
+                
+                switch (error.code) {
+                    case 'auth/wrong-password':
+                    case 'auth/invalid-credential':
+                        errorMessage += 'Incorrect password. The password you entered does not match what\'s in Firebase. Try resetting your password first.';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMessage += 'Account not found. Please create an account first by signing up.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Invalid email format.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage += 'Too many failed attempts. Please wait a few minutes and try again.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                showStatus(errorMessage, 'error');
+                setupBtn.textContent = '🚀 Setup Admin Access';
+                setupBtn.disabled = false;
+            }
+        });
+
+        async function listAllUsers() {
+            const statusBox = document.getElementById('statusBox');
+            const userList = document.getElementById('userList');
+            const listBtn = document.getElementById('listBtn');
+
+            listBtn.textContent = '🔄 Loading...';
+            listBtn.disabled = true;
+
+            try {
+                showStatus('Loading all users from Firestore...', 'info');
+
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                
+                if (usersSnapshot.empty) {
+                    userList.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #666;">
+                            <h3>📭 No Users Found</h3>
+                            <p>The "users" collection is empty or doesn't exist yet.</p>
+                            <p>Use the form above to create your first admin user.</p>
+                        </div>
+                    `;
+                    showStatus('⚠️ No users found in Firestore database', 'info');
+                } else {
+                    let html = '<h3 style="margin-bottom: 1rem; color: #1e1e2f;">👥 All Users in Database:</h3>';
+                    
+                    usersSnapshot.forEach((doc) => {
+                        const user = doc.data();
+                        html += `
+                            <div class="user-item">
+                                <div class="user-info">
+                                    <div class="user-email">${user.email || 'No email'}</div>
+                                    <div class="user-uid">UID: ${doc.id}</div>
+                                    ${user.firstName ? `<div style="color: #666; font-size: 0.9rem;">Name: ${user.firstName} ${user.lastName || ''}</div>` : ''}
+                                </div>
+                                ${user.isAdmin ? '<span class="admin-badge">👑 ADMIN</span>' : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    userList.innerHTML = html;
+                    showStatus(`✅ Found ${usersSnapshot.size} user(s) in database`, 'success');
+                }
+
+            } catch (error) {
+                console.error('List users error:', error);
+                showStatus(`❌ Error loading users: ${error.message}`, 'error');
+            } finally {
+                listBtn.textContent = '📋 List All Users';
+                listBtn.disabled = false;
+            }
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusBox = document.getElementById('statusBox');
+            statusBox.className = `status-box show ${type}`;
+            statusBox.innerHTML = message;
+        }
+
+        // Check current auth state on load
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('Already logged in as:', user.email);
+            }
+        });
+    </script>
+</body>
+</html>
+
