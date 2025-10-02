@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Debug - LinoxFitness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .debug-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #1e1e2f;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .debug-output {
+            background: #1e1e2f;
+            color: #00ff00;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .error { color: #ff6b6b; }
+        .success { color: #51cf66; }
+        .info { color: #339af0; }
+        .warning { color: #ffd43b; }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Login Debug Tool</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            This tool will show you exactly what's happening during login
+        </p>
+
+        <form id="debugForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required value="shaunvdbijl@gmail.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="btn" id="testBtn">🧪 Test Login</button>
+        </form>
+
+        <div id="debugOutput" class="debug-output">
+→ Ready to test login. Enter credentials and click "Test Login"
+        </div>
+
+        <div class="back-link">
+            <a href="loginPage.html">← Back to Login Page</a>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const output = document.getElementById('debugOutput');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type;
+            output.innerHTML += `\n<span class="${className}">[${timestamp}] ${message}</span>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        document.getElementById('debugForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const testBtn = document.getElementById('testBtn');
+
+            output.innerHTML = '';
+            log('═══════════════════════════════════════', 'info');
+            log('🚀 Starting Login Debug Test', 'info');
+            log('═══════════════════════════════════════', 'info');
+
+            testBtn.disabled = true;
+            testBtn.textContent = '🔄 Testing...';
+
+            try {
+                // Step 1: Validate input
+                log('\n📋 Step 1: Input Validation', 'info');
+                log(`   Email: ${email}`, 'info');
+                log(`   Password: ${'*'.repeat(password.length)} (${password.length} characters)`, 'info');
+
+                if (!email || !password) {
+                    log('   ❌ ERROR: Email or password is empty!', 'error');
+                    testBtn.disabled = false;
+                    testBtn.textContent = '🧪 Test Login';
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    log('   ❌ ERROR: Invalid email format!', 'error');
+                    testBtn.disabled = false;
+                    testBtn.textContent = '🧪 Test Login';
+                    return;
+                }
+                log('   ✅ Input validation passed', 'success');
+
+                // Step 2: Attempt Firebase Authentication
+                log('\n🔐 Step 2: Firebase Authentication', 'info');
+                log('   Attempting to sign in with Firebase...', 'info');
+
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                log('   ✅ Authentication SUCCESSFUL!', 'success');
+                log(`   User ID: ${user.uid}`, 'success');
+                log(`   Email: ${user.email}`, 'success');
+                log(`   Email Verified: ${user.emailVerified}`, 'info');
+
+                // Step 3: Check Firestore User Document
+                log('\n📊 Step 3: Checking Firestore User Document', 'info');
+                log(`   Looking up document: users/${user.uid}`, 'info');
+
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    log('   ✅ User document found in Firestore!', 'success');
+                    log('\n   📄 User Data:', 'info');
+                    log(`      Email: ${userData.email || 'Not set'}`, 'info');
+                    log(`      First Name: ${userData.firstName || 'Not set'}`, 'info');
+                    log(`      Last Name: ${userData.lastName || 'Not set'}`, 'info');
+                    log(`      Is Admin: ${userData.isAdmin === true ? '✅ TRUE' : '❌ FALSE'}`, userData.isAdmin ? 'success' : 'warning');
+                    log(`      Is Active: ${userData.isActive === true ? '✅ TRUE' : '❌ FALSE'}`, userData.isActive ? 'success' : 'warning');
+                    log(`      Profile Complete: ${userData.profileComplete || 'Not set'}`, 'info');
+                    log(`      Created At: ${userData.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleString() : 'Not set'}`, 'info');
+
+                    // Step 4: Determine redirect
+                    log('\n🎯 Step 4: Determining Redirect', 'info');
+                    
+                    if (userData.isActive === false) {
+                        log('   ❌ Account is DEACTIVATED!', 'error');
+                        log('   Action: User should be signed out and see error', 'error');
+                    } else if (userData.isAdmin === true) {
+                        log('   ✅ User is ADMIN', 'success');
+                        log('   Redirect → admin-portal-firebase.html', 'success');
+                    } else {
+                        log('   ✅ User is REGULAR USER', 'success');
+                        log('   Redirect → dashboard.html', 'success');
+                    }
+
+                } else {
+                    log('   ⚠️ WARNING: User document NOT found in Firestore!', 'warning');
+                    log('   This user exists in Authentication but has no profile data', 'warning');
+                    log('   Redirect → dashboard.html (default)', 'info');
+                }
+
+                // Step 5: Summary
+                log('\n═══════════════════════════════════════', 'info');
+                log('🎉 LOGIN TEST COMPLETE - SUCCESS!', 'success');
+                log('═══════════════════════════════════════', 'info');
+                log('\n💡 What this means:', 'info');
+                log('   • Your credentials are CORRECT ✅', 'success');
+                log('   • Firebase authentication is WORKING ✅', 'success');
+                log('   • Your account data is properly stored ✅', 'success');
+                log('\n🔧 Next Steps:', 'info');
+                log('   • Use these EXACT credentials on the login page', 'info');
+                log('   • Make sure you\'re testing on the same domain', 'info');
+                log('   • Check browser console for any JavaScript errors', 'info');
+
+                await auth.signOut();
+                log('\n🚪 Signed out for testing purposes', 'info');
+
+            } catch (error) {
+                log('\n❌ LOGIN FAILED!', 'error');
+                log('═══════════════════════════════════════', 'error');
+                log(`Error Code: ${error.code}`, 'error');
+                log(`Error Message: ${error.message}`, 'error');
+
+                log('\n🔍 Error Analysis:', 'warning');
+                
+                switch (error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/invalid-login-credentials':
+                        log('   → This means: Email or password is incorrect', 'warning');
+                        log('   → Solution: Reset your password or check credentials', 'warning');
+                        break;
+                    case 'auth/user-not-found':
+                        log('   → This means: No account exists with this email', 'warning');
+                        log('   → Solution: Check email spelling or sign up', 'warning');
+                        break;
+                    case 'auth/wrong-password':
+                        log('   → This means: Password is incorrect', 'warning');
+                        log('   → Solution: Try again or reset password', 'warning');
+                        break;
+                    case 'auth/too-many-requests':
+                        log('   → This means: Too many failed attempts', 'warning');
+                        log('   → Solution: Wait 15 minutes or reset password', 'warning');
+                        break;
+                    default:
+                        log(`   → Unknown error: ${error.code}`, 'error');
+                }
+
+                log('\n💡 Suggestions:', 'info');
+                log('   1. Try resetting your password via reset-password.html', 'info');
+                log('   2. Check that you\'re using the correct email', 'info');
+                log('   3. Verify CAPS LOCK is off', 'info');
+                log('   4. Check for extra spaces in email or password', 'info');
+
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = '🧪 Test Login Again';
+            }
+        });
+    </script>
+</body>
+</html>
+
