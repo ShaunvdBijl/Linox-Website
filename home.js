@@ -8,6 +8,7 @@ function checkAuthStatus() {
     const userEmail = localStorage.getItem('userEmail');
     const memberPortal = document.getElementById('memberPortal');
     const logoutBtn = document.getElementById('logoutBtn');
+    const workoutSchedule = document.getElementById('workoutSchedule');
     const loginLink = document.querySelector('a[href="loginPage.html"]');
     const signUpLink = document.querySelector('a[href="signUp.html"]');
     
@@ -20,6 +21,7 @@ function checkAuthStatus() {
         // User is logged in
         if (memberPortal) memberPortal.style.display = 'block';
         if (logoutBtn) logoutBtn.style.display = 'block';
+        if (workoutSchedule) workoutSchedule.style.display = 'block';
         if (loginLink) loginLink.textContent = 'Welcome, ' + (localStorage.getItem('userName') || 'Member');
         if (signUpLink) signUpLink.style.display = 'none';
         
@@ -31,6 +33,7 @@ function checkAuthStatus() {
         // User is not logged in
         if (memberPortal) memberPortal.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'none';
+        if (workoutSchedule) workoutSchedule.style.display = 'none';
         if (loginLink) loginLink.textContent = 'Login';
         if (signUpLink) signUpLink.style.display = 'block';
         
