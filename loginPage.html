@@ -41,8 +41,8 @@
             <h4 style="margin: 0 0 1rem 0; color: #0056b3;">🧪 Test Accounts Available</h4>
             <div style="margin-bottom: 1rem;">
               <strong>Admin Account:</strong><br>
-              Email: <code>shaunvdbijl@gmail.com</code><br>
-              Password: <code>@dm1n313</code><br>
+              Email: <code>admin@linoxfitness.com</code><br>
+              Password: <code>Admin123!</code><br>
               <small style="color: #1e3a8a; font-weight: bold;">→ Access to Admin Portal</small>
             </div>
             <div>
@@ -50,7 +50,7 @@
               Email: <code>test@linoxfitness.com</code><br>
               Password: <code>Test123!</code>
             </div>
-            <small style="color: #666; display: block; margin-top: 0.5rem;">These accounts are automatically created for testing purposes.</small>
+            <small style="color: #666; display: block; margin-top: 0.5rem;">Create these accounts by <a href="setup-admin.html" style="color: #667eea; font-weight: bold;">running setup</a> or sign up with your own account.</small>
           </div>
           
           <form id="loginForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
@@ -290,7 +290,7 @@
           // Handle specific Firebase authentication errors
           switch (error.code) {
             case 'auth/user-not-found':
-              errorMessage = '❌ Email not found. Please check your email or sign up for an account.';
+              errorMessage = '❌ Email not found. Please check your email or <a href="signUp.html" style="color: #667eea; font-weight: bold;">sign up for an account</a>.';
               break;
             case 'auth/wrong-password':
               errorMessage = '❌ Incorrect password. Please try again or use "Forgot Password".';
@@ -302,13 +302,14 @@
               errorMessage = '❌ This account has been disabled. Please contact support.';
               break;
             case 'auth/too-many-requests':
-              errorMessage = '❌ Too many failed login attempts. Please try again later or reset your password.';
+              errorMessage = '❌ Too many failed login attempts. Your account has been temporarily locked. Please try again later or reset your password.';
               break;
             case 'auth/network-request-failed':
               errorMessage = '❌ Network error. Please check your internet connection and try again.';
               break;
             case 'auth/invalid-credential':
-              errorMessage = '❌ Invalid credentials. Please check your email and password.';
+            case 'auth/invalid-login-credentials':
+              errorMessage = '❌ Invalid email or password. Please check your credentials and try again. If you don\'t have an account, <a href="signUp.html" style="color: #667eea; font-weight: bold;">sign up here</a>.';
               break;
             case 'auth/operation-not-allowed':
               errorMessage = '❌ Email/password sign-in is not enabled. Please contact support.';
@@ -317,7 +318,7 @@
               errorMessage = '❌ Password is too weak. Please use a stronger password.';
               break;
             default:
-              errorMessage = `❌ Login failed: ${error.message}`;
+              errorMessage = `❌ Login failed: ${error.message}. Please verify your credentials or <a href="signUp.html" style="color: #667eea; font-weight: bold;">create an account</a>.`;
           }
           
           this.showNotification(errorMessage, 'error');
@@ -358,7 +359,7 @@
         else icon.textContent = 'ℹ️';
 
         const messageSpan = document.createElement('span');
-        messageSpan.textContent = message;
+        messageSpan.innerHTML = message;
 
         const closeButton = document.createElement('button');
         closeButton.innerHTML = '×';
