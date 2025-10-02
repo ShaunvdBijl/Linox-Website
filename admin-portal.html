@@ -320,6 +320,179 @@
       opacity: 0.5;
     }
 
+    /* Admin Modal Styles */
+    .admin-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .admin-modal .modal-content {
+      background: white;
+      border-radius: 15px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .admin-modal .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 2rem 1rem 2rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .admin-modal .modal-header h2 {
+      margin: 0;
+      color: #14532d;
+      font-size: 1.5rem;
+    }
+
+    .admin-modal .modal-body {
+      padding: 2rem;
+    }
+
+    .admin-modal .modal-footer {
+      padding: 1rem 2rem 2rem 2rem;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .admin-modal .btn-close {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #64748b;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      line-height: 1;
+    }
+
+    .admin-modal .btn-close:hover {
+      color: #333;
+    }
+
+    .customer-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .detail-section h3 {
+      color: #14532d;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .detail-section p {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .detail-section ul {
+      margin: 0.5rem 0;
+      padding-left: 1.5rem;
+    }
+
+    .schedule-management h3 {
+      color: #14532d;
+      margin-bottom: 1rem;
+    }
+
+    .booking-list {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .schedule-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .schedule-actions button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .exercise-recommendations h3 {
+      color: #14532d;
+      margin-bottom: 1rem;
+    }
+
+    .current-level {
+      background: #e8f4fd;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .exercise-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .exercise-category {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid #15803d;
+    }
+
+    .exercise-category h4 {
+      color: #14532d;
+      margin-bottom: 1rem;
+    }
+
+    .exercise-category ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .exercise-category li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .exercise-category li:last-child {
+      border-bottom: none;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
     @media (max-width: 768px) {
       .admin-container {
         padding: 1rem;
@@ -340,6 +513,26 @@
       }
 
       .customers-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-modal .modal-content {
+        margin: 10px;
+        max-height: calc(100vh - 20px);
+      }
+
+      .admin-modal .modal-header,
+      .admin-modal .modal-body,
+      .admin-modal .modal-footer {
+        padding: 1rem;
+      }
+
+      .customer-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .exercise-categories {
         grid-template-columns: 1fr;
       }
     }
