@@ -223,13 +223,30 @@
       }
 
       async handleLogin() {
-        const email = document.getElementById('loginEmail').value;
+        const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
+        const submitButton = document.querySelector('#loginForm button[type="submit"]');
 
+        // Clear any existing notifications
+        this.clearNotifications();
+
+        // Validate fields
         if (!email || !password) {
-          alert('Please fill in all fields');
+          this.showNotification('Please fill in all fields', 'error');
           return;
         }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          this.showNotification('Please enter a valid email address', 'error');
+          return;
+        }
+
+        // Show loading state
+        const originalText = submitButton.textContent;
+        submitButton.textContent = 'Logging in...';
+        submitButton.disabled = true;
 
         try {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -240,19 +257,28 @@
           if (userDoc.exists()) {
             const userData = userDoc.data();
             
+            // Check if account is active
+            if (userData.isActive === false) {
+              await auth.signOut();
+              this.showNotification('Your account has been deactivated. Please contact support.', 'error');
+              submitButton.textContent = originalText;
+              submitButton.disabled = false;
+              return;
+            }
+            
             if (userData.isAdmin) {
-              alert('Welcome back, Admin! Redirecting...');
+              this.showNotification('Welcome back, Admin! Redirecting to admin portal...', 'success');
               setTimeout(() => {
                 window.location.href = 'admin-portal-firebase.html';
               }, 1500);
             } else {
-              alert('Welcome back! Redirecting...');
+              this.showNotification(`Welcome back, ${userData.firstName || 'User'}! Redirecting to dashboard...`, 'success');
               setTimeout(() => {
                 window.location.href = 'dashboard.html';
               }, 1500);
             }
           } else {
-            alert('Welcome back! Redirecting...');
+            this.showNotification('Welcome back! Redirecting to dashboard...', 'success');
             setTimeout(() => {
               window.location.href = 'dashboard.html';
             }, 1500);
@@ -261,18 +287,118 @@
           console.error('Login error:', error);
           let errorMessage = 'Login failed. Please try again.';
           
-          if (error.code === 'auth/user-not-found') {
-            errorMessage = 'No account found with this email address.';
-          } else if (error.code === 'auth/wrong-password') {
-            errorMessage = 'Incorrect password. Please try again.';
-          } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'Please enter a valid email address.';
-          } else if (error.code === 'auth/too-many-requests') {
-            errorMessage = 'Too many failed attempts. Please try again later.';
+          // Handle specific Firebase authentication errors
+          switch (error.code) {
+            case 'auth/user-not-found':
+              errorMessage = '❌ Email not found. Please check your email or sign up for an account.';
+              break;
+            case 'auth/wrong-password':
+              errorMessage = '❌ Incorrect password. Please try again or use "Forgot Password".';
+              break;
+            case 'auth/invalid-email':
+              errorMessage = '❌ Invalid email format. Please enter a valid email address.';
+              break;
+            case 'auth/user-disabled':
+              errorMessage = '❌ This account has been disabled. Please contact support.';
+              break;
+            case 'auth/too-many-requests':
+              errorMessage = '❌ Too many failed login attempts. Please try again later or reset your password.';
+              break;
+            case 'auth/network-request-failed':
+              errorMessage = '❌ Network error. Please check your internet connection and try again.';
+              break;
+            case 'auth/invalid-credential':
+              errorMessage = '❌ Invalid credentials. Please check your email and password.';
+              break;
+            case 'auth/operation-not-allowed':
+              errorMessage = '❌ Email/password sign-in is not enabled. Please contact support.';
+              break;
+            case 'auth/weak-password':
+              errorMessage = '❌ Password is too weak. Please use a stronger password.';
+              break;
+            default:
+              errorMessage = `❌ Login failed: ${error.message}`;
           }
           
-          alert(errorMessage);
+          this.showNotification(errorMessage, 'error');
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
         }
+      }
+
+      showNotification(message, type = 'info') {
+        // Remove any existing notifications
+        this.clearNotifications();
+
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          max-width: 400px;
+          padding: 1.25rem 1.5rem;
+          border-radius: 10px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+          z-index: 10000;
+          animation: slideInRight 0.3s ease-out;
+          font-size: 1rem;
+          line-height: 1.5;
+          ${type === 'error' ? 'background: #fee; color: #c33; border-left: 4px solid #c33;' : ''}
+          ${type === 'success' ? 'background: #d4edda; color: #155724; border-left: 4px solid #28a745;' : ''}
+          ${type === 'warning' ? 'background: #fff3cd; color: #856404; border-left: 4px solid #ffc107;' : ''}
+          ${type === 'info' ? 'background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8;' : ''}
+        `;
+
+        const icon = document.createElement('span');
+        icon.style.cssText = 'font-size: 1.2rem; margin-right: 0.75rem; font-weight: bold;';
+        if (type === 'error') icon.textContent = '⚠️';
+        else if (type === 'success') icon.textContent = '✅';
+        else if (type === 'warning') icon.textContent = '⚠️';
+        else icon.textContent = 'ℹ️';
+
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+
+        const closeButton = document.createElement('button');
+        closeButton.innerHTML = '×';
+        closeButton.style.cssText = `
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: inherit;
+          opacity: 0.7;
+          transition: opacity 0.2s;
+          padding: 0;
+          width: 24px;
+          height: 24px;
+          line-height: 1;
+        `;
+        closeButton.onmouseover = () => closeButton.style.opacity = '1';
+        closeButton.onmouseout = () => closeButton.style.opacity = '0.7';
+        closeButton.onclick = () => notification.remove();
+
+        notification.appendChild(icon);
+        notification.appendChild(messageSpan);
+        notification.appendChild(closeButton);
+        document.body.appendChild(notification);
+
+        // Auto-remove after 6 seconds
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+          }
+        }, 6000);
+      }
+
+      clearNotifications() {
+        const notifications = document.querySelectorAll('.notification');
+        notifications.forEach(notif => notif.remove());
       }
     }
 
@@ -291,6 +417,37 @@
         passwordInput.type = 'password';
       }
     }
+
+    // Add notification animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+      
+      .notification {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
