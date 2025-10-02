@@ -453,6 +453,55 @@ body {
     border-color: #764ba2;
   }
 
+  /* Ensure all button elements have proper text visibility */
+  button.btn-primary,
+  button.btn-secondary,
+  a.btn-primary,
+  a.btn-secondary {
+    color: inherit !important;
+  }
+
+  /* Specific fixes for navigation and CTA buttons */
+  .cta-buttons .btn-primary,
+  .cta-buttons .btn-secondary,
+  .hero-buttons .btn-primary,
+  .hero-buttons .btn-secondary {
+    text-shadow: none !important;
+  }
+
+  /* Ensure nav menu links have proper contrast */
+  .nav-menu a {
+    color: white !important;
+  }
+
+  .nav-menu a:hover {
+    color: #fbbf24 !important;
+  }
+
+  /* Fix dashboard quick action buttons */
+  .dashboard .btn-secondary {
+    background-color: #667eea !important;
+    color: white !important;
+    border: 2px solid #667eea !important;
+    text-decoration: none !important;
+  }
+
+  .dashboard .btn-secondary:hover {
+    background-color: #764ba2 !important;
+    color: white !important;
+    border-color: #764ba2 !important;
+    text-decoration: none !important;
+  }
+
+  /* Ensure all dashboard buttons have proper text visibility */
+  .dashboard a.btn-primary,
+  .dashboard a.btn-secondary,
+  .dashboard button.btn-primary,
+  .dashboard button.btn-secondary {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
   .btn-outline {
     background-color: transparent;
     color: #667eea;
