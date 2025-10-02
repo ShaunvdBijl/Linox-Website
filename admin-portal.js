@@ -179,18 +179,216 @@ class AdminPortal {
   }
 
   viewCustomer(customerId) {
-    // Navigate to customer detail page
-    window.location.href = `customer-details.html?id=${customerId}`;
+    const customer = this.customers.find(c => c.id === customerId);
+    if (!customer) return;
+    
+    // Show customer details in a modal
+    this.showCustomerModal(customer);
   }
 
   manageSchedule(customerId) {
-    // Navigate to schedule management page
-    window.location.href = `customer-schedule.html?id=${customerId}`;
+    const customer = this.customers.find(c => c.id === customerId);
+    if (!customer) return;
+    
+    // Show schedule management modal
+    this.showScheduleModal(customer);
   }
 
   recommendExercises(customerId) {
-    // Navigate to exercise recommendation page
-    window.location.href = `customer-exercises.html?id=${customerId}`;
+    const customer = this.customers.find(c => c.id === customerId);
+    if (!customer) return;
+    
+    // Show exercise recommendation modal
+    this.showExerciseModal(customer);
+  }
+
+  showCustomerModal(customer) {
+    const modal = document.createElement('div');
+    modal.className = 'admin-modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Customer Details - ${customer.name}</h2>
+          <button class="btn-close" onclick="this.closest('.admin-modal').remove()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="customer-detail-grid">
+            <div class="detail-section">
+              <h3>Personal Information</h3>
+              <p><strong>Name:</strong> ${customer.name}</p>
+              <p><strong>Email:</strong> ${customer.email}</p>
+              <p><strong>Phone:</strong> ${customer.phone}</p>
+              <p><strong>Join Date:</strong> ${new Date(customer.joinDate).toLocaleDateString()}</p>
+              <p><strong>Status:</strong> <span class="status-badge status-${customer.status}">${customer.status}</span></p>
+            </div>
+            <div class="detail-section">
+              <h3>Training Information</h3>
+              <p><strong>Training Level:</strong> ${customer.trainingLevel || 'Not Set'}</p>
+              <p><strong>Last Activity:</strong> ${customer.lastActivity || 'Never'}</p>
+              <p><strong>Goals:</strong></p>
+              <ul>
+                ${customer.goals ? customer.goals.map(goal => `<li>${goal}</li>`).join('') : '<li>No goals set</li>'}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary" onclick="this.closest('.admin-modal').remove()">Close</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+  }
+
+  showScheduleModal(customer) {
+    const modal = document.createElement('div');
+    modal.className = 'admin-modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Manage Schedule - ${customer.name}</h2>
+          <button class="btn-close" onclick="this.closest('.admin-modal').remove()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="schedule-management">
+            <h3>Current Bookings</h3>
+            <div class="booking-list">
+              <p>No current bookings found.</p>
+            </div>
+            <div class="schedule-actions">
+              <h3>Schedule Actions</h3>
+              <button class="btn-primary" onclick="adminPortal.schedulePersonalTraining('${customer.id}')">
+                Schedule Personal Training
+              </button>
+              <button class="btn-secondary" onclick="adminPortal.viewClassSchedule('${customer.id}')">
+                View Class Schedule
+              </button>
+              <button class="btn-secondary" onclick="adminPortal.sendReminder('${customer.id}')">
+                Send Reminder
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary" onclick="this.closest('.admin-modal').remove()">Close</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+  }
+
+  showExerciseModal(customer) {
+    const modal = document.createElement('div');
+    modal.className = 'admin-modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Exercise Recommendations - ${customer.name}</h2>
+          <button class="btn-close" onclick="this.closest('.admin-modal').remove()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="exercise-recommendations">
+            <div class="current-level">
+              <h3>Current Training Level: ${customer.trainingLevel || 'Not Set'}</h3>
+            </div>
+            <div class="recommendations">
+              <h3>Recommended Exercises</h3>
+              <div class="exercise-categories">
+                <div class="exercise-category">
+                  <h4>Technical Skills</h4>
+                  <ul>
+                    <li>Ball Control Drills</li>
+                    <li>Passing Accuracy</li>
+                    <li>Shooting Practice</li>
+                    <li>Dribbling Techniques</li>
+                  </ul>
+                </div>
+                <div class="exercise-category">
+                  <h4>Physical Conditioning</h4>
+                  <ul>
+                    <li>Cardio Endurance</li>
+                    <li>Strength Training</li>
+                    <li>Speed and Agility</li>
+                    <li>Flexibility Training</li>
+                  </ul>
+                </div>
+                <div class="exercise-category">
+                  <h4>Tactical Training</h4>
+                  <ul>
+                    <li>Positioning Drills</li>
+                    <li>Game Awareness</li>
+                    <li>Decision Making</li>
+                    <li>Team Coordination</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary" onclick="adminPortal.sendExercisePlan('${customer.id}')">
+            Send Exercise Plan
+          </button>
+          <button class="btn-secondary" onclick="this.closest('.admin-modal').remove()">Close</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+  }
+
+  schedulePersonalTraining(customerId) {
+    this.showNotification(`Personal training session scheduled for customer ${customerId}`, 'success');
+  }
+
+  viewClassSchedule(customerId) {
+    this.showNotification(`Opening class schedule for customer ${customerId}`, 'info');
+  }
+
+  sendReminder(customerId) {
+    this.showNotification(`Reminder sent to customer ${customerId}`, 'success');
+  }
+
+  sendExercisePlan(customerId) {
+    this.showNotification(`Exercise plan sent to customer ${customerId}`, 'success');
+  }
+
+  showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      max-width: 400px;
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      animation: slideInRight 0.3s ease-out;
+      color: white;
+      font-weight: 600;
+    `;
+    
+    if (type === 'success') {
+      notification.style.backgroundColor = '#10b981';
+    } else if (type === 'error') {
+      notification.style.backgroundColor = '#ef4444';
+    } else {
+      notification.style.backgroundColor = '#3b82f6';
+    }
+    
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.remove();
+    }, 4000);
   }
 
   // Sample data generation for demo purposes
