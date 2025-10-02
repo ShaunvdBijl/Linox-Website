@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Workout Plan - LinoxFitness</title>
+    <link rel="stylesheet" href="HomePage.css">
+    <style>
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .workout-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .workout-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+
+        .workout-meta {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .no-plan-message {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-plan-message h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .no-plan-message p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .exercises-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .exercise-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .exercise-card.completed {
+            opacity: 0.7;
+            border-left-color: #28a745;
+            background: #f8f9fa;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .exercise-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .exercise-card.completed .exercise-number {
+            background: #28a745;
+        }
+
+        .exercise-title {
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        .exercise-title h3 {
+            margin: 0 0 5px 0;
+            color: #1e3a8a;
+            font-size: 1.5rem;
+        }
+
+        .exercise-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .exercise-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .exercise-notes {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .exercise-notes strong {
+            color: #856404;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .exercise-notes p {
+            color: #856404;
+            margin: 0;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .progress-summary {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .exercise-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .exercise-title {
+                margin: 15px 0;
+            }
+            
+            .exercise-details {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="schedule.html">Class Schedule</a></li>
+                <li><a href="my-workout-plan.html" class="active">My Workout</a></li>
+                <li><a href="progress.html">Progress</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container-custom">
+            <div id="loadingState" class="loading">
+                Loading your workout plan...
+            </div>
+
+            <div id="workoutContent" style="display: none;">
+                <!-- Workout Header -->
+                <div class="workout-header">
+                    <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
+                    <h1 id="planName">My Workout Plan</h1>
+                    <div class="workout-meta">
+                        <span id="planDuration">Duration: 4 weeks</span> • 
+                        <span id="exerciseCount">10 exercises</span>
+                    </div>
+                    <p id="planDescription" style="margin-top: 15px; font-size: 1rem;"></p>
+                </div>
+
+                <!-- Progress Summary -->
+                <div class="progress-summary">
+                    <h2 style="margin-top: 0; color: #1e3a8a;">Your Progress</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill">0%</div>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="completedCount">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="remainingCount">0</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalCount">0</div>
+                            <div class="stat-label">Total Exercises</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercises List -->
+                <div id="exercisesList" class="exercises-container">
+                    <!-- Exercises will be loaded here -->
+                </div>
+            </div>
+
+            <!-- No Plan Message -->
+            <div id="noPlanMessage" style="display: none;">
+                <div class="no-plan-message">
+                    <h2>📭 No Workout Plan Assigned</h2>
+                    <p>You don't have a workout plan assigned yet.</p>
+                    <p>Please contact your trainer to get a personalized workout plan!</p>
+                    <a href="dashboard.html" class="btn-primary" style="display: inline-block; text-decoration: none; margin-top: 20px;">← Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LinoxFitness</h3>
+                    <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="my-workout-plan.html">My Workout</a></li>
+                        <li><a href="progress.html">Progress</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, doc, getDoc, query, where, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let userPlan = null;
+        let completedExercises = [];
+
+        // Auth check
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'loginPage.html';
+                return;
+            }
+            
+            currentUser = user;
+            console.log('✅ User authenticated:', user.email);
+            await loadWorkoutPlan();
+        });
+
+        // Load workout plan
+        async function loadWorkoutPlan() {
+            try {
+                console.log('🔍 Loading workout plan for user:', currentUser.uid);
+                
+                // Find plans assigned to this user
+                const plansQuery = query(
+                    collection(db, 'workoutPlans'),
+                    where('assignedTo', 'array-contains', currentUser.uid)
+                );
+                
+                const plansSnapshot = await getDocs(plansQuery);
+                
+                if (plansSnapshot.empty) {
+                    console.log('📭 No workout plan found');
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('noPlanMessage').style.display = 'block';
+                    return;
+                }
+                
+                // Get the first assigned plan
+                const planDoc = plansSnapshot.docs[0];
+                userPlan = { id: planDoc.id, ...planDoc.data() };
+                
+                console.log('✅ Workout plan loaded:', userPlan.planName);
+                
+                // Load user's progress
+                await loadProgress();
+                
+                // Display the plan
+                displayWorkoutPlan();
+                
+            } catch (error) {
+                console.error('❌ Error loading workout plan:', error);
+                document.getElementById('loadingState').innerHTML = 
+                    '<div class="no-plan-message"><h2>❌ Error Loading Plan</h2><p>' + error.message + '</p></div>';
+            }
+        }
+
+        // Load user progress
+        async function loadProgress() {
+            try {
+                const userProgressDoc = await getDoc(doc(db, 'userProgress', currentUser.uid));
+                if (userProgressDoc.exists()) {
+                    const progress = userProgressDoc.data();
+                    completedExercises = progress.completedExercises || [];
+                    console.log('✅ Progress loaded:', completedExercises.length, 'exercises completed');
+                } else {
+                    completedExercises = [];
+                }
+            } catch (error) {
+                console.error('⚠️ Could not load progress:', error);
+                completedExercises = [];
+            }
+        }
+
+        // Display workout plan
+        function displayWorkoutPlan() {
+            // Update header
+            document.getElementById('planName').textContent = userPlan.planName;
+            document.getElementById('planDuration').textContent = `Duration: ${userPlan.duration} weeks`;
+            document.getElementById('exerciseCount').textContent = `${userPlan.exercises.length} exercises`;
+            document.getElementById('planDescription').textContent = userPlan.description || '';
+            
+            // Calculate progress
+            const totalExercises = userPlan.exercises.length;
+            const completedCount = completedExercises.length;
+            const remainingCount = totalExercises - completedCount;
+            const progressPercent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
+            
+            // Update progress stats
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            document.getElementById('progressFill').textContent = progressPercent + '%';
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+            document.getElementById('totalCount').textContent = totalExercises;
+            
+            // Display exercises
+            const exercisesList = document.getElementById('exercisesList');
+            exercisesList.innerHTML = '';
+            
+            userPlan.exercises.forEach((exercise, index) => {
+                const isCompleted = completedExercises.includes(index);
+                
+                const exerciseCard = document.createElement('div');
+                exerciseCard.className = 'exercise-card' + (isCompleted ? ' completed' : '');
+                exerciseCard.innerHTML = `
+                    <div class="exercise-header">
+                        <div class="exercise-number">${exercise.order || index + 1}</div>
+                        <div class="exercise-title">
+                            <h3>${exercise.name}</h3>
+                            <div class="exercise-subtitle">${isCompleted ? '✅ Completed' : '⏳ Pending'}</div>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="exercise-${index}" 
+                                   ${isCompleted ? 'checked' : ''} 
+                                   onchange="toggleExercise(${index})"
+                                   title="${isCompleted ? 'Mark as incomplete' : 'Mark as complete'}">
+                        </div>
+                    </div>
+                    
+                    <div class="exercise-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Sets</div>
+                            <div class="detail-value">${exercise.sets}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Reps</div>
+                            <div class="detail-value">${exercise.reps}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Rest</div>
+                            <div class="detail-value">${exercise.rest}s</div>
+                        </div>
+                    </div>
+                    
+                    ${exercise.notes ? `
+                        <div class="exercise-notes">
+                            <strong>💡 Notes from your trainer:</strong>
+                            <p>${exercise.notes}</p>
+                        </div>
+                    ` : ''}
+                `;
+                
+                exercisesList.appendChild(exerciseCard);
+            });
+            
+            // Show content
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('workoutContent').style.display = 'block';
+        }
+
+        // Toggle exercise completion
+        window.toggleExercise = async function(exerciseIndex) {
+            const checkbox = document.getElementById(`exercise-${exerciseIndex}`);
+            const isChecked = checkbox.checked;
+            
+            try {
+                if (isChecked) {
+                    // Add to completed
+                    if (!completedExercises.includes(exerciseIndex)) {
+                        completedExercises.push(exerciseIndex);
+                    }
+                } else {
+                    // Remove from completed
+                    const index = completedExercises.indexOf(exerciseIndex);
+                    if (index > -1) {
+                        completedExercises.splice(index, 1);
+                    }
+                }
+                
+                // Save progress to Firestore
+                await updateDoc(doc(db, 'userProgress', currentUser.uid), {
+                    completedExercises: completedExercises,
+                    lastUpdated: new Date(),
+                    planId: userPlan.id
+                }).catch(async (error) => {
+                    // If document doesn't exist, create it
+                    if (error.code === 'not-found') {
+                        const { setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                        await setDoc(doc(db, 'userProgress', currentUser.uid), {
+                            userId: currentUser.uid,
+                            planId: userPlan.id,
+                            completedExercises: completedExercises,
+                            lastUpdated: new Date()
+                        });
+                    } else {
+                        throw error;
+                    }
+                });
+                
+                console.log('✅ Progress saved');
+                
+                // Refresh display
+                displayWorkoutPlan();
+                
+            } catch (error) {
+                console.error('❌ Error saving progress:', error);
+                checkbox.checked = !isChecked; // Revert checkbox
+                alert('Failed to save progress. Please try again.');
+            }
+        };
+
+        // Logout
+        window.logout = async function() {
+            try {
+                await signOut(auth);
+                window.location.href = 'loginPage.html';
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                alert('Error logging out');
+            }
+        };
+    </script>
+</body>
+</html>
+
