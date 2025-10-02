@@ -1,201 +1,800 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Workout Schedule - LinoxFitness</title>
-  <link rel="stylesheet" href="HomePage.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Schedule - LinoxFitness</title>
+    <link rel="stylesheet" href="HomePage.css">
+    <style>
+        .container-custom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .schedule-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .schedule-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+
+        .schedule-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 10px 0;
+        }
+
+        .week-navigation {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .week-display {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .week-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-nav:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .filters h3 {
+            margin: 0 0 15px 0;
+            color: #1e3a8a;
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-tag:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-tag.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .day-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .class-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .class-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .class-item.full {
+            border-left-color: #dc3545;
+            opacity: 0.7;
+        }
+
+        .class-item.booked {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .class-time {
+            font-weight: bold;
+            color: #1e3a8a;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .class-name {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .class-trainer {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .class-capacity {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .capacity-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .capacity-low {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .capacity-full {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .class-booked {
+            background: #28a745;
+            color: white;
+        }
+
+        .no-classes {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #1e3a8a;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 1;
+        }
+
+        .btn-close:hover {
+            color: #333;
+        }
+
+        .modal-details {
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .modal-details strong {
+            color: #1e3a8a;
+        }
+
+        .btn-book {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .btn-book:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn-book:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            background: #dc3545;
+        }
+
+        .btn-cancel:hover {
+            background: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .week-navigation {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .day-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-      <div class="nav-brand">
-        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
-      </div>
-      <ul class="nav-menu">
-        <li><a href="about.html">About</a></li>
-        <li><a href="schedule.html">Workout Schedule</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="credentials.html">Credentials</a></li>
-        <li><a href="loginPage.html">Login</a></li>
-      </ul>
-    </nav>
-  </header>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="schedule.html" class="active">Class Schedule</a></li>
+                <li><a href="my-workout-plan.html">My Workout</a></li>
+                <li><a href="book-session.html">Book Session</a></li>
+                <li><a href="progress.html">Progress</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main>
-    <section class="hero" style="min-height: 60vh;">
-      <div class="hero-content">
-        <h1>Workout Schedule</h1>
-        <p>Find the perfect time to train and join our classes. Book your sessions today!</p>
-      </div>
-    </section>
+    <main>
+        <div class="container-custom">
+            <!-- Header -->
+            <div class="schedule-header">
+                <h1>📅 Weekly Class Schedule</h1>
+                <p>Book your spot in our group fitness classes</p>
+            </div>
 
-    <section class="features">
-      <div class="container">
-        <h2>Weekly Class Schedule</h2>
-        <div style="background: white; border-radius: 10px; padding: 2rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 3rem;">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-            <div>
-              <h3 style="color: #667eea; margin-bottom: 1rem;">Monday</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>6:00 AM</strong> - HIIT Cardio</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>9:00 AM</strong> - Strength Training</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>5:30 PM</strong> - Group Fitness</li>
-                <li style="padding: 0.5rem 0;"><strong>7:00 PM</strong> - Yoga & Stretching</li>
-              </ul>
+            <!-- Week Navigation -->
+            <div class="week-navigation">
+                <div class="week-display" id="weekDisplay">Loading...</div>
+                <div class="week-buttons">
+                    <button class="btn-nav" onclick="changeWeek(-1)">← Previous</button>
+                    <button class="btn-nav" onclick="changeWeek(0)">This Week</button>
+                    <button class="btn-nav" onclick="changeWeek(1)">Next →</button>
+                </div>
             </div>
-            
-            <div>
-              <h3 style="color: #667eea; margin-bottom: 1rem;">Tuesday</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>6:00 AM</strong> - Strength Training</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>9:00 AM</strong> - Cardio Kickboxing</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>5:30 PM</strong> - HIIT Circuit</li>
-                <li style="padding: 0.5rem 0;"><strong>7:00 PM</strong> - Pilates</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 style="color: #667eea; margin-bottom: 1rem;">Wednesday</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>6:00 AM</strong> - Cardio Blast</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>9:00 AM</strong> - Core & Balance</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>5:30 PM</strong> - Strength & Conditioning</li>
-                <li style="padding: 0.5rem 0;"><strong>7:00 PM</strong> - Zumba</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 style="color: #667eea; margin-bottom: 1rem;">Thursday</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>6:00 AM</strong> - Power Yoga</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>9:00 AM</strong> - HIIT Training</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>5:30 PM</strong> - Boxing Fitness</li>
-                <li style="padding: 0.5rem 0;"><strong>7:00 PM</strong> - Stretch & Recovery</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 style="color: #667eea; margin-bottom: 1rem;">Friday</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>6:00 AM</strong> - Full Body Workout</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>9:00 AM</strong> - Cardio Dance</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>5:30 PM</strong> - Strength Training</li>
-                <li style="padding: 0.5rem 0;"><strong>7:00 PM</strong> - Meditation & Stretching</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 style="color: #667eea; margin-bottom: 1rem;">Weekend</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>8:00 AM</strong> - Weekend Warrior (Sat)</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>9:00 AM</strong> - Yoga Flow (Sat)</li>
-                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;"><strong>8:00 AM</strong> - Recovery Session (Sun)</li>
-                <li style="padding: 0.5rem 0;"><strong>10:00 AM</strong> - Family Fitness (Sun)</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section class="about-preview">
-      <div class="container">
-        <div class="about-content">
-          <h2>Personal Training Sessions</h2>
-          <p>Book one-on-one sessions with our certified personal trainers. Available times throughout the week to fit your schedule.</p>
-          <ul style="font-size: 1.1rem; line-height: 1.8;">
-            <li><strong>Morning Sessions:</strong> 6:00 AM - 11:00 AM</li>
-            <li><strong>Afternoon Sessions:</strong> 12:00 PM - 4:00 PM</li>
-            <li><strong>Evening Sessions:</strong> 5:00 PM - 9:00 PM</li>
-            <li><strong>Weekend Sessions:</strong> 8:00 AM - 6:00 PM</li>
-          </ul>
-          <p style="margin-top: 1rem;"><strong>Session Duration:</strong> 30, 45, or 60 minutes</p>
-          <a href="loginPage.html" class="btn-outline">Book Personal Training</a>
-        </div>
-        <div class="about-image">
-          <div class="image-placeholder">
-            <p>Personal Training</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="services-preview">
-      <div class="container">
-        <h2>Class Descriptions</h2>
-        <div class="services-grid">
-          <div class="service-card">
-            <div class="service-image">
-              <div class="image-placeholder">
-                <p>HIIT Training</p>
-              </div>
+            <!-- Filters -->
+            <div class="filters">
+                <h3>🔍 Filter by Activity:</h3>
+                <div class="filter-tags">
+                    <button class="filter-tag active" onclick="filterByActivity('all')">All Classes</button>
+                    <button class="filter-tag" onclick="filterByActivity('HIIT')">HIIT</button>
+                    <button class="filter-tag" onclick="filterByActivity('Strength')">Strength</button>
+                    <button class="filter-tag" onclick="filterByActivity('Yoga')">Yoga</button>
+                    <button class="filter-tag" onclick="filterByActivity('Cardio')">Cardio</button>
+                </div>
             </div>
-            <h3>HIIT Cardio</h3>
-            <p>High-intensity interval training that alternates between intense bursts of activity and fixed periods of less-intense activity or rest.</p>
-          </div>
-          
-          <div class="service-card">
-            <div class="service-image">
-              <div class="image-placeholder">
-                <p>Strength Training</p>
-              </div>
-            </div>
-            <h3>Strength Training</h3>
-            <p>Build muscle and increase strength with our progressive resistance training programs using free weights and machines.</p>
-          </div>
-          
-          <div class="service-card">
-            <div class="service-image">
-              <div class="image-placeholder">
-                <p>Yoga</p>
-              </div>
-            </div>
-            <h3>Yoga & Flexibility</h3>
-            <p>Improve flexibility, balance, and mental focus with our yoga classes suitable for all levels.</p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section class="cta">
-      <div class="container">
-        <h2>Ready to Join a Class?</h2>
-        <p>Reserve your spot in our classes or book a personal training session. New clients get their first session free!</p>
-        <div class="cta-buttons">
-          <a href="loginPage.html" class="btn-primary">Book Your Class</a>
-          <a href="services.html" class="btn-secondary">View All Services</a>
-        </div>
-      </div>
-    </section>
-  </main>
+            <!-- Loading State -->
+            <div id="loadingState" class="loading">
+                Loading schedule...
+            </div>
 
-  <footer>
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>LinoxFitness</h3>
-          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+            <!-- Schedule Grid -->
+            <div id="scheduleGrid" class="day-grid" style="display: none;">
+                <!-- Days will be populated here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <h2>📭 No Classes This Week</h2>
+                <p>There are no classes scheduled for this week yet.</p>
+                <p>Check back later or contact your trainer!</p>
+            </div>
         </div>
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="schedule.html">Schedule</a></li>
-            <li><a href="credentials.html">Credentials</a></li>
-          </ul>
+    </main>
+
+    <!-- Class Details Modal -->
+    <div id="classModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalClassName">Class Name</h2>
+                <button class="btn-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-details" id="modalDetails">
+                <!-- Details will be populated -->
+            </div>
+            <div id="modalActions">
+                <!-- Action buttons will be populated -->
+            </div>
         </div>
-        <div class="footer-section">
-          <h4>Contact</h4>
-          <p>Ready to start your journey?</p>
-          <a href="loginPage.html" class="btn-outline">Get Started</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
-      </div>
     </div>
-  </footer>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LinoxFitness</h3>
+                    <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="schedule.html">Class Schedule</a></li>
+                        <li><a href="my-workout-plan.html">My Workout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let currentWeekOffset = 0;
+        let allSchedules = [];
+        let currentFilter = 'all';
+
+        // Auth check
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'loginPage.html';
+                return;
+            }
+            
+            currentUser = user;
+            console.log('✅ User authenticated:', user.email);
+            await loadSchedule();
+        });
+
+        // Get week range
+        function getWeekRange(offset = 0) {
+            const now = new Date();
+            const currentDay = now.getDay();
+            const diff = now.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
+            
+            const monday = new Date(now.setDate(diff + (offset * 7)));
+            monday.setHours(0, 0, 0, 0);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23, 59, 59, 999);
+            
+            return { start: monday, end: sunday };
+        }
+
+        // Format date
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // Change week
+        window.changeWeek = function(offset) {
+            if (offset === 0) {
+                currentWeekOffset = 0;
+            } else {
+                currentWeekOffset += offset;
+            }
+            loadSchedule();
+        };
+
+        // Filter by activity
+        window.filterByActivity = function(activity) {
+            currentFilter = activity;
+            
+            // Update active tag
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displaySchedule();
+        };
+
+        // Load schedule
+        async function loadSchedule() {
+            try {
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('scheduleGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+                
+                const { start, end } = getWeekRange(currentWeekOffset);
+                document.getElementById('weekDisplay').textContent = 
+                    `${formatDate(start)} - ${formatDate(end)}`;
+                
+                const schedulesRef = collection(db, 'schedules');
+                const q = query(
+                    schedulesRef,
+                    where('date', '>=', start.toISOString().split('T')[0]),
+                    where('date', '<=', end.toISOString().split('T')[0]),
+                    orderBy('date'),
+                    orderBy('startTime')
+                );
+                
+                const snapshot = await getDocs(q);
+                allSchedules = [];
+                
+                snapshot.forEach(doc => {
+                    allSchedules.push({ id: doc.id, ...doc.data() });
+                });
+                
+                console.log(`✅ Loaded ${allSchedules.length} classes`);
+                displaySchedule();
+                
+            } catch (error) {
+                console.error('❌ Error loading schedule:', error);
+                document.getElementById('loadingState').innerHTML = 
+                    '<div class="empty-state"><h2>❌ Error</h2><p>' + error.message + '</p></div>';
+            }
+        }
+
+        // Display schedule
+        function displaySchedule() {
+            document.getElementById('loadingState').style.display = 'none';
+            
+            // Filter schedules
+            let filteredSchedules = allSchedules;
+            if (currentFilter !== 'all') {
+                filteredSchedules = allSchedules.filter(s => 
+                    s.activity.toLowerCase().includes(currentFilter.toLowerCase())
+                );
+            }
+            
+            if (filteredSchedules.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('scheduleGrid').style.display = 'none';
+                return;
+            }
+            
+            // Group by day
+            const dayMap = new Map();
+            const { start } = getWeekRange(currentWeekOffset);
+            
+            // Initialize all 7 days
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(start);
+                day.setDate(start.getDate() + i);
+                const dateKey = day.toISOString().split('T')[0];
+                dayMap.set(dateKey, {
+                    date: day,
+                    classes: []
+                });
+            }
+            
+            // Add classes to respective days
+            filteredSchedules.forEach(schedule => {
+                if (dayMap.has(schedule.date)) {
+                    dayMap.get(schedule.date).classes.push(schedule);
+                }
+            });
+            
+            // Build HTML
+            const scheduleGrid = document.getElementById('scheduleGrid');
+            scheduleGrid.innerHTML = '';
+            
+            dayMap.forEach((dayData, dateKey) => {
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                
+                const dayName = dayData.date.toLocaleDateString('en-US', { weekday: 'long' });
+                const dayDate = dayData.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                
+                let classesHtml = '';
+                if (dayData.classes.length === 0) {
+                    classesHtml = '<div class="no-classes">No classes scheduled</div>';
+                } else {
+                    dayData.classes.forEach(classItem => {
+                        const bookedCount = classItem.bookedUsers ? classItem.bookedUsers.length : 0;
+                        const spotsLeft = classItem.maxCapacity - bookedCount;
+                        const isFull = spotsLeft <= 0;
+                        const isBooked = classItem.bookedUsers && classItem.bookedUsers.includes(currentUser.uid);
+                        
+                        let capacityClass = 'capacity-available';
+                        let capacityText = `${spotsLeft} spots left`;
+                        
+                        if (isBooked) {
+                            capacityClass = 'class-booked';
+                            capacityText = '✅ You\'re booked!';
+                        } else if (isFull) {
+                            capacityClass = 'capacity-full';
+                            capacityText = 'FULL';
+                        } else if (spotsLeft <= 3) {
+                            capacityClass = 'capacity-low';
+                            capacityText = `${spotsLeft} spots left`;
+                        }
+                        
+                        classesHtml += `
+                            <div class="class-item ${isFull ? 'full' : ''} ${isBooked ? 'booked' : ''}" 
+                                 onclick='openModal(${JSON.stringify(classItem).replace(/'/g, "&#39;")})'>
+                                <div class="class-time">${classItem.startTime} - ${classItem.endTime}</div>
+                                <div class="class-name">${classItem.activity}</div>
+                                <div class="class-trainer">👤 ${classItem.trainer}</div>
+                                ${classItem.location ? `<div class="class-trainer">📍 ${classItem.location}</div>` : ''}
+                                <span class="class-capacity ${capacityClass}">${capacityText}</span>
+                            </div>
+                        `;
+                    });
+                }
+                
+                dayCard.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-name">${dayName}</div>
+                        <div class="day-date">${dayDate}</div>
+                    </div>
+                    ${classesHtml}
+                `;
+                
+                scheduleGrid.appendChild(dayCard);
+            });
+            
+            document.getElementById('scheduleGrid').style.display = 'grid';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        // Open modal
+        window.openModal = function(classData) {
+            const modal = document.getElementById('classModal');
+            const bookedCount = classData.bookedUsers ? classData.bookedUsers.length : 0;
+            const spotsLeft = classData.maxCapacity - bookedCount;
+            const isBooked = classData.bookedUsers && classData.bookedUsers.includes(currentUser.uid);
+            const isFull = spotsLeft <= 0 && !isBooked;
+            
+            document.getElementById('modalClassName').textContent = classData.activity;
+            
+            const classDate = new Date(classData.date);
+            const dateStr = classDate.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+            
+            document.getElementById('modalDetails').innerHTML = `
+                <p><strong>📅 Date:</strong> ${dateStr}</p>
+                <p><strong>🕐 Time:</strong> ${classData.startTime} - ${classData.endTime}</p>
+                <p><strong>👤 Trainer:</strong> ${classData.trainer}</p>
+                ${classData.location ? `<p><strong>📍 Location:</strong> ${classData.location}</p>` : ''}
+                <p><strong>👥 Capacity:</strong> ${bookedCount}/${classData.maxCapacity} booked</p>
+                <p><strong>✅ Available Spots:</strong> ${spotsLeft > 0 ? spotsLeft : 'FULL'}</p>
+                ${classData.description ? `<p><strong>📝 Description:</strong><br>${classData.description}</p>` : ''}
+            `;
+            
+            let actionButton = '';
+            if (isBooked) {
+                actionButton = `<button class="btn-book btn-cancel" onclick="cancelBooking('${classData.id}')">Cancel Booking</button>`;
+            } else if (isFull) {
+                actionButton = `<button class="btn-book" disabled>Class is Full</button>`;
+            } else {
+                actionButton = `<button class="btn-book" onclick="bookClass('${classData.id}')">Book This Class</button>`;
+            }
+            
+            document.getElementById('modalActions').innerHTML = actionButton;
+            modal.classList.add('show');
+        };
+
+        // Close modal
+        window.closeModal = function() {
+            document.getElementById('classModal').classList.remove('show');
+        };
+
+        // Book class
+        window.bookClass = async function(scheduleId) {
+            try {
+                const scheduleRef = doc(db, 'schedules', scheduleId);
+                await updateDoc(scheduleRef, {
+                    bookedUsers: arrayUnion(currentUser.uid)
+                });
+                
+                console.log('✅ Class booked successfully');
+                showNotification('✅ Class booked successfully!', 'success');
+                closeModal();
+                await loadSchedule();
+                
+            } catch (error) {
+                console.error('❌ Error booking class:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            }
+        };
+
+        // Cancel booking
+        window.cancelBooking = async function(scheduleId) {
+            if (!confirm('Are you sure you want to cancel this booking?')) {
+                return;
+            }
+            
+            try {
+                const scheduleRef = doc(db, 'schedules', scheduleId);
+                await updateDoc(scheduleRef, {
+                    bookedUsers: arrayRemove(currentUser.uid)
+                });
+                
+                console.log('✅ Booking cancelled');
+                showNotification('✅ Booking cancelled successfully', 'success');
+                closeModal();
+                await loadSchedule();
+                
+            } catch (error) {
+                console.error('❌ Error cancelling booking:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            }
+        };
+
+        // Logout
+        window.logout = async function() {
+            try {
+                await signOut(auth);
+                window.location.href = 'loginPage.html';
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                alert('Error logging out');
+            }
+        };
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                max-width: 400px;
+                padding: 1.25rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+    </script>
 </body>
 </html>
