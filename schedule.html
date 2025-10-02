@@ -336,6 +336,25 @@
             background: #c82333;
         }
 
+        .btn-back-schedule {
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-back-schedule:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
         @media (max-width: 768px) {
             .week-navigation {
                 flex-direction: column;
@@ -368,6 +387,13 @@
 
   <main>
         <div class="container-custom">
+            <!-- Back Button -->
+            <div style="margin-bottom: 20px;">
+              <a href="dashboard.html" class="btn-back-schedule">
+                ← Back to Dashboard
+              </a>
+            </div>
+            
             <!-- Header -->
             <div class="schedule-header">
                 <h1>📅 Weekly Class Schedule</h1>
