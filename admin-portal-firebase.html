@@ -1014,6 +1014,8 @@
         let adminPortal;
         document.addEventListener('DOMContentLoaded', () => {
             adminPortal = new AdminPortalFirebase();
+            // Expose to global scope for onclick handlers
+            window.adminPortal = adminPortal;
             
             // Handle add customer form submission
             const addCustomerForm = document.getElementById('addCustomerForm');
