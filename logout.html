@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout - LinoxFitness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .logout-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #1e1e2f;
+            margin-bottom: 1rem;
+        }
+
+        .status {
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            font-size: 1.1rem;
+        }
+
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <h1>🚪 Logging Out</h1>
+        
+        <div id="status" class="status loading">
+            <div class="spinner"></div>
+            <p>Signing you out and clearing session...</p>
+        </div>
+
+        <div id="actions" style="display: none;">
+            <a href="loginPage.html" class="btn">← Back to Login</a>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const statusDiv = document.getElementById('status');
+        const actionsDiv = document.getElementById('actions');
+
+        async function logout() {
+            try {
+                // Sign out from Firebase
+                await signOut(auth);
+
+                // Clear all localStorage
+                localStorage.clear();
+
+                // Clear sessionStorage
+                sessionStorage.clear();
+
+                // Show success
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `
+                    <h2 style="margin: 0 0 1rem 0;">✅ Successfully Logged Out</h2>
+                    <p>Your session has been cleared.</p>
+                    <p>All cached data has been removed.</p>
+                `;
+
+                actionsDiv.style.display = 'block';
+
+                // Auto-redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'loginPage.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Logout error:', error);
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `
+                    <h2 style="margin: 0 0 1rem 0;">✅ Session Cleared</h2>
+                    <p>Local session data has been cleared.</p>
+                    <p>${error.message}</p>
+                `;
+                actionsDiv.style.display = 'block';
+            }
+        }
+
+        // Execute logout on page load
+        logout();
+    </script>
+</body>
+</html>
+
