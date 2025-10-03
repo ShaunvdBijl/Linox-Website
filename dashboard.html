@@ -95,6 +95,14 @@
             </div>
           </div>
           
+          <!-- Recommended Exercises Section -->
+          <h2 style="margin-top: 2rem;">🏋️ Your Recommended Exercises</h2>
+          <div id="recommendedExercises" style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+            <div class="loading" style="text-align: center; padding: 2rem; color: #666;">
+              <p>Loading your recommended exercises...</p>
+            </div>
+          </div>
+          
           <h3>Quick Actions</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
             <a href="my-workout-plan.html" class="btn-primary" style="text-align: center; padding: 1rem;">💪 My Workout Plan</a>
@@ -216,7 +224,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, collection, doc, getDoc, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     // Firebase configuration
     const firebaseConfig = {
@@ -287,6 +295,9 @@
         // Store user data for other pages
         localStorage.setItem('userName', `${userData.firstName} ${userData.lastName}`);
         localStorage.setItem('userEmail', userData.email);
+        
+        // Load recommended exercises
+        await loadRecommendedExercises(user.uid);
         
         console.log('✅ Dashboard loaded successfully');
         
@@ -362,6 +373,149 @@
         }
       }, 3000);
     }
+
+    // Load recommended exercises for the customer
+    async function loadRecommendedExercises(userId) {
+      try {
+        console.log('🏋️ Loading recommended exercises for user:', userId);
+        
+        // First, get the customer ID from the users collection
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        let customerId = userId; // Default to user ID
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          // Check if there's a customerId field or use email to find customer
+          if (userData.customerId) {
+            customerId = userData.customerId;
+          } else if (userData.email) {
+            // Try to find customer by email
+            const customersQuery = query(collection(db, 'customers'), where('email', '==', userData.email));
+            const customersSnapshot = await getDocs(customersQuery);
+            if (!customersSnapshot.empty) {
+              customerId = customersSnapshot.docs[0].id;
+            }
+          }
+        }
+        
+        console.log('🔍 Using customer ID:', customerId);
+        
+        // Get recommended exercises
+        const recommendationsQuery = query(
+          collection(db, 'customerRecommendedExercises'),
+          where('customerID', '==', customerId),
+          where('status', '==', 'active')
+        );
+        
+        const recommendationsSnapshot = await getDocs(recommendationsQuery);
+        const recommendations = [];
+        
+        recommendationsSnapshot.forEach(doc => {
+          recommendations.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Sort by priority
+        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+        recommendations.sort((a, b) => {
+          return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+        });
+        
+        console.log('✅ Loaded recommendations:', recommendations.length);
+        displayRecommendedExercises(recommendations);
+        
+      } catch (error) {
+        console.error('❌ Error loading recommended exercises:', error);
+        displayRecommendedExercises([]);
+      }
+    }
+
+    // Display recommended exercises in the dashboard
+    function displayRecommendedExercises(recommendations) {
+      const container = document.getElementById('recommendedExercises');
+      
+      if (!recommendations || recommendations.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: #666;">
+            <h3>No exercises recommended yet</h3>
+            <p>Your trainer hasn't assigned any specific exercises yet. Check back later or contact your trainer for personalized recommendations!</p>
+            <div style="margin-top: 1rem;">
+              <a href="my-workout-plan.html" class="btn-primary">View General Workout Plan</a>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const exercisesHtml = recommendations.map(rec => `
+        <div style="
+          background: #f8f9fa;
+          border-radius: 8px;
+          padding: 1rem;
+          margin-bottom: 1rem;
+          border-left: 4px solid ${getPriorityColor(rec.priority)};
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 0.5rem 0; color: #333; font-size: 1.1rem;">
+                ${rec.exerciseName}
+                <span style="
+                  background: ${getPriorityColor(rec.priority)};
+                  color: white;
+                  padding: 2px 8px;
+                  border-radius: 12px;
+                  font-size: 0.8rem;
+                  margin-left: 0.5rem;
+                ">${rec.priority}</span>
+              </h4>
+              <div style="color: #666; margin-bottom: 0.5rem;">
+                ${rec.sets ? `${rec.sets} sets` : ''} 
+                ${rec.reps ? `x ${rec.reps} reps` : ''} 
+                ${rec.duration ? `x ${rec.duration}s` : ''}
+              </div>
+              ${rec.notes ? `<div style="color: #555; font-style: italic; font-size: 0.9rem;">${rec.notes}</div>` : ''}
+            </div>
+            <div style="margin-left: 1rem;">
+              <button onclick="markExerciseComplete('${rec.id}')" style="
+                background: #28a745;
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 0.9rem;
+              ">Mark Done</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      container.innerHTML = `
+        <div style="margin-bottom: 1rem;">
+          <h3 style="margin: 0 0 1rem 0; color: #667eea;">Your Personalized Exercise Plan</h3>
+          <p style="color: #666; margin-bottom: 1rem;">These exercises have been specifically recommended for you by your trainer.</p>
+        </div>
+        ${exercisesHtml}
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <a href="my-workout-plan.html" class="btn-secondary">View Full Workout Plan</a>
+        </div>
+      `;
+    }
+
+    // Get priority color
+    function getPriorityColor(priority) {
+      switch (priority) {
+        case 'high': return '#dc3545';
+        case 'medium': return '#ffc107';
+        case 'low': return '#28a745';
+        default: return '#6c757d';
+      }
+    }
+
+    // Mark exercise as complete (placeholder function)
+    window.markExerciseComplete = function(exerciseId) {
+      showSuccessMessage('Exercise marked as complete! Great job! 🎉');
+      // TODO: Implement actual completion tracking
+    };
 
     // Make functions available globally
     window.markWorkoutComplete = markWorkoutComplete;

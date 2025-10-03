@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Exercise Library - Linox Fitness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .setup-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .exercise-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+        }
+        .exercise-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .exercise-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏋️ Setup Exercise Library</h1>
+    
+    <div class="setup-section">
+        <h2>📚 Exercise Library Management</h2>
+        <button class="btn" onclick="createExerciseCategories()">Create Exercise Categories</button>
+        <button class="btn" onclick="createSampleExercises()">Create Sample Exercises</button>
+        <button class="btn" onclick="loadExercises()">Load All Exercises</button>
+        <button class="btn btn-danger" onclick="clearExerciseLibrary()">Clear Exercise Library</button>
+        <div id="exerciseResult"></div>
+    </div>
+
+    <div class="setup-section">
+        <h2>👤 Customer Exercise Recommendations</h2>
+        <button class="btn" onclick="createSampleRecommendations()">Create Sample Recommendations for Piet</button>
+        <button class="btn" onclick="loadCustomerRecommendations()">Load Piet's Recommendations</button>
+        <button class="btn btn-danger" onclick="clearCustomerRecommendations()">Clear Piet's Recommendations</button>
+        <div id="recommendationResult"></div>
+    </div>
+
+    <div class="setup-section">
+        <h2>📊 Current Exercise Library</h2>
+        <div id="exerciseLibrary"></div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-XXXXXXXXXX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Test customer ID (Piet Pompies)
+        const customerId = 'op0oejT2GFciFuXcPqptdU3MHHv1';
+
+        // Sample exercise categories
+        const exerciseCategories = [
+            { name: 'Strength Training', description: 'Exercises to build muscle and strength', icon: '💪', color: '#667eea' },
+            { name: 'Cardio', description: 'Exercises to improve cardiovascular health', icon: '❤️', color: '#e74c3c' },
+            { name: 'Core', description: 'Exercises to strengthen core muscles', icon: '🏋️', color: '#f39c12' },
+            { name: 'Flexibility', description: 'Exercises to improve flexibility and mobility', icon: '🧘', color: '#27ae60' }
+        ];
+
+        // Sample exercises
+        const sampleExercises = [
+            {
+                name: 'Squats',
+                category: 'strength',
+                muscleGroups: ['legs', 'glutes', 'core'],
+                difficulty: 'beginner',
+                equipment: 'bodyweight',
+                description: 'A fundamental lower body exercise that targets the quadriceps, hamstrings, and glutes.',
+                instructions: [
+                    'Stand with feet shoulder-width apart',
+                    'Lower your body as if sitting back into a chair',
+                    'Keep your chest up and knees behind toes',
+                    'Return to starting position'
+                ],
+                benefits: ['strength', 'endurance', 'balance'],
+                contraindications: ['knee-injury'],
+                duration: 5,
+                calories: 10
+            },
+            {
+                name: 'Push-ups',
+                category: 'strength',
+                muscleGroups: ['chest', 'arms', 'core'],
+                difficulty: 'beginner',
+                equipment: 'bodyweight',
+                description: 'A classic upper body exercise that strengthens the chest, shoulders, and triceps.',
+                instructions: [
+                    'Start in plank position',
+                    'Lower your body until chest nearly touches floor',
+                    'Push back up to starting position',
+                    'Keep core tight throughout movement'
+                ],
+                benefits: ['strength', 'endurance'],
+                contraindications: ['wrist-injury', 'shoulder-injury'],
+                duration: 5,
+                calories: 8
+            },
+            {
+                name: 'Plank',
+                category: 'core',
+                muscleGroups: ['core', 'shoulders', 'legs'],
+                difficulty: 'beginner',
+                equipment: 'bodyweight',
+                description: 'An isometric exercise that strengthens the entire core and improves stability.',
+                instructions: [
+                    'Start in push-up position',
+                    'Lower to forearms',
+                    'Keep body in straight line',
+                    'Hold position while breathing normally'
+                ],
+                benefits: ['strength', 'stability', 'endurance'],
+                contraindications: ['back-injury'],
+                duration: 1,
+                calories: 5
+            },
+            {
+                name: 'Burpees',
+                category: 'cardio',
+                muscleGroups: ['full-body'],
+                difficulty: 'intermediate',
+                equipment: 'bodyweight',
+                description: 'A high-intensity full-body exercise that combines strength and cardio.',
+                instructions: [
+                    'Start standing',
+                    'Drop into squat position',
+                    'Jump feet back to plank',
+                    'Do a push-up',
+                    'Jump feet back to squat',
+                    'Jump up with arms overhead'
+                ],
+                benefits: ['cardio', 'strength', 'endurance'],
+                contraindications: ['knee-injury', 'back-injury'],
+                duration: 10,
+                calories: 15
+            },
+            {
+                name: 'Lunges',
+                category: 'strength',
+                muscleGroups: ['legs', 'glutes', 'core'],
+                difficulty: 'beginner',
+                equipment: 'bodyweight',
+                description: 'A unilateral leg exercise that improves balance and targets the lower body.',
+                instructions: [
+                    'Step forward with one leg',
+                    'Lower hips until both knees are at 90 degrees',
+                    'Push back to starting position',
+                    'Repeat with other leg'
+                ],
+                benefits: ['strength', 'balance', 'mobility'],
+                contraindications: ['knee-injury'],
+                duration: 8,
+                calories: 12
+            },
+            {
+                name: 'Mountain Climbers',
+                category: 'cardio',
+                muscleGroups: ['core', 'arms', 'legs'],
+                difficulty: 'intermediate',
+                equipment: 'bodyweight',
+                description: 'A dynamic cardio exercise that targets the core while improving cardiovascular fitness.',
+                instructions: [
+                    'Start in plank position',
+                    'Bring one knee toward chest',
+                    'Quickly switch legs',
+                    'Continue alternating at a steady pace'
+                ],
+                benefits: ['cardio', 'core-strength', 'endurance'],
+                contraindications: ['wrist-injury', 'back-injury'],
+                duration: 5,
+                calories: 12
+            },
+            {
+                name: 'Dead Bug',
+                category: 'core',
+                muscleGroups: ['core', 'stabilizers'],
+                difficulty: 'beginner',
+                equipment: 'bodyweight',
+                description: 'A safe core exercise that improves stability and coordination.',
+                instructions: [
+                    'Lie on back with arms up',
+                    'Lift knees to 90 degrees',
+                    'Lower one arm and opposite leg',
+                    'Return to start and switch sides'
+                ],
+                benefits: ['core-strength', 'stability', 'coordination'],
+                contraindications: [],
+                duration: 5,
+                calories: 5
+            }
+        ];
+
+        // Create exercise categories
+        window.createExerciseCategories = async function() {
+            try {
+                const resultDiv = document.getElementById('exerciseResult');
+                resultDiv.innerHTML = '<div class="result">Creating exercise categories...</div>';
+                
+                for (const category of exerciseCategories) {
+                    await addDoc(collection(db, 'exerciseCategories'), {
+                        ...category,
+                        isActive: true,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+                
+                resultDiv.innerHTML = '<div class="result">✅ Exercise categories created successfully!</div>';
+            } catch (error) {
+                document.getElementById('exerciseResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        // Create sample exercises
+        window.createSampleExercises = async function() {
+            try {
+                const resultDiv = document.getElementById('exerciseResult');
+                resultDiv.innerHTML = '<div class="result">Creating sample exercises...</div>';
+                
+                for (const exercise of sampleExercises) {
+                    await addDoc(collection(db, 'exercises'), {
+                        ...exercise,
+                        isActive: true,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp(),
+                        createdBy: 'setup-script'
+                    });
+                }
+                
+                resultDiv.innerHTML = '<div class="result">✅ Sample exercises created successfully!</div>';
+                await loadExercises();
+            } catch (error) {
+                document.getElementById('exerciseResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        // Load all exercises
+        window.loadExercises = async function() {
+            try {
+                const resultDiv = document.getElementById('exerciseResult');
+                resultDiv.innerHTML = '<div class="result">Loading exercises...</div>';
+                
+                const exercisesSnapshot = await getDocs(collection(db, 'exercises'));
+                const exercises = [];
+                
+                exercisesSnapshot.forEach(doc => {
+                    exercises.push({ id: doc.id, ...doc.data() });
+                });
+                
+                if (exercises.length === 0) {
+                    resultDiv.innerHTML = '<div class="result">No exercises found. Create some first!</div>';
+                    return;
+                }
+                
+                // Display exercises
+                const libraryDiv = document.getElementById('exerciseLibrary');
+                libraryDiv.innerHTML = `
+                    <h3>📚 Exercise Library (${exercises.length} exercises)</h3>
+                    <div class="exercise-grid">
+                        ${exercises.map(exercise => `
+                            <div class="exercise-card">
+                                <h4>${exercise.name}</h4>
+                                <p><strong>Category:</strong> ${exercise.category}</p>
+                                <p><strong>Difficulty:</strong> ${exercise.difficulty}</p>
+                                <p><strong>Equipment:</strong> ${exercise.equipment}</p>
+                                <p><strong>Muscle Groups:</strong> ${exercise.muscleGroups.join(', ')}</p>
+                                <div>
+                                    ${exercise.benefits.map(benefit => `<span class="category-badge">${benefit}</span>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                resultDiv.innerHTML = '<div class="result">✅ Exercises loaded successfully!</div>';
+            } catch (error) {
+                document.getElementById('exerciseResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        // Create sample recommendations for Piet
+        window.createSampleRecommendations = async function() {
+            try {
+                const resultDiv = document.getElementById('recommendationResult');
+                resultDiv.innerHTML = '<div class="result">Creating sample recommendations...</div>';
+                
+                // Get exercises first
+                const exercisesSnapshot = await getDocs(collection(db, 'exercises'));
+                const exercises = [];
+                exercisesSnapshot.forEach(doc => {
+                    exercises.push({ id: doc.id, ...doc.data() });
+                });
+                
+                if (exercises.length === 0) {
+                    resultDiv.innerHTML = '<div class="result error">❌ No exercises found. Create exercises first!</div>';
+                    return;
+                }
+                
+                // Create recommendations for first few exercises
+                const recommendations = [
+                    {
+                        exerciseId: exercises[0].id,
+                        exerciseName: exercises[0].name,
+                        sets: 3,
+                        reps: 12,
+                        notes: 'Focus on proper form, go slow',
+                        priority: 'high',
+                        status: 'active',
+                        frequency: '3x-week'
+                    },
+                    {
+                        exerciseId: exercises[1].id,
+                        exerciseName: exercises[1].name,
+                        sets: 2,
+                        reps: 8,
+                        notes: 'Modified for knee issues',
+                        priority: 'medium',
+                        status: 'active',
+                        frequency: '2x-week'
+                    },
+                    {
+                        exerciseId: exercises[2].id,
+                        exerciseName: exercises[2].name,
+                        sets: 3,
+                        duration: 30,
+                        notes: 'Hold for 30 seconds each set',
+                        priority: 'high',
+                        status: 'active',
+                        frequency: 'daily'
+                    }
+                ];
+                
+                for (const rec of recommendations) {
+                    await addDoc(collection(db, 'customerRecommendedExercises'), {
+                        customerID: customerId,
+                        ...rec,
+                        assignedDate: serverTimestamp(),
+                        completedDates: [],
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp(),
+                        createdBy: 'setup-script'
+                    });
+                }
+                
+                resultDiv.innerHTML = '<div class="result">✅ Sample recommendations created successfully!</div>';
+                await loadCustomerRecommendations();
+            } catch (error) {
+                document.getElementById('recommendationResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        // Load customer recommendations
+        window.loadCustomerRecommendations = async function() {
+            try {
+                const resultDiv = document.getElementById('recommendationResult');
+                resultDiv.innerHTML = '<div class="result">Loading customer recommendations...</div>';
+                
+                const recommendationsQuery = query(
+                    collection(db, 'customerRecommendedExercises'),
+                    where('customerID', '==', customerId)
+                );
+                
+                const recommendationsSnapshot = await getDocs(recommendationsQuery);
+                const recommendations = [];
+                
+                recommendationsSnapshot.forEach(doc => {
+                    recommendations.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort by priority (high, medium, low) in JavaScript
+                const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+                recommendations.sort((a, b) => {
+                    return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+                });
+                
+                if (recommendations.length === 0) {
+                    resultDiv.innerHTML = '<div class="result">No recommendations found for this customer.</div>';
+                    return;
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <h3>📋 Customer Recommendations (${recommendations.length} total)</h3>
+                        ${recommendations.map(rec => `
+                            <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px;">
+                                <h4>${rec.exerciseName}</h4>
+                                <p><strong>Sets:</strong> ${rec.sets || 'N/A'} | <strong>Reps:</strong> ${rec.reps || 'N/A'} | <strong>Duration:</strong> ${rec.duration || 'N/A'}s</p>
+                                <p><strong>Priority:</strong> ${rec.priority} | <strong>Status:</strong> ${rec.status} | <strong>Frequency:</strong> ${rec.frequency}</p>
+                                <p><strong>Notes:</strong> ${rec.notes}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('recommendationResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        // Clear exercise library
+        window.clearExerciseLibrary = async function() {
+            try {
+                if (!confirm('Are you sure you want to clear the entire exercise library? This cannot be undone!')) {
+                    return;
+                }
+                
+                const resultDiv = document.getElementById('exerciseResult');
+                resultDiv.innerHTML = '<div class="result">Clearing exercise library...</div>';
+                
+                // Delete all exercises
+                const exercisesSnapshot = await getDocs(collection(db, 'exercises'));
+                const deletePromises = [];
+                exercisesSnapshot.forEach(doc => {
+                    deletePromises.push(deleteDoc(doc.ref));
+                });
+                
+                await Promise.all(deletePromises);
+                
+                resultDiv.innerHTML = '<div class="result">✅ Exercise library cleared successfully!</div>';
+                document.getElementById('exerciseLibrary').innerHTML = '';
+            } catch (error) {
+                document.getElementById('exerciseResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        // Clear customer recommendations
+        window.clearCustomerRecommendations = async function() {
+            try {
+                if (!confirm('Are you sure you want to clear all recommendations for this customer?')) {
+                    return;
+                }
+                
+                const resultDiv = document.getElementById('recommendationResult');
+                resultDiv.innerHTML = '<div class="result">Clearing customer recommendations...</div>';
+                
+                const recommendationsQuery = query(
+                    collection(db, 'customerRecommendedExercises'),
+                    where('customerID', '==', customerId)
+                );
+                
+                const recommendationsSnapshot = await getDocs(recommendationsQuery);
+                const deletePromises = [];
+                recommendationsSnapshot.forEach(doc => {
+                    deletePromises.push(deleteDoc(doc.ref));
+                });
+                
+                await Promise.all(deletePromises);
+                
+                resultDiv.innerHTML = '<div class="result">✅ Customer recommendations cleared successfully!</div>';
+            } catch (error) {
+                document.getElementById('recommendationResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        // Auto-load exercises on page load
+        window.addEventListener('load', () => {
+            loadExercises();
+        });
+    </script>
+</body>
+</html>

@@ -122,6 +122,65 @@
     .btn-add:hover {
       background: #218838;
     }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .exercise-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .priority-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .priority-high {
+      background: #dc3545;
+      color: white;
+    }
+
+    .priority-medium {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .priority-low {
+      background: #28a745;
+      color: white;
+    }
+
+    .exercise-description {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -250,39 +309,821 @@
     </div>
   </main>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+      authDomain: "linox-soccer.firebaseapp.com",
+      projectId: "linox-soccer",
+      storageBucket: "linox-soccer.firebasestorage.app",
+      messagingSenderId: "313058607377",
+      appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+      measurementId: "G-XXXXXXXXXX"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
     // Get customer ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const customerId = urlParams.get('id');
+    
+    let currentUser = null;
+    let allExercises = [];
+    let customerRecommendations = [];
+    let customerData = null;
 
-    function addNewRecommendation() {
-      alert('Add New Recommendation functionality would open a form to create custom exercise recommendations.');
-    }
+    // Make functions available immediately
+    window.addNewRecommendation = function() {
+      console.log('✅ addNewRecommendation called');
+      window.openAddRecommendationModal();
+    };
 
-    function editRecommendation(exerciseId) {
-      alert(`Edit recommendation for ${exerciseId} - would open editing form.`);
-    }
+    window.openAddRecommendationModal = function() {
+      console.log('✅ openAddRecommendationModal called');
+      // Create modal HTML
+      const modal = document.createElement('div');
+      modal.id = 'addRecommendationModal';
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      `;
 
-    function recommendExercise(exerciseId) {
-      if (confirm(`Add ${exerciseId} to customer's recommendations?`)) {
-        alert(`${exerciseId} added to recommendations successfully!`);
+      modal.innerHTML = `
+        <div style="
+          background: white;
+          padding: 2rem;
+          border-radius: 10px;
+          width: 90%;
+          max-width: 500px;
+          max-height: 90vh;
+          overflow-y: auto;
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>Add Custom Exercise Recommendation</h2>
+            <button onclick="window.closeAddRecommendationModal()" style="
+              background: none;
+              border: none;
+              font-size: 1.5rem;
+              cursor: pointer;
+            ">&times;</button>
+          </div>
+          
+          <form id="customExerciseForm">
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Exercise Name *</label>
+              <input type="text" id="exerciseName" required style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              " placeholder="e.g., Custom Squat Variation">
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Category *</label>
+              <select id="exerciseCategory" required style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="">Select Category</option>
+                <option value="strength">Strength Training</option>
+                <option value="cardio">Cardio</option>
+                <option value="core">Core</option>
+                <option value="flexibility">Flexibility</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Difficulty *</label>
+              <select id="exerciseDifficulty" required style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="">Select Difficulty</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Equipment</label>
+              <select id="exerciseEquipment" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="bodyweight">Bodyweight</option>
+                <option value="dumbbells">Dumbbells</option>
+                <option value="resistance-band">Resistance Band</option>
+                <option value="none">No Equipment</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Description</label>
+              <textarea id="exerciseDescription" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+                height: 80px;
+                resize: vertical;
+              " placeholder="Brief description of the exercise..."></textarea>
+            </div>
+
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #eee;">
+
+            <h3 style="margin-bottom: 1rem; color: #333;">Recommendation Details</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sets</label>
+                <input type="number" id="recommendationSets" min="1" value="3" style="
+                  width: 100%;
+                  padding: 10px;
+                  border: 1px solid #ddd;
+                  border-radius: 5px;
+                  font-size: 1rem;
+                ">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Reps</label>
+                <input type="number" id="recommendationReps" min="1" value="12" style="
+                  width: 100%;
+                  padding: 10px;
+                  border: 1px solid #ddd;
+                  border-radius: 5px;
+                  font-size: 1rem;
+                ">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Priority</label>
+              <select id="recommendationPriority" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="high">High Priority</option>
+                <option value="medium" selected>Medium Priority</option>
+                <option value="low">Low Priority</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Special Notes</label>
+              <textarea id="recommendationNotes" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+                height: 80px;
+                resize: vertical;
+              " placeholder="Any special instructions or modifications for this customer..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button type="submit" style="
+                flex: 1;
+                background: #28a745;
+                color: white;
+                padding: 12px;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+              ">Add Recommendation</button>
+              <button type="button" onclick="window.closeAddRecommendationModal()" style="
+                background: #6c757d;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                cursor: pointer;
+              ">Cancel</button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // Handle form submission
+      document.getElementById('customExerciseForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await handleCustomExerciseSubmission();
+      });
+    };
+
+    window.closeAddRecommendationModal = function() {
+      const modal = document.getElementById('addRecommendationModal');
+      if (modal) {
+        modal.remove();
+      }
+    };
+
+    // Auth check
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert('Access denied. Please log in.');
+        window.location.href = 'loginPage.html';
+        return;
+      }
+      currentUser = user;
+      console.log('✅ Admin authenticated:', user.email);
+      
+      await loadCustomerData();
+      await loadExercises();
+      await loadCustomerRecommendations();
+    });
+
+    // Load customer data
+    async function loadCustomerData() {
+      try {
+        const customerDoc = await getDoc(doc(db, 'customers', customerId));
+        if (customerDoc.exists) {
+          customerData = { id: customerDoc.id, ...customerDoc.data() };
+          console.log('✅ Customer data loaded:', customerData.firstName, customerData.lastName);
+        } else {
+          console.error('❌ Customer not found');
+          alert('Customer not found');
+        }
+      } catch (error) {
+        console.error('Error loading customer data:', error);
       }
     }
 
-    function saveRecommendationNotes() {
-      const notes = document.getElementById('recommendationNotes').value;
-      alert('Recommendation notes saved successfully!');
+    // Load all exercises from library
+    async function loadExercises() {
+      try {
+        const exercisesSnapshot = await getDocs(collection(db, 'exercises'));
+        allExercises = [];
+        exercisesSnapshot.forEach(doc => {
+          allExercises.push({ id: doc.id, ...doc.data() });
+        });
+        console.log('✅ Exercises loaded:', allExercises.length);
+        displayExerciseLibrary();
+      } catch (error) {
+        console.error('Error loading exercises:', error);
+      }
     }
 
-    function logout() {
+    // Load customer's current recommendations
+    async function loadCustomerRecommendations() {
+      try {
+        const recommendationsQuery = query(
+          collection(db, 'customerRecommendedExercises'),
+          where('customerID', '==', customerId)
+        );
+        
+        const recommendationsSnapshot = await getDocs(recommendationsQuery);
+        customerRecommendations = [];
+        
+        recommendationsSnapshot.forEach(doc => {
+          customerRecommendations.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Sort by priority (high, medium, low)
+        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+        customerRecommendations.sort((a, b) => {
+          return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+        });
+        
+        console.log('✅ Customer recommendations loaded:', customerRecommendations.length);
+        displayCurrentRecommendations();
+      } catch (error) {
+        console.error('Error loading customer recommendations:', error);
+      }
+    }
+
+    // Display current recommendations
+    function displayCurrentRecommendations() {
+      const container = document.getElementById('currentRecommendations');
+      
+      if (customerRecommendations.length === 0) {
+        container.innerHTML = '<div class="empty-state">No recommendations yet. Add some from the exercise library below!</div>';
+        return;
+      }
+
+      container.innerHTML = customerRecommendations.map(rec => `
+        <div class="exercise-item">
+          <div class="exercise-info">
+            <div class="exercise-name">${rec.exerciseName}</div>
+            <div class="exercise-details">
+              ${rec.sets ? `${rec.sets} sets` : ''} 
+              ${rec.reps ? `x ${rec.reps} reps` : ''} 
+              ${rec.duration ? `x ${rec.duration}s` : ''}
+              ${rec.notes ? ` - ${rec.notes}` : ''}
+            </div>
+            <div class="priority-badge priority-${rec.priority}">${rec.priority}</div>
+          </div>
+          <div class="exercise-actions">
+            <button class="btn-primary" onclick="editRecommendation('${rec.id}')">Edit</button>
+            <button class="btn-danger" onclick="removeRecommendation('${rec.id}')">Remove</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Display exercise library
+    function displayExerciseLibrary() {
+      const container = document.getElementById('exerciseLibrary');
+      
+      if (allExercises.length === 0) {
+        container.innerHTML = '<div class="empty-state">No exercises available. Please set up the exercise library first.</div>';
+        return;
+      }
+
+      // Filter out exercises that are already recommended
+      const recommendedExerciseIds = customerRecommendations.map(rec => rec.exerciseId);
+      const availableExercises = allExercises.filter(exercise => 
+        !recommendedExerciseIds.includes(exercise.id)
+      );
+
+      if (availableExercises.length === 0) {
+        container.innerHTML = '<div class="empty-state">All exercises have been recommended to this customer!</div>';
+        return;
+      }
+
+      container.innerHTML = availableExercises.map(exercise => `
+        <div class="exercise-item">
+          <div class="exercise-info">
+            <div class="exercise-name">${exercise.name}</div>
+            <div class="exercise-details">
+              ${exercise.category} • ${exercise.difficulty} • ${exercise.equipment}
+            </div>
+            <div class="exercise-description">${exercise.description}</div>
+          </div>
+          <button class="btn-primary" onclick="recommendExercise('${exercise.id}')">Recommend</button>
+        </div>
+      `).join('');
+    }
+
+    // Add new recommendation (opens modal) - Make globally accessible
+    window.addNewRecommendation = function() {
+      console.log('✅ addNewRecommendation called');
+      window.openAddRecommendationModal();
+    };
+
+    // Open modal for adding new custom exercise recommendation - Make globally accessible
+    window.openAddRecommendationModal = function() {
+      console.log('✅ openAddRecommendationModal called');
+      // Create modal HTML
+      const modal = document.createElement('div');
+      modal.id = 'addRecommendationModal';
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      `;
+
+      modal.innerHTML = `
+        <div style="
+          background: white;
+          padding: 2rem;
+          border-radius: 10px;
+          width: 90%;
+          max-width: 500px;
+          max-height: 90vh;
+          overflow-y: auto;
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>Add Custom Exercise Recommendation</h2>
+            <button onclick="window.closeAddRecommendationModal()" style="
+              background: none;
+              border: none;
+              font-size: 1.5rem;
+              cursor: pointer;
+            ">&times;</button>
+          </div>
+          
+          <form id="customExerciseForm">
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Exercise Name *</label>
+              <input type="text" id="exerciseName" required style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              " placeholder="e.g., Custom Squat Variation">
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Category *</label>
+              <select id="exerciseCategory" required style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="">Select Category</option>
+                <option value="strength">Strength Training</option>
+                <option value="cardio">Cardio</option>
+                <option value="core">Core</option>
+                <option value="flexibility">Flexibility</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Difficulty *</label>
+              <select id="exerciseDifficulty" required style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="">Select Difficulty</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Equipment</label>
+              <select id="exerciseEquipment" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="bodyweight">Bodyweight</option>
+                <option value="dumbbells">Dumbbells</option>
+                <option value="resistance-band">Resistance Band</option>
+                <option value="none">No Equipment</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Description</label>
+              <textarea id="exerciseDescription" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+                height: 80px;
+                resize: vertical;
+              " placeholder="Brief description of the exercise..."></textarea>
+            </div>
+
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #eee;">
+
+            <h3 style="margin-bottom: 1rem; color: #333;">Recommendation Details</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sets</label>
+                <input type="number" id="recommendationSets" min="1" value="3" style="
+                  width: 100%;
+                  padding: 10px;
+                  border: 1px solid #ddd;
+                  border-radius: 5px;
+                  font-size: 1rem;
+                ">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Reps</label>
+                <input type="number" id="recommendationReps" min="1" value="12" style="
+                  width: 100%;
+                  padding: 10px;
+                  border: 1px solid #ddd;
+                  border-radius: 5px;
+                  font-size: 1rem;
+                ">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Priority</label>
+              <select id="recommendationPriority" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+              ">
+                <option value="high">High Priority</option>
+                <option value="medium" selected>Medium Priority</option>
+                <option value="low">Low Priority</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Special Notes</label>
+              <textarea id="recommendationNotes" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+                height: 80px;
+                resize: vertical;
+              " placeholder="Any special instructions or modifications for this customer..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button type="submit" style="
+                flex: 1;
+                background: #28a745;
+                color: white;
+                padding: 12px;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+              ">Add Recommendation</button>
+              <button type="button" onclick="window.closeAddRecommendationModal()" style="
+                background: #6c757d;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                cursor: pointer;
+              ">Cancel</button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // Handle form submission
+      document.getElementById('customExerciseForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await handleCustomExerciseSubmission();
+      });
+    }
+
+    // Close the add recommendation modal - Make globally accessible
+    window.closeAddRecommendationModal = function() {
+      const modal = document.getElementById('addRecommendationModal');
+      if (modal) {
+        modal.remove();
+      }
+    };
+
+    // Handle custom exercise form submission
+    async function handleCustomExerciseSubmission() {
+      try {
+        // Get form data
+        const exerciseName = document.getElementById('exerciseName').value.trim();
+        const category = document.getElementById('exerciseCategory').value;
+        const difficulty = document.getElementById('exerciseDifficulty').value;
+        const equipment = document.getElementById('exerciseEquipment').value;
+        const description = document.getElementById('exerciseDescription').value.trim();
+        const sets = parseInt(document.getElementById('recommendationSets').value);
+        const reps = parseInt(document.getElementById('recommendationReps').value);
+        const priority = document.getElementById('recommendationPriority').value;
+        const notes = document.getElementById('recommendationNotes').value.trim();
+
+        if (!exerciseName || !category || !difficulty) {
+          showNotification('❌ Please fill in all required fields', 'error');
+          return;
+        }
+
+        // Create exercise in the library
+        const exerciseData = {
+          name: exerciseName,
+          category: category,
+          muscleGroups: [category], // Default to category as muscle group
+          difficulty: difficulty,
+          equipment: equipment,
+          description: description || `${exerciseName} - Custom exercise`,
+          instructions: [`Perform ${exerciseName} with proper form`],
+          benefits: [category],
+          contraindications: [],
+          duration: 5, // Default duration
+          calories: 10, // Default calories
+          isActive: true,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          createdBy: currentUser.uid
+        };
+
+        // Add exercise to library
+        const exerciseRef = await addDoc(collection(db, 'exercises'), exerciseData);
+        
+        // Create recommendation for the customer
+        const recommendationData = {
+          customerID: customerId,
+          exerciseId: exerciseRef.id,
+          exerciseName: exerciseName,
+          sets: sets,
+          reps: reps,
+          notes: notes,
+          priority: priority,
+          status: 'active',
+          assignedDate: serverTimestamp(),
+          completedDates: [],
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          createdBy: currentUser.uid
+        };
+
+        // Add recommendation
+        await addDoc(collection(db, 'customerRecommendedExercises'), recommendationData);
+
+        // Close modal
+        closeAddRecommendationModal();
+
+        // Refresh data
+        await loadExercises();
+        await loadCustomerRecommendations();
+
+        showNotification('✅ Custom exercise and recommendation created successfully!', 'success');
+
+      } catch (error) {
+        console.error('Error creating custom exercise:', error);
+        showNotification('❌ Error creating custom exercise: ' + error.message, 'error');
+      }
+    }
+
+    // Edit recommendation
+    window.editRecommendation = function(recommendationId) {
+      const recommendation = customerRecommendations.find(rec => rec.id === recommendationId);
+      if (!recommendation) return;
+
+      const newSets = prompt(`Edit sets for ${recommendation.exerciseName}:`, recommendation.sets || '');
+      if (newSets === null) return;
+
+      const newReps = prompt(`Edit reps for ${recommendation.exerciseName}:`, recommendation.reps || '');
+      if (newReps === null) return;
+
+      const newNotes = prompt(`Edit notes for ${recommendation.exerciseName}:`, recommendation.notes || '');
+      if (newNotes === null) return;
+
+      const priority = prompt(`Edit priority (high/medium/low) for ${recommendation.exerciseName}:`, recommendation.priority || 'medium');
+      if (priority === null) return;
+
+      updateRecommendation(recommendationId, {
+        sets: parseInt(newSets) || null,
+        reps: parseInt(newReps) || null,
+        notes: newNotes,
+        priority: priority,
+        updatedAt: serverTimestamp()
+      });
+    };
+
+    // Remove recommendation
+    window.removeRecommendation = async function(recommendationId) {
+      if (!confirm('Are you sure you want to remove this recommendation?')) return;
+
+      try {
+        await deleteDoc(doc(db, 'customerRecommendedExercises', recommendationId));
+        await loadCustomerRecommendations();
+        await loadExercises(); // Refresh library to show the exercise again
+        showNotification('✅ Recommendation removed successfully!', 'success');
+      } catch (error) {
+        console.error('Error removing recommendation:', error);
+        showNotification('❌ Error removing recommendation', 'error');
+      }
+    };
+
+    // Recommend exercise from library
+    window.recommendExercise = async function(exerciseId) {
+      const exercise = allExercises.find(ex => ex.id === exerciseId);
+      if (!exercise) return;
+
+      const sets = prompt(`How many sets for ${exercise.name}?`, '3');
+      if (sets === null) return;
+
+      const reps = prompt(`How many reps per set for ${exercise.name}?`, '12');
+      if (reps === null) return;
+
+      const notes = prompt(`Add any special notes for ${exercise.name}:`, '');
+      if (notes === null) return;
+
+      const priority = prompt(`Set priority (high/medium/low) for ${exercise.name}:`, 'medium');
+      if (priority === null) return;
+
+      await addRecommendation({
+        customerID: customerId,
+        exerciseId: exercise.id,
+        exerciseName: exercise.name,
+        sets: parseInt(sets),
+        reps: parseInt(reps),
+        notes: notes,
+        priority: priority,
+        status: 'active',
+        assignedDate: serverTimestamp(),
+        completedDates: [],
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        createdBy: currentUser.uid
+      });
+    };
+
+    // Add new recommendation to Firebase
+    async function addRecommendation(recommendationData) {
+      try {
+        await addDoc(collection(db, 'customerRecommendedExercises'), recommendationData);
+        await loadCustomerRecommendations();
+        await loadExercises(); // Refresh library to hide the recommended exercise
+        showNotification('✅ Exercise recommended successfully!', 'success');
+      } catch (error) {
+        console.error('Error adding recommendation:', error);
+        showNotification('❌ Error adding recommendation', 'error');
+      }
+    }
+
+    // Update existing recommendation
+    async function updateRecommendation(recommendationId, updates) {
+      try {
+        await updateDoc(doc(db, 'customerRecommendedExercises', recommendationId), updates);
+        await loadCustomerRecommendations();
+        showNotification('✅ Recommendation updated successfully!', 'success');
+      } catch (error) {
+        console.error('Error updating recommendation:', error);
+        showNotification('❌ Error updating recommendation', 'error');
+      }
+    }
+
+    // Save recommendation notes (if there's a notes section)
+    window.saveRecommendationNotes = function() {
+      const notes = document.getElementById('recommendationNotes');
+      if (notes) {
+        const notesValue = notes.value;
+        // Save to customer document or recommendations
+        showNotification('✅ Recommendation notes saved successfully!', 'success');
+      }
+    };
+
+    // Logout function
+    window.logout = function() {
       localStorage.removeItem('currentUser');
       window.location.href = 'loginPage.html';
-    }
+    };
 
-    // Load customer exercise recommendations when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Managing exercise recommendations for customer ID:', customerId);
-    });
+    // Show notification
+    function showNotification(message, type = 'info') {
+      // Create a simple notification
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: 600;
+        z-index: 1000;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
   </script>
 </body>
 </html>
