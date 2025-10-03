@@ -169,6 +169,105 @@
             background: #c82333;
         }
 
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        /* Booking Modal Styles */
+        .booking-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .booking-modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .booking-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .booking-modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close-booking-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-booking-modal:hover {
+            color: #333;
+        }
+
+        .booking-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .booking-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .booking-item-info {
+            flex: 1;
+        }
+
+        .booking-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-bookings {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
         .week-navigation {
             display: flex;
             justify-content: space-between;
@@ -420,6 +519,19 @@
         </div>
     </div>
 
+    <!-- Booking Management Modal -->
+    <div id="bookingModal" class="booking-modal">
+        <div class="booking-modal-content">
+            <div class="booking-modal-header">
+                <h2 id="bookingModalTitle">Class Bookings</h2>
+                <button class="close-booking-modal" onclick="closeBookingModal()">&times;</button>
+            </div>
+            <div id="bookingModalBody">
+                <!-- Booking content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase CDN -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -561,6 +673,9 @@
                                     <button class="btn-secondary" onclick="editSchedule('${schedule.id}', ${JSON.stringify(schedule).replace(/"/g, '&quot;')})">
                                         ✏️ Edit
                                     </button>
+                                    <button class="btn-info" onclick="viewBookings('${schedule.id}', '${schedule.activity}', ${JSON.stringify(schedule.bookedUsers || []).replace(/"/g, '&quot;')})">
+                                        👥 Bookings (${bookedCount})
+                                    </button>
                                     <button class="btn-danger" onclick="deleteSchedule('${schedule.id}', '${schedule.activity}')">
                                         🗑️ Delete
                                     </button>
@@ -597,9 +712,59 @@
             }
         }
 
+        // Form validation
+        function validateScheduleForm() {
+            const date = document.getElementById('scheduleDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const activity = document.getElementById('activity').value.trim();
+            const trainer = document.getElementById('trainer').value.trim();
+            const maxCapacity = parseInt(document.getElementById('maxCapacity').value);
+            
+            const errors = [];
+            
+            if (!date) errors.push('Date is required');
+            if (!startTime) errors.push('Start time is required');
+            if (!endTime) errors.push('End time is required');
+            if (!activity) errors.push('Activity name is required');
+            if (!trainer) errors.push('Trainer name is required');
+            if (!maxCapacity || maxCapacity < 1) errors.push('Max capacity must be at least 1');
+            
+            // Validate time logic
+            if (startTime && endTime) {
+                const start = new Date(`2000-01-01T${startTime}`);
+                const end = new Date(`2000-01-01T${endTime}`);
+                if (end <= start) {
+                    errors.push('End time must be after start time');
+                }
+            }
+            
+            // Validate date is not in the past
+            if (date) {
+                const selectedDate = new Date(date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (selectedDate < today) {
+                    errors.push('Cannot schedule classes in the past');
+                }
+            }
+            
+            if (errors.length > 0) {
+                showNotification('❌ Validation errors:\n• ' + errors.join('\n• '), 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
         // Handle form submission
         document.getElementById('scheduleForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Validate form before submission
+            if (!validateScheduleForm()) {
+                return;
+            }
             
             const submitBtn = document.getElementById('submitBtn');
             const scheduleId = document.getElementById('scheduleId').value;
@@ -613,11 +778,11 @@
                     date: document.getElementById('scheduleDate').value,
                     startTime: document.getElementById('startTime').value,
                     endTime: document.getElementById('endTime').value,
-                    activity: document.getElementById('activity').value,
-                    trainer: document.getElementById('trainer').value,
-                    location: document.getElementById('location').value || '',
+                    activity: document.getElementById('activity').value.trim(),
+                    trainer: document.getElementById('trainer').value.trim(),
+                    location: document.getElementById('location').value.trim() || '',
                     maxCapacity: parseInt(document.getElementById('maxCapacity').value),
-                    description: document.getElementById('description').value || '',
+                    description: document.getElementById('description').value.trim() || '',
                     bookedUsers: [],
                     status: 'active',
                     updatedAt: new Date(),
@@ -643,7 +808,18 @@
                 
             } catch (error) {
                 console.error('❌ Error saving schedule:', error);
-                showNotification('❌ Error: ' + error.message, 'error');
+                let errorMessage = 'Error saving schedule';
+                
+                // Handle specific Firebase errors
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'Permission denied. Please check your admin privileges.';
+                } else if (error.code === 'unavailable') {
+                    errorMessage = 'Service temporarily unavailable. Please try again.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                showNotification('❌ ' + errorMessage, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
@@ -720,6 +896,107 @@
                 setTimeout(() => notification.remove(), 300);
             }, 4000);
         }
+
+        // View bookings for a specific class
+        window.viewBookings = function(scheduleId, activityName, bookedUsers) {
+            document.getElementById('bookingModalTitle').textContent = `📅 ${activityName} - Bookings`;
+            
+            let bookingHtml = '';
+            
+            if (!bookedUsers || bookedUsers.length === 0) {
+                bookingHtml = `
+                    <div class="empty-bookings">
+                        <h3>📭 No Bookings Yet</h3>
+                        <p>This class doesn't have any bookings yet.</p>
+                    </div>
+                `;
+            } else {
+                bookingHtml = '<div class="booking-list">';
+                bookedUsers.forEach((user, index) => {
+                    const bookingDate = new Date(user.bookingDate || new Date()).toLocaleDateString();
+                    bookingHtml += `
+                        <div class="booking-item">
+                            <div class="booking-item-info">
+                                <strong>${user.name || user.email || 'Unknown User'}</strong><br>
+                                <small>Email: ${user.email || 'Not provided'}</small><br>
+                                <small>Booked: ${bookingDate}</small>
+                                ${user.phone ? `<br><small>Phone: ${user.phone}</small>` : ''}
+                            </div>
+                            <div class="booking-item-actions">
+                                <button class="btn-secondary" onclick="contactUser('${user.email}', '${activityName}')">
+                                    📧 Contact
+                                </button>
+                                <button class="btn-danger" onclick="removeBooking('${scheduleId}', ${index}, '${user.name || user.email}')">
+                                    ❌ Remove
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                bookingHtml += '</div>';
+            }
+            
+            document.getElementById('bookingModalBody').innerHTML = bookingHtml;
+            document.getElementById('bookingModal').style.display = 'block';
+        };
+
+        // Close booking modal
+        window.closeBookingModal = function() {
+            document.getElementById('bookingModal').style.display = 'none';
+        };
+
+        // Contact user (placeholder function)
+        window.contactUser = function(email, activityName) {
+            const subject = encodeURIComponent(`Regarding your booking for ${activityName}`);
+            const body = encodeURIComponent(`Hi there,\n\nI'm contacting you regarding your booking for ${activityName}.\n\nBest regards,\nLINQXFITNESS Team`);
+            window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+        };
+
+        // Remove booking
+        window.removeBooking = async function(scheduleId, bookingIndex, userName) {
+            if (!confirm(`Are you sure you want to remove ${userName} from this class?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const scheduleRef = doc(db, 'schedules', scheduleId);
+                const scheduleDoc = await getDoc(scheduleRef);
+                
+                if (scheduleDoc.exists()) {
+                    const scheduleData = scheduleDoc.data();
+                    const bookedUsers = scheduleData.bookedUsers || [];
+                    
+                    // Remove the booking at the specified index
+                    bookedUsers.splice(bookingIndex, 1);
+                    
+                    // Update the schedule
+                    await updateDoc(scheduleRef, {
+                        bookedUsers: bookedUsers,
+                        updatedAt: new Date(),
+                        updatedBy: currentUser.uid
+                    });
+                    
+                    showNotification(`✅ ${userName} removed from class successfully!`, 'success');
+                    
+                    // Refresh the booking modal
+                    viewBookings(scheduleId, scheduleData.activity, bookedUsers);
+                    
+                    // Refresh the schedule list
+                    await loadSchedules();
+                }
+            } catch (error) {
+                console.error('❌ Error removing booking:', error);
+                showNotification('❌ Error removing booking: ' + error.message, 'error');
+            }
+        };
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('bookingModal');
+            if (event.target === modal) {
+                closeBookingModal();
+            }
+        };
     </script>
 </body>
 </html>
