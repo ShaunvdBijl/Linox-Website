@@ -87,6 +87,209 @@
     .btn-primary:hover {
       background: #764ba2;
     }
+    /* Modal Styles */
+    .session-modal, .progress-modal, .session-details-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .session-modal-content, .progress-modal-content, .session-details-modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .progress-modal-content {
+      max-width: 800px;
+    }
+
+    .session-modal-header, .progress-modal-header, .session-details-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .session-modal-header h2, .progress-modal-header h2, .session-details-modal-header h2 {
+      margin: 0;
+      color: #333;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .close-modal:hover {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* Progress Modal Styles */
+    .progress-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      border-left: 4px solid #667eea;
+    }
+
+    .stat-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 0.9rem;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .progress-chart {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .chart-placeholder {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      background: white;
+      border-radius: 8px;
+      border: 2px dashed #ddd;
+    }
+
+    .progress-notes {
+      margin-top: 20px;
+    }
+
+    .progress-notes textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    /* Session Details Modal */
+    .session-details-content {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .detail-group {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .detail-group h3 {
+      margin: 0 0 10px 0;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+
+    .detail-group p {
+      margin: 5px 0;
+      color: #555;
+    }
+
+    /* Status badges */
+    .status-scheduled { color: #007bff; font-weight: bold; }
+    .status-completed { color: #28a745; font-weight: bold; }
+    .status-cancelled { color: #dc3545; font-weight: bold; }
+    .status-in-progress { color: #ffc107; font-weight: bold; }
+
+    /* Notification styles */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      z-index: 1001;
+      animation: slideInRight 0.3s ease-out;
+    }
+
+    .notification.success { background: #28a745; }
+    .notification.error { background: #dc3545; }
+    .notification.info { background: #17a2b8; }
+    .notification.warning { background: #ffc107; color: #333; }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -159,11 +362,13 @@
           <div class="schedule-section">
             <h3>Quick Actions</h3>
             <div style="display: flex; flex-direction: column; gap: 1rem;">
-              <button class="btn-primary" onclick="rescheduleSession()">Reschedule Session</button>
-              <button class="btn-primary" onclick="cancelSession()">Cancel Session</button>
-              <button class="btn-primary" onclick="sendReminder()">Send Reminder</button>
+              <button class="btn-primary" onclick="showQuickActionsHelp()">How to use actions</button>
               <button class="btn-primary" onclick="viewProgress()">View Progress</button>
+              <button class="btn-primary" onclick="sendGeneralReminder()">Send General Reminder</button>
             </div>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+              💡 <strong>Tip:</strong> Use the action buttons next to each session for specific operations like reschedule, cancel, or send individual reminders.
+            </p>
           </div>
         </div>
 
@@ -176,36 +381,560 @@
     </div>
   </main>
 
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+      authDomain: "linox-soccer.firebaseapp.com",
+      projectId: "linox-soccer",
+      storageBucket: "linox-soccer.firebasestorage.app",
+      messagingSenderId: "313058607377",
+      appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+      measurementId: "G-QQJD06D5RK"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Make functions globally available
+    window.firebaseDb = db;
+    window.firebaseAuth = auth;
+  </script>
+
   <script>
     // Get customer ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const customerId = urlParams.get('id');
+    
+    let currentUser = null;
+    let customerData = null;
+    let customerSessions = [];
 
-    function addNewSession() {
-      alert('Add New Session functionality would open a scheduling form here.');
-    }
+    // Load customer data
+    async function loadCustomerData() {
+      if (!customerId) {
+        showNotification('No customer ID provided', 'error');
+        return;
+      }
 
-    function rescheduleSession() {
-      alert('Reschedule Session functionality would open a rescheduling form here.');
-    }
+      try {
+        // Wait for Firebase to be initialized
+        let attempts = 0;
+        while (!window.firebaseDb && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
 
-    function cancelSession() {
-      if (confirm('Are you sure you want to cancel the selected session?')) {
-        alert('Session cancelled successfully.');
+        if (!window.firebaseDb) {
+          throw new Error('Firebase initialization timeout');
+        }
+
+        // Load customer data
+        const customerRef = doc(window.firebaseDb, 'customers', customerId);
+        const customerSnap = await getDoc(customerRef);
+        
+        if (customerSnap.exists()) {
+          customerData = { id: customerSnap.id, ...customerSnap.data() };
+          updateCustomerHeader();
+          await loadCustomerSessions();
+        } else {
+          showNotification('Customer not found', 'error');
+        }
+      } catch (error) {
+        console.error('Error loading customer data:', error);
+        showNotification('Error loading customer data: ' + error.message, 'error');
       }
     }
 
-    function sendReminder() {
-      alert('Reminder sent to customer via email and SMS.');
+    // Update customer header
+    function updateCustomerHeader() {
+      if (customerData) {
+        const headerTitle = document.querySelector('.admin-header h1');
+        const headerSubtitle = document.querySelector('.admin-header p');
+        
+        headerTitle.textContent = `Manage Schedule - ${customerData.firstName || customerData.name || 'Customer'} ${customerData.lastName || ''}`;
+        headerSubtitle.textContent = `Email: ${customerData.email || 'Not provided'} | Phone: ${customerData.phone || 'Not provided'}`;
+      }
     }
 
+    // Load customer sessions
+    async function loadCustomerSessions() {
+      try {
+        const sessionsRef = collection(window.firebaseDb, 'customerSessions');
+        const q = query(
+          sessionsRef,
+          where('customerId', '==', customerId),
+          orderBy('sessionDate', 'desc')
+        );
+        
+        const snapshot = await getDocs(q);
+        customerSessions = [];
+        snapshot.forEach(doc => {
+          customerSessions.push({ id: doc.id, ...doc.data() });
+        });
+        
+        updateSessionsDisplay();
+      } catch (error) {
+        console.error('Error loading customer sessions:', error);
+        showNotification('Error loading sessions: ' + error.message, 'error');
+      }
+    }
+
+    // Update sessions display
+    function updateSessionsDisplay() {
+      const upcomingSessions = document.getElementById('upcomingSessions');
+      const pastSessions = document.getElementById('pastSessions');
+      
+      const now = new Date();
+      const upcoming = customerSessions.filter(session => new Date(session.sessionDate) >= now);
+      const past = customerSessions.filter(session => new Date(session.sessionDate) < now);
+      
+      upcomingSessions.innerHTML = renderSessionsList(upcoming, true);
+      pastSessions.innerHTML = renderSessionsList(past, false);
+    }
+
+    // Render sessions list
+    function renderSessionsList(sessions, isUpcoming) {
+      if (sessions.length === 0) {
+        return `<div class="empty-state">No ${isUpcoming ? 'upcoming' : 'past'} sessions found.</div>`;
+      }
+      
+      return sessions.map(session => `
+        <div class="session-item">
+          <div class="session-info">
+            <h4>${session.sessionType || 'Training Session'}</h4>
+            <p><strong>Date:</strong> ${formatDate(session.sessionDate)}</p>
+            <p><strong>Time:</strong> ${session.startTime} - ${session.endTime}</p>
+            <p><strong>Trainer:</strong> ${session.trainer || 'Not assigned'}</p>
+            <p><strong>Status:</strong> <span class="status-${session.status || 'scheduled'}">${session.status || 'Scheduled'}</span></p>
+            ${session.notes ? `<p><strong>Notes:</strong> ${session.notes}</p>` : ''}
+          </div>
+          <div class="session-actions">
+            ${isUpcoming ? `
+              <button class="btn-secondary" onclick="editSession('${session.id}')">✏️ Edit</button>
+              <button class="btn-warning" onclick="rescheduleSession('${session.id}')">📅 Reschedule</button>
+              <button class="btn-danger" onclick="cancelSession('${session.id}')">❌ Cancel</button>
+            ` : `
+              <button class="btn-info" onclick="viewSessionDetails('${session.id}')">👁️ View</button>
+            `}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Format date
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
+
+    // Add New Session
+    function addNewSession() {
+      showSessionModal();
+    }
+
+    // Show session modal
+    function showSessionModal(sessionId = null) {
+      const modal = document.createElement('div');
+      modal.className = 'session-modal';
+      modal.innerHTML = `
+        <div class="session-modal-content">
+          <div class="session-modal-header">
+            <h2>${sessionId ? 'Edit Session' : 'Add New Session'}</h2>
+            <button class="close-modal" onclick="closeSessionModal()">&times;</button>
+          </div>
+          <form id="sessionForm">
+            <input type="hidden" id="sessionId" value="${sessionId || ''}">
+            <div class="form-group">
+              <label for="sessionDate">Session Date:</label>
+              <input type="date" id="sessionDate" required>
+            </div>
+            <div class="form-group">
+              <label for="startTime">Start Time:</label>
+              <input type="time" id="startTime" required>
+            </div>
+            <div class="form-group">
+              <label for="endTime">End Time:</label>
+              <input type="time" id="endTime" required>
+            </div>
+            <div class="form-group">
+              <label for="sessionType">Session Type:</label>
+              <select id="sessionType" required>
+                <option value="Personal Training">Personal Training</option>
+                <option value="Group Class">Group Class</option>
+                <option value="Consultation">Consultation</option>
+                <option value="Assessment">Assessment</option>
+                <option value="Follow-up">Follow-up</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="trainer">Trainer:</label>
+              <input type="text" id="trainer" placeholder="Trainer name" required>
+            </div>
+            <div class="form-group">
+              <label for="location">Location:</label>
+              <input type="text" id="location" placeholder="Gym, Studio, etc.">
+            </div>
+            <div class="form-group">
+              <label for="sessionNotes">Session Notes:</label>
+              <textarea id="sessionNotes" rows="3" placeholder="Any specific notes for this session..."></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" onclick="closeSessionModal()">Cancel</button>
+              <button type="submit" class="btn-primary">${sessionId ? 'Update Session' : 'Add Session'}</button>
+            </div>
+          </form>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Handle form submission
+      document.getElementById('sessionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await saveSession();
+      });
+      
+      // Load existing session data if editing
+      if (sessionId) {
+        const session = customerSessions.find(s => s.id === sessionId);
+        if (session) {
+          document.getElementById('sessionDate').value = session.sessionDate;
+          document.getElementById('startTime').value = session.startTime;
+          document.getElementById('endTime').value = session.endTime;
+          document.getElementById('sessionType').value = session.sessionType;
+          document.getElementById('trainer').value = session.trainer;
+          document.getElementById('location').value = session.location || '';
+          document.getElementById('sessionNotes').value = session.notes || '';
+        }
+      } else {
+        // Set default date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('sessionDate').value = tomorrow.toISOString().split('T')[0];
+      }
+    }
+
+    // Close session modal
+    function closeSessionModal() {
+      const modal = document.querySelector('.session-modal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    // Save session
+    async function saveSession() {
+      try {
+        const sessionData = {
+          customerId: customerId,
+          sessionDate: document.getElementById('sessionDate').value,
+          startTime: document.getElementById('startTime').value,
+          endTime: document.getElementById('endTime').value,
+          sessionType: document.getElementById('sessionType').value,
+          trainer: document.getElementById('trainer').value.trim(),
+          location: document.getElementById('location').value.trim() || '',
+          notes: document.getElementById('sessionNotes').value.trim() || '',
+          status: 'scheduled',
+          createdAt: new Date(),
+          createdBy: currentUser.uid
+        };
+
+        const sessionId = document.getElementById('sessionId').value;
+        
+        if (sessionId) {
+          // Update existing session
+          await updateDoc(doc(window.firebaseDb, 'customerSessions', sessionId), {
+            ...sessionData,
+            updatedAt: new Date(),
+            updatedBy: currentUser.uid
+          });
+          showNotification('✅ Session updated successfully!', 'success');
+        } else {
+          // Add new session
+          await addDoc(collection(window.firebaseDb, 'customerSessions'), sessionData);
+          showNotification('✅ New session added successfully!', 'success');
+        }
+        
+        closeSessionModal();
+        await loadCustomerSessions();
+        
+      } catch (error) {
+        console.error('Error saving session:', error);
+        showNotification('❌ Error saving session: ' + error.message, 'error');
+      }
+    }
+
+    // Reschedule Session
+    function rescheduleSession(sessionId) {
+      if (sessionId) {
+        showSessionModal(sessionId);
+      } else {
+        showNotification('Please select a session to reschedule', 'error');
+      }
+    }
+
+    // Cancel Session
+    async function cancelSession(sessionId) {
+      if (!sessionId) {
+        showNotification('Please select a session to cancel', 'error');
+        return;
+      }
+
+      if (confirm('Are you sure you want to cancel this session?\n\nThis action cannot be undone.')) {
+        try {
+          await updateDoc(doc(window.firebaseDb, 'customerSessions', sessionId), {
+            status: 'cancelled',
+            cancelledAt: new Date(),
+            cancelledBy: currentUser.uid
+          });
+          
+          showNotification('✅ Session cancelled successfully!', 'success');
+          await loadCustomerSessions();
+        } catch (error) {
+          console.error('Error cancelling session:', error);
+          showNotification('❌ Error cancelling session: ' + error.message, 'error');
+        }
+      }
+    }
+
+    // Send Reminder
+    async function sendReminder(sessionId) {
+      if (!sessionId) {
+        showNotification('Please select a session to send reminder for', 'error');
+        return;
+      }
+
+      const session = customerSessions.find(s => s.id === sessionId);
+      if (!session) {
+        showNotification('Session not found', 'error');
+        return;
+      }
+
+      try {
+        // Send email reminder
+        const emailSubject = `Reminder: ${session.sessionType} Session - ${formatDate(session.sessionDate)}`;
+        const emailBody = `Hi ${customerData.firstName || 'there'},\n\nThis is a reminder about your upcoming session:\n\n` +
+          `📅 Date: ${formatDate(session.sessionDate)}\n` +
+          `🕐 Time: ${session.startTime} - ${session.endTime}\n` +
+          `👨‍💼 Trainer: ${session.trainer}\n` +
+          `📍 Location: ${session.location || 'Main Gym'}\n\n` +
+          `Please arrive 10 minutes early. If you need to reschedule or cancel, please contact us as soon as possible.\n\n` +
+          `Best regards,\nLINQXFITNESS Team`;
+
+        // Open email client
+        window.open(`mailto:${customerData.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`);
+        
+        // Log reminder sent
+        await addDoc(collection(window.firebaseDb, 'customerReminders'), {
+          customerId: customerId,
+          sessionId: sessionId,
+          reminderType: 'email',
+          sentAt: new Date(),
+          sentBy: currentUser.uid
+        });
+
+        showNotification('✅ Reminder email opened in your email client!', 'success');
+      } catch (error) {
+        console.error('Error sending reminder:', error);
+        showNotification('❌ Error sending reminder: ' + error.message, 'error');
+      }
+    }
+
+    // View Progress
     function viewProgress() {
-      alert('View Progress would show detailed progress charts and metrics.');
+      showProgressModal();
     }
 
-    function saveNotes() {
-      const notes = document.getElementById('trainingNotes').value;
-      alert('Training notes saved successfully!');
+    // Show progress modal
+    function showProgressModal() {
+      const modal = document.createElement('div');
+      modal.className = 'progress-modal';
+      modal.innerHTML = `
+        <div class="progress-modal-content">
+          <div class="progress-modal-header">
+            <h2>📊 Progress Overview - ${customerData.firstName || 'Customer'}</h2>
+            <button class="close-modal" onclick="closeProgressModal()">&times;</button>
+          </div>
+          <div class="progress-content">
+            <div class="progress-stats">
+              <div class="stat-card">
+                <h3>Total Sessions</h3>
+                <div class="stat-number">${customerSessions.length}</div>
+              </div>
+              <div class="stat-card">
+                <h3>Completed Sessions</h3>
+                <div class="stat-number">${customerSessions.filter(s => s.status === 'completed').length}</div>
+              </div>
+              <div class="stat-card">
+                <h3>Upcoming Sessions</h3>
+                <div class="stat-number">${customerSessions.filter(s => new Date(s.sessionDate) >= new Date() && s.status === 'scheduled').length}</div>
+              </div>
+              <div class="stat-card">
+                <h3>Cancelled Sessions</h3>
+                <div class="stat-number">${customerSessions.filter(s => s.status === 'cancelled').length}</div>
+              </div>
+            </div>
+            <div class="progress-chart">
+              <h3>Session History (Last 30 Days)</h3>
+              <div class="chart-placeholder">
+                <p>📈 Chart visualization would be implemented here</p>
+                <p>This could show session frequency, completion rates, and progress trends.</p>
+              </div>
+            </div>
+            <div class="progress-notes">
+              <h3>Progress Notes</h3>
+              <textarea id="progressNotes" rows="4" placeholder="Add progress notes for this customer...">${customerData.progressNotes || ''}</textarea>
+              <button class="btn-primary" onclick="saveProgressNotes()">Save Progress Notes</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    // Close progress modal
+    function closeProgressModal() {
+      const modal = document.querySelector('.progress-modal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    // Save progress notes
+    async function saveProgressNotes() {
+      try {
+        const progressNotes = document.getElementById('progressNotes').value;
+        await updateDoc(doc(window.firebaseDb, 'customers', customerId), {
+          progressNotes: progressNotes,
+          progressNotesUpdatedAt: new Date(),
+          progressNotesUpdatedBy: currentUser.uid
+        });
+        
+        showNotification('✅ Progress notes saved successfully!', 'success');
+        customerData.progressNotes = progressNotes;
+      } catch (error) {
+        console.error('Error saving progress notes:', error);
+        showNotification('❌ Error saving progress notes: ' + error.message, 'error');
+      }
+    }
+
+    // Save Notes (Training Notes)
+    async function saveNotes() {
+      try {
+        const notes = document.getElementById('trainingNotes').value;
+        await updateDoc(doc(window.firebaseDb, 'customers', customerId), {
+          trainingNotes: notes,
+          trainingNotesUpdatedAt: new Date(),
+          trainingNotesUpdatedBy: currentUser.uid
+        });
+        
+        showNotification('✅ Training notes saved successfully!', 'success');
+        customerData.trainingNotes = notes;
+      } catch (error) {
+        console.error('Error saving training notes:', error);
+        showNotification('❌ Error saving training notes: ' + error.message, 'error');
+      }
+    }
+
+    // Edit Session
+    function editSession(sessionId) {
+      showSessionModal(sessionId);
+    }
+
+    // View Session Details
+    function viewSessionDetails(sessionId) {
+      const session = customerSessions.find(s => s.id === sessionId);
+      if (session) {
+        const modal = document.createElement('div');
+        modal.className = 'session-details-modal';
+        modal.innerHTML = `
+          <div class="session-details-modal-content">
+            <div class="session-details-modal-header">
+              <h2>📋 Session Details</h2>
+              <button class="close-modal" onclick="closeSessionDetailsModal()">&times;</button>
+            </div>
+            <div class="session-details-content">
+              <div class="detail-group">
+                <h3>Session Information</h3>
+                <p><strong>Type:</strong> ${session.sessionType}</p>
+                <p><strong>Date:</strong> ${formatDate(session.sessionDate)}</p>
+                <p><strong>Time:</strong> ${session.startTime} - ${session.endTime}</p>
+                <p><strong>Trainer:</strong> ${session.trainer}</p>
+                <p><strong>Location:</strong> ${session.location || 'Not specified'}</p>
+                <p><strong>Status:</strong> <span class="status-${session.status}">${session.status}</span></p>
+              </div>
+              ${session.notes ? `
+                <div class="detail-group">
+                  <h3>Session Notes</h3>
+                  <p>${session.notes}</p>
+                </div>
+              ` : ''}
+              <div class="detail-group">
+                <h3>Session History</h3>
+                <p><strong>Created:</strong> ${new Date(session.createdAt).toLocaleString()}</p>
+                ${session.updatedAt ? `<p><strong>Last Updated:</strong> ${new Date(session.updatedAt).toLocaleString()}</p>` : ''}
+                ${session.cancelledAt ? `<p><strong>Cancelled:</strong> ${new Date(session.cancelledAt).toLocaleString()}</p>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+      }
+    }
+
+    // Close session details modal
+    function closeSessionDetailsModal() {
+      const modal = document.querySelector('.session-details-modal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+      }, 4000);
+    }
+
+    // Show quick actions help
+    function showQuickActionsHelp() {
+      showNotification('💡 Quick Actions Guide:\n\n• Use "Edit" button next to each session to modify details\n• Use "Reschedule" to change session time/date\n• Use "Cancel" to cancel a specific session\n• Use "View" to see detailed session information\n• Use "Send Reminder" for individual session reminders\n• Use "View Progress" to see overall customer progress\n• Use "Send General Reminder" to send a general message', 'info');
+    }
+
+    // Send general reminder
+    async function sendGeneralReminder() {
+      if (!customerData) {
+        showNotification('Customer data not loaded', 'error');
+        return;
+      }
+
+      const subject = encodeURIComponent(`Message from LINQXFITNESS - ${customerData.firstName || 'Customer'}`);
+      const body = encodeURIComponent(`Hi ${customerData.firstName || 'there'},\n\nThis is a general message from your LINQXFITNESS team.\n\nIf you have any questions or need to schedule/reschedule sessions, please don't hesitate to contact us.\n\nBest regards,\nLINQXFITNESS Team`);
+      
+      window.open(`mailto:${customerData.email}?subject=${subject}&body=${body}`);
+      showNotification('✅ General reminder email opened in your email client!', 'success');
     }
 
     function logout() {
@@ -214,8 +943,37 @@
     }
 
     // Load customer schedule when page loads
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
       console.log('Managing schedule for customer ID:', customerId);
+      
+      // Wait for Firebase to be initialized
+      let attempts = 0;
+      while (!window.firebaseAuth && attempts < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+
+      if (!window.firebaseAuth) {
+        showNotification('Firebase initialization timeout', 'error');
+        return;
+      }
+
+      // Check authentication
+      onAuthStateChanged(window.firebaseAuth, async (user) => {
+        if (!user) {
+          showNotification('Please log in to access this page', 'error');
+          setTimeout(() => {
+            window.location.href = 'loginPage.html';
+          }, 2000);
+          return;
+        }
+
+        currentUser = user;
+        console.log('✅ Admin authenticated:', user.email);
+        
+        // Load customer data and sessions
+        await loadCustomerData();
+      });
     });
   </script>
 </body>
