@@ -195,7 +195,7 @@
                   const userData = userDoc.data();
                   
                   if (userData.isAdmin) {
-                    window.location.href = 'admin-portal-firebase.html';
+                    window.location.href = 'admin-portal.html';
                   } else {
                     window.location.href = 'dashboard.html';
                   }
@@ -269,7 +269,7 @@
             if (userData.isAdmin) {
               this.showNotification('Welcome back, Admin! Redirecting to admin portal...', 'success');
               setTimeout(() => {
-                window.location.href = 'admin-portal-firebase.html';
+                window.location.href = 'admin-portal.html';
               }, 1500);
             } else {
               this.showNotification(`Welcome back, ${userData.firstName || 'User'}! Redirecting to dashboard...`, 'success');
