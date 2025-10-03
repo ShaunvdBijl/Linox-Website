@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Notes Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Notes Firebase Database</h1>
+    
+    <div class="test-section">
+        <h2>📋 Current Customer Data</h2>
+        <button class="btn" onclick="loadCustomerData()">Load Customer Data</button>
+        <div id="customerDataResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Test Simple Notes (Single Field)</h2>
+        <textarea id="simpleNotes" placeholder="Enter simple training notes...">Customer shows great progress in strength training. Focus on improving cardio endurance.</textarea>
+        <br><br>
+        <button class="btn" onclick="saveSimpleNotes()">Save Simple Notes</button>
+        <button class="btn" onclick="loadSimpleNotes()">Load Simple Notes</button>
+        <div id="simpleNotesResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📚 Test Array Notes (Multiple Notes)</h2>
+        <textarea id="arrayNote" placeholder="Enter a new note...">New training observation: Customer improved form on squats.</textarea>
+        <br><br>
+        <button class="btn" onclick="addArrayNote()">Add Array Note</button>
+        <button class="btn" onclick="loadArrayNotes()">Load Array Notes</button>
+        <button class="btn" onclick="clearArrayNotes()">Clear All Notes</button>
+        <div id="arrayNotesResult"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-XXXXXXXXXX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Test customer ID (use Piet Pompies)
+        const customerId = 'op0oejT2GFciFuXcPqptdU3MHHv1';
+
+        // Load customer data
+        window.loadCustomerData = async function loadCustomerData() {
+            try {
+                const resultDiv = document.getElementById('customerDataResult');
+                resultDiv.innerHTML = '<div class="result">Loading customer data...</div>';
+                
+                const customerDoc = await getDoc(doc(db, 'customers', customerId));
+                
+                if (customerDoc.exists) {
+                    const data = customerDoc.data();
+                    resultDiv.innerHTML = `
+                        <div class="result">
+                            <h3>✅ Customer Found</h3>
+                            <p><strong>Name:</strong> ${data.firstName} ${data.lastName}</p>
+                            <p><strong>Email:</strong> ${data.email}</p>
+                            <p><strong>Has trainingNotes field:</strong> ${data.trainingNotes !== undefined ? '✅ Yes' : '❌ No'}</p>
+                            <p><strong>Has trainingNotesUpdatedAt:</strong> ${data.trainingNotesUpdatedAt !== undefined ? '✅ Yes' : '❌ No'}</p>
+                            <p><strong>Simple Notes:</strong> ${data.trainingNotes || 'None'}</p>
+                            <p><strong>Notes Type:</strong> ${Array.isArray(data.trainingNotes) ? 'Array' : typeof data.trainingNotes}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ Customer not found</div>';
+                }
+            } catch (error) {
+                document.getElementById('customerDataResult').innerHTML = 
+                    `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Save simple notes (single field)
+        window.saveSimpleNotes = async function saveSimpleNotes() {
+            try {
+                const resultDiv = document.getElementById('simpleNotesResult');
+                const notes = document.getElementById('simpleNotes').value;
+                
+                resultDiv.innerHTML = '<div class="result">Saving simple notes...</div>';
+                
+                await updateDoc(doc(db, 'customers', customerId), {
+                    trainingNotes: notes,
+                    trainingNotesUpdatedAt: new Date(),
+                    trainingNotesUpdatedBy: 'test-user'
+                });
+                
+                resultDiv.innerHTML = '<div class="result">✅ Simple notes saved successfully!</div>';
+            } catch (error) {
+                document.getElementById('simpleNotesResult').innerHTML = 
+                    `<div class="result error">❌ Error saving simple notes: ${error.message}</div>`;
+            }
+        }
+
+        // Load simple notes
+        window.loadSimpleNotes = async function loadSimpleNotes() {
+            try {
+                const resultDiv = document.getElementById('simpleNotesResult');
+                resultDiv.innerHTML = '<div class="result">Loading simple notes...</div>';
+                
+                const customerDoc = await getDoc(doc(db, 'customers', customerId));
+                
+                if (customerDoc.exists) {
+                    const data = customerDoc.data();
+                    const notes = data.trainingNotes || 'No notes found';
+                    
+                    document.getElementById('simpleNotes').value = notes;
+                    resultDiv.innerHTML = `
+                        <div class="result">
+                            <h3>✅ Simple Notes Loaded</h3>
+                            <p><strong>Notes:</strong> ${notes}</p>
+                            <p><strong>Last Updated:</strong> ${data.trainingNotesUpdatedAt ? new Date(data.trainingNotesUpdatedAt.toDate()).toLocaleString() : 'Never'}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ Customer not found</div>';
+                }
+            } catch (error) {
+                document.getElementById('simpleNotesResult').innerHTML = 
+                    `<div class="result error">❌ Error loading simple notes: ${error.message}</div>`;
+            }
+        }
+
+        // Add array note
+        window.addArrayNote = async function addArrayNote() {
+            try {
+                const resultDiv = document.getElementById('arrayNotesResult');
+                const noteContent = document.getElementById('arrayNote').value;
+                
+                if (!noteContent.trim()) {
+                    resultDiv.innerHTML = '<div class="result error">❌ Please enter a note</div>';
+                    return;
+                }
+                
+                resultDiv.innerHTML = '<div class="result">Adding array note...</div>';
+                
+                // Get current notes array
+                const customerDoc = await getDoc(doc(db, 'customers', customerId));
+                const currentData = customerDoc.exists ? customerDoc.data() : {};
+                const currentNotes = currentData.trainingNotesArray || [];
+                
+                // Add new note
+                const newNote = {
+                    id: Date.now().toString(),
+                    content: noteContent,
+                    date: new Date(),
+                    createdBy: 'test-user'
+                };
+                
+                currentNotes.push(newNote);
+                
+                // Save back to database
+                await updateDoc(doc(db, 'customers', customerId), {
+                    trainingNotesArray: currentNotes,
+                    trainingNotesArrayUpdatedAt: new Date()
+                });
+                
+                document.getElementById('arrayNote').value = '';
+                resultDiv.innerHTML = '<div class="result">✅ Array note added successfully!</div>';
+            } catch (error) {
+                document.getElementById('arrayNotesResult').innerHTML = 
+                    `<div class="result error">❌ Error adding array note: ${error.message}</div>`;
+            }
+        }
+
+        // Load array notes
+        window.loadArrayNotes = async function loadArrayNotes() {
+            try {
+                const resultDiv = document.getElementById('arrayNotesResult');
+                resultDiv.innerHTML = '<div class="result">Loading array notes...</div>';
+                
+                const customerDoc = await getDoc(doc(db, 'customers', customerId));
+                
+                if (customerDoc.exists) {
+                    const data = customerDoc.data();
+                    const notes = data.trainingNotesArray || [];
+                    
+                    if (notes.length === 0) {
+                        resultDiv.innerHTML = '<div class="result">No array notes found</div>';
+                        return;
+                    }
+                    
+                    // Sort by date (newest first)
+                    notes.sort((a, b) => new Date(b.date.toDate()) - new Date(a.date.toDate()));
+                    
+                    const notesHtml = notes.map(note => `
+                        <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px;">
+                            <strong>📅 ${new Date(note.date.toDate()).toLocaleString()}</strong><br>
+                            ${note.content}
+                        </div>
+                    `).join('');
+                    
+                    resultDiv.innerHTML = `
+                        <div class="result">
+                            <h3>✅ Array Notes Loaded (${notes.length} notes)</h3>
+                            ${notesHtml}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ Customer not found</div>';
+                }
+            } catch (error) {
+                document.getElementById('arrayNotesResult').innerHTML = 
+                    `<div class="result error">❌ Error loading array notes: ${error.message}</div>`;
+            }
+        }
+
+        // Clear array notes
+        window.clearArrayNotes = async function clearArrayNotes() {
+            try {
+                const resultDiv = document.getElementById('arrayNotesResult');
+                
+                if (!confirm('Are you sure you want to clear all array notes?')) {
+                    return;
+                }
+                
+                resultDiv.innerHTML = '<div class="result">Clearing array notes...</div>';
+                
+                await updateDoc(doc(db, 'customers', customerId), {
+                    trainingNotesArray: [],
+                    trainingNotesArrayUpdatedAt: new Date()
+                });
+                
+                resultDiv.innerHTML = '<div class="result">✅ Array notes cleared successfully!</div>';
+            } catch (error) {
+                document.getElementById('arrayNotesResult').innerHTML = 
+                    `<div class="result error">❌ Error clearing array notes: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-load customer data on page load
+        window.addEventListener('load', () => {
+            loadCustomerData();
+        });
+    </script>
+</body>
+</html>

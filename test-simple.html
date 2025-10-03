@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Firebase Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Simple Firebase Test</h1>
+    
+    <button onclick="testConnection()">Test Firebase Connection</button>
+    <button onclick="createTestSession()">Create Test Session</button>
+    <button onclick="listSessions()">List All Sessions</button>
+    <button onclick="testCustomerAssignment()">Test Customer Assignment</button>
+    
+    <div id="results"></div>
+    
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong> - ${message}`;
+            results.appendChild(div);
+        }
+
+        window.testConnection = function() {
+            addResult('🧪 Testing Firebase connection...', 'info');
+            addResult(`✅ Firebase initialized successfully`, 'success');
+            addResult(`✅ Database connected: ${db.app.name}`, 'success');
+        };
+
+        window.createTestSession = async function() {
+            addResult('📝 Creating test session...', 'info');
+            
+            try {
+                const testSession = {
+                    date: new Date().toISOString().split('T')[0],
+                    startTime: '10:00',
+                    endTime: '11:00',
+                    activity: 'Test Personal Training',
+                    trainer: 'Test Trainer',
+                    location: 'Main Gym',
+                    maxCapacity: 5,
+                    description: 'Test session created by diagnostic tool',
+                    bookedUsers: [],
+                    status: 'active',
+                    createdAt: new Date(),
+                    createdBy: 'test-admin'
+                };
+                
+                const docRef = await addDoc(collection(db, 'schedules'), testSession);
+                addResult(`✅ Test session created successfully! ID: ${docRef.id}`, 'success');
+                addResult(`📋 Session: ${testSession.activity} on ${testSession.date}`, 'info');
+                
+            } catch (error) {
+                addResult(`❌ Error creating session: ${error.message}`, 'error');
+            }
+        };
+
+        window.listSessions = async function() {
+            addResult('📋 Listing all sessions...', 'info');
+            
+            try {
+                const snapshot = await getDocs(collection(db, 'schedules'));
+                addResult(`✅ Found ${snapshot.size} sessions`, 'success');
+                
+                snapshot.forEach(doc => {
+                    const session = doc.data();
+                    addResult(`• ${session.activity} on ${session.date} (${session.bookedUsers?.length || 0} booked)`, 'info');
+                });
+                
+            } catch (error) {
+                addResult(`❌ Error listing sessions: ${error.message}`, 'error');
+            }
+        };
+
+        window.testCustomerAssignment = async function() {
+            addResult('👥 Testing customer assignment...', 'info');
+            
+            try {
+                // Get first session
+                const snapshot = await getDocs(collection(db, 'schedules'));
+                if (snapshot.empty) {
+                    addResult('❌ No sessions found. Create a session first.', 'error');
+                    return;
+                }
+                
+                const firstSession = snapshot.docs[0];
+                const sessionData = firstSession.data();
+                
+                // Add test customer
+                const bookedUsers = sessionData.bookedUsers || [];
+                bookedUsers.push({
+                    customerID: 'test-customer-123',
+                    email: 'piet@student.com',
+                    name: 'Piet Pompies',
+                    phone: '123-456-7890',
+                    bookedAt: new Date()
+                });
+                
+                await updateDoc(doc(db, 'schedules', firstSession.id), {
+                    bookedUsers: bookedUsers
+                });
+                
+                addResult(`✅ Customer Piet Pompies assigned to ${sessionData.activity}`, 'success');
+                
+            } catch (error) {
+                addResult(`❌ Error assigning customer: ${error.message}`, 'error');
+            }
+        };
+
+        // Check authentication
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                addResult(`👤 Logged in as: ${user.email}`, 'success');
+            } else {
+                addResult('⚠️ Not logged in. Please log in first.', 'error');
+            }
+        });
+
+        addResult('🚀 Simple Firebase test loaded. Click buttons to test functionality.', 'info');
+    </script>
+</body>
+</html>

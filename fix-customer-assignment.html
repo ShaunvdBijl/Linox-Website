@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Customer Assignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #5a6fd8; }
+        .log { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin: 10px 0; 
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Customer Assignment</h1>
+        <p>This tool will fix the customer assignment in the "Dribble" session to use the correct customer ID.</p>
+        
+        <button onclick="fixCustomerAssignment()">Fix Customer Assignment</button>
+        <button onclick="checkCurrentAssignment()">Check Current Assignment</button>
+        
+        <div id="log" class="log">Ready to fix customer assignment...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, getDoc, updateDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let logElement = document.getElementById('log');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logElement.innerHTML += `<span class="${className}">${timestamp} - ${message}</span>\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        // Check current assignment
+        window.checkCurrentAssignment = async function() {
+            try {
+                log('🔍 Checking current assignment in Dribble session...');
+                
+                // Get all sessions
+                const schedulesRef = collection(db, 'schedules');
+                const schedulesSnapshot = await getDocs(schedulesRef);
+                
+                schedulesSnapshot.forEach(doc => {
+                    const session = doc.data();
+                    if (session.activity === 'Dribble') {
+                        log(`📋 Found Dribble session: ${doc.id}`);
+                        log(`👥 Current booked users: ${JSON.stringify(session.bookedUsers, null, 2)}`);
+                    }
+                });
+                
+            } catch (error) {
+                log(`❌ Error checking assignment: ${error.message}`, 'error');
+            }
+        };
+
+        // Fix customer assignment
+        window.fixCustomerAssignment = async function() {
+            try {
+                log('🔧 Starting customer assignment fix...');
+                
+                // Get all sessions
+                const schedulesRef = collection(db, 'schedules');
+                const schedulesSnapshot = await getDocs(schedulesRef);
+                
+                let dribbleSessionId = null;
+                let dribbleSessionData = null;
+                
+                // Find the Dribble session
+                schedulesSnapshot.forEach(doc => {
+                    const session = doc.data();
+                    if (session.activity === 'Dribble') {
+                        dribbleSessionId = doc.id;
+                        dribbleSessionData = session;
+                        log(`✅ Found Dribble session: ${doc.id}`);
+                    }
+                });
+                
+                if (!dribbleSessionId) {
+                    log('❌ Dribble session not found!', 'error');
+                    return;
+                }
+                
+                // Update the booked users with correct customer ID
+                const updatedBookedUsers = [
+                    {
+                        customerID: 'op0oejT2GFciFuXcPqptdU3MHHv1', // Piet Pompies' real Firebase UID
+                        email: 'piet@student.com',
+                        name: 'Piet Pompies',
+                        phone: '+27123456789',
+                        bookedAt: new Date()
+                    }
+                ];
+                
+                log(`🔄 Updating Dribble session with correct customer ID...`);
+                log(`📝 New booked users: ${JSON.stringify(updatedBookedUsers, null, 2)}`);
+                
+                // Update the session
+                const sessionRef = doc(db, 'schedules', dribbleSessionId);
+                await updateDoc(sessionRef, {
+                    bookedUsers: updatedBookedUsers
+                });
+                
+                log('✅ Customer assignment fixed successfully!', 'success');
+                log('🎯 Piet Pompies should now appear in his customer schedule page');
+                
+            } catch (error) {
+                log(`❌ Error fixing assignment: ${error.message}`, 'error');
+            }
+        };
+
+        // Check auth status
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                log(`👤 Logged in as: ${user.email}`, 'success');
+            } else {
+                log('❌ Not logged in. Please log in first.', 'error');
+            }
+        });
+
+        log('🚀 Fix Customer Assignment tool loaded. Ready to fix the assignment issue.');
+    </script>
+</body>
+</html>

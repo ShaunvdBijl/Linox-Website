@@ -281,6 +281,16 @@
     .notification.info { background: #17a2b8; }
     .notification.warning { background: #ffc107; color: #333; }
 
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+      font-style: italic;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 2px dashed #dee2e6;
+    }
+
     @keyframes slideInRight {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
@@ -310,8 +320,15 @@
       <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
       
       <div class="admin-header">
-        <h1>Manage Customer Schedule</h1>
-        <p>View and manage training sessions for the selected customer</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1>Manage Customer Schedule</h1>
+            <p>View and manage training sessions for the selected customer</p>
+          </div>
+          <button class="btn btn-secondary" onclick="goBackToCustomerManagement()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            ← Back to Customer Management
+          </button>
+        </div>
       </div>
 
       <div class="schedule-management">
@@ -319,43 +336,15 @@
           <div class="schedule-section">
             <h3>Upcoming Sessions</h3>
             <div id="upcomingSessions">
-              <div class="session-item">
-                <strong>Personal Training</strong><br>
-                Tomorrow, 9:00 AM<br>
-                <span style="color: #28a745;">Confirmed</span>
-              </div>
-              <div class="session-item">
-                <strong>HIIT Cardio Class</strong><br>
-                Friday, 6:00 PM<br>
-                <span style="color: #28a745;">Confirmed</span>
-              </div>
-              <div class="session-item">
-                <strong>Yoga & Flexibility</strong><br>
-                Sunday, 10:00 AM<br>
-                <span style="color: #ffc107;">Pending</span>
-              </div>
+              <div class="empty-state">Loading sessions...</div>
             </div>
-            <button class="btn-primary" onclick="addNewSession()">Add New Session</button>
+            <button class="btn-primary" onclick="addNewSession()">Create New Sessions</button>
           </div>
 
           <div class="schedule-section">
-            <h3>Session History</h3>
-            <div id="sessionHistory">
-              <div class="session-item">
-                <strong>Strength Training</strong><br>
-                Last Monday, 10:00 AM<br>
-                <span style="color: #28a745;">Completed</span>
-              </div>
-              <div class="session-item">
-                <strong>Cardio Workout</strong><br>
-                Last Wednesday, 7:00 PM<br>
-                <span style="color: #28a745;">Completed</span>
-              </div>
-              <div class="session-item">
-                <strong>Personal Training</strong><br>
-                Last Friday, 2:00 PM<br>
-                <span style="color: #dc3545;">Cancelled</span>
-              </div>
+            <h3>Past Sessions</h3>
+            <div id="pastSessions">
+              <div class="empty-state">Loading sessions...</div>
             </div>
           </div>
 
@@ -365,6 +354,7 @@
               <button class="btn-primary" onclick="showQuickActionsHelp()">How to use actions</button>
               <button class="btn-primary" onclick="viewProgress()">View Progress</button>
               <button class="btn-primary" onclick="sendGeneralReminder()">Send General Reminder</button>
+              <button class="btn-primary" onclick="testFunctions()" style="background: #28a745;">Test Functions</button>
             </div>
             <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
               💡 <strong>Tip:</strong> Use the action buttons next to each session for specific operations like reschedule, cancel, or send individual reminders.
@@ -406,6 +396,10 @@
     // Make functions globally available
     window.firebaseDb = db;
     window.firebaseAuth = auth;
+    window.firebaseAuthFunctions = { onAuthStateChanged };
+    window.firebaseFirestoreFunctions = { collection, doc, getDoc, addDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy };
+
+    console.log('✅ Firebase initialized successfully');
   </script>
 
   <script>
@@ -416,6 +410,111 @@
     let currentUser = null;
     let customerData = null;
     let customerSessions = [];
+
+    // Global function definitions (accessible from HTML onclick)
+    function addNewSession() {
+      console.log('✅ addNewSession called - redirecting to admin schedule page');
+      // Redirect to admin schedule page where admins can create sessions
+      window.location.href = 'admin-schedule.html';
+    }
+
+    function goBackToCustomerManagement() {
+      console.log('✅ Going back to customer management');
+      window.location.href = 'admin-portal.html';
+    }
+
+    function viewProgress() {
+      console.log('✅ viewProgress called - redirecting to progress page');
+      console.log('🔍 Customer ID being passed:', customerId);
+      // Redirect to dedicated progress page
+      window.location.href = `customer-progress.html?id=${customerId}`;
+    }
+
+    async function saveNotes() {
+      console.log('✅ saveNotes called');
+      try {
+        const notes = document.getElementById('trainingNotes').value;
+        if (!customerId || !currentUser) {
+          showNotification('Customer ID or user not available', 'error');
+          return;
+        }
+        
+        await window.firebaseFirestoreFunctions.updateDoc(window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customers', customerId), {
+          trainingNotes: notes,
+          trainingNotesUpdatedAt: new Date(),
+          trainingNotesUpdatedBy: currentUser.uid
+        });
+        
+        showNotification('✅ Training notes saved successfully!', 'success');
+        if (customerData) customerData.trainingNotes = notes;
+      } catch (error) {
+        console.error('Error saving training notes:', error);
+        showNotification('❌ Error saving training notes: ' + error.message, 'error');
+      }
+    }
+
+    function showQuickActionsHelp() {
+      showNotification('💡 Quick Actions Guide:\n\n• Use "Edit" button next to each session to modify details\n• Use "Reschedule" to change session time/date\n• Use "Cancel" to cancel a specific session\n• Use "View" to see detailed session information\n• Use "Send Reminder" for individual session reminders\n• Use "View Progress" to see overall customer progress\n• Use "Send General Reminder" to send a general message', 'info');
+    }
+
+    async function sendGeneralReminder() {
+      if (!customerData) {
+        showNotification('Customer data not loaded', 'error');
+        return;
+      }
+
+      const subject = encodeURIComponent(`Message from LINQXFITNESS - ${customerData.firstName || 'Customer'}`);
+      const body = encodeURIComponent(`Hi ${customerData.firstName || 'there'},\n\nThis is a general message from your LINQXFITNESS team.\n\nIf you have any questions or need to schedule/reschedule sessions, please don't hesitate to contact us.\n\nBest regards,\nLINQXFITNESS Team`);
+      
+      window.open(`mailto:${customerData.email}?subject=${subject}&body=${body}`);
+      showNotification('✅ General reminder email opened in your email client!', 'success');
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'loginPage.html';
+    }
+
+    // Test function to verify all functions are working
+    function testFunctions() {
+      console.log('🧪 Testing all functions...');
+      
+      const functions = ['addNewSession', 'viewProgress', 'saveNotes', 'showQuickActionsHelp', 'sendGeneralReminder', 'logout'];
+      let allWorking = true;
+      
+      functions.forEach(funcName => {
+        if (typeof window[funcName] === 'function') {
+          console.log(`✅ ${funcName} function exists`);
+        } else {
+          console.log(`❌ ${funcName} function missing`);
+          allWorking = false;
+        }
+      });
+      
+      if (allWorking) {
+        showNotification('✅ All functions are working!', 'success');
+        console.log('✅ All functions are accessible');
+      } else {
+        showNotification('❌ Some functions are missing', 'error');
+        console.log('❌ Some functions are not accessible');
+      }
+    }
+
+    // Make functions globally accessible
+    window.addNewSession = addNewSession;
+    window.goBackToCustomerManagement = goBackToCustomerManagement;
+    window.viewProgress = viewProgress;
+    window.saveNotes = saveNotes;
+    window.showQuickActionsHelp = showQuickActionsHelp;
+    window.sendGeneralReminder = sendGeneralReminder;
+    window.logout = logout;
+    window.testFunctions = testFunctions;
+
+    // Test function accessibility
+    console.log('🔧 Testing function accessibility:');
+    console.log('addNewSession:', typeof window.addNewSession);
+    console.log('viewProgress:', typeof window.viewProgress);
+    console.log('saveNotes:', typeof window.saveNotes);
 
     // Load customer data
     async function loadCustomerData() {
@@ -436,20 +535,41 @@
           throw new Error('Firebase initialization timeout');
         }
 
+        console.log('🔍 Loading customer data for ID:', customerId);
+
         // Load customer data
-        const customerRef = doc(window.firebaseDb, 'customers', customerId);
-        const customerSnap = await getDoc(customerRef);
+        const customerRef = window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customers', customerId);
+        const customerSnap = await window.firebaseFirestoreFunctions.getDoc(customerRef);
         
         if (customerSnap.exists()) {
           customerData = { id: customerSnap.id, ...customerSnap.data() };
+          console.log('✅ Customer data loaded:', customerData);
           updateCustomerHeader();
           await loadCustomerSessions();
         } else {
-          showNotification('Customer not found', 'error');
+          console.log('❌ Customer not found in database');
+          showNotification('Customer not found in database', 'error');
+          
+          // Clear the template data
+          clearTemplateData();
         }
       } catch (error) {
-        console.error('Error loading customer data:', error);
+        console.error('❌ Error loading customer data:', error);
         showNotification('Error loading customer data: ' + error.message, 'error');
+        clearTemplateData();
+      }
+    }
+
+    // Clear template data and show empty state
+    function clearTemplateData() {
+      const upcomingSessions = document.getElementById('upcomingSessions');
+      const pastSessions = document.getElementById('pastSessions');
+      
+      if (upcomingSessions) {
+        upcomingSessions.innerHTML = '<div class="empty-state">No upcoming sessions found.</div>';
+      }
+      if (pastSessions) {
+        pastSessions.innerHTML = '<div class="empty-state">No past sessions found.</div>';
       }
     }
 
@@ -459,30 +579,71 @@
         const headerTitle = document.querySelector('.admin-header h1');
         const headerSubtitle = document.querySelector('.admin-header p');
         
-        headerTitle.textContent = `Manage Schedule - ${customerData.firstName || customerData.name || 'Customer'} ${customerData.lastName || ''}`;
-        headerSubtitle.textContent = `Email: ${customerData.email || 'Not provided'} | Phone: ${customerData.phone || 'Not provided'}`;
+        if (!headerTitle || !headerSubtitle) {
+          console.error('❌ Header elements not found');
+          return;
+        }
+        
+        try {
+          headerTitle.textContent = `Manage Schedule - ${customerData.firstName || customerData.name || 'Customer'} ${customerData.lastName || ''}`;
+          headerSubtitle.textContent = `Email: ${customerData.email || 'Not provided'} | Phone: ${customerData.phone || 'Not provided'}`;
+          console.log('✅ Customer header updated successfully');
+        } catch (error) {
+          console.error('❌ Error updating customer header:', error);
+        }
       }
     }
 
-    // Load customer sessions
+    // Load customer sessions from main schedules collection
     async function loadCustomerSessions() {
       try {
-        const sessionsRef = collection(window.firebaseDb, 'customerSessions');
-        const q = query(
-          sessionsRef,
-          where('customerId', '==', customerId),
-          orderBy('sessionDate', 'desc')
-        );
+        console.log('🔍 Loading sessions for customer:', customerId);
         
-        const snapshot = await getDocs(q);
+        // First, get all sessions from the main schedules collection
+        const schedulesRef = window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'schedules');
+        const schedulesSnapshot = await window.firebaseFirestoreFunctions.getDocs(schedulesRef);
+        
+        console.log(`📋 Found ${schedulesSnapshot.size} total sessions in database`);
+        
         customerSessions = [];
-        snapshot.forEach(doc => {
-          customerSessions.push({ id: doc.id, ...doc.data() });
+        schedulesSnapshot.forEach(doc => {
+          const schedule = doc.data();
+          console.log('🔍 Checking session:', schedule.activity, 'Booked users:', schedule.bookedUsers);
+          
+          // Check if this customer is booked for this session
+          if (schedule.bookedUsers && Array.isArray(schedule.bookedUsers)) {
+            const isBooked = schedule.bookedUsers.some(user => {
+              const matchesCustomerID = user.customerID === customerId;
+              const matchesEmail = user.email === customerData?.email;
+              console.log(`  Checking user: ${user.name} (ID: ${user.customerID}, Email: ${user.email})`);
+              console.log(`  Matches customer ID: ${matchesCustomerID}, Matches email: ${matchesEmail}`);
+              return matchesCustomerID || matchesEmail;
+            });
+            
+            if (isBooked) {
+              console.log(`✅ Customer is booked for session: ${schedule.activity}`);
+              customerSessions.push({ 
+                id: doc.id, 
+                ...schedule,
+                sessionDate: schedule.date, // Map date to sessionDate for consistency
+                sessionType: schedule.activity // Map activity to sessionType
+              });
+            }
+          }
         });
         
+        // Sort sessions by date
+        customerSessions.sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate));
+        
         updateSessionsDisplay();
+        console.log(`✅ Loaded ${customerSessions.length} sessions for customer ${customerId}`);
+        
+        if (customerSessions.length === 0) {
+          console.log('ℹ️ No sessions found for this customer. They may not be assigned to any sessions yet.');
+        }
+        
       } catch (error) {
-        console.error('Error loading customer sessions:', error);
+        console.error('❌ Error loading customer sessions:', error);
         showNotification('Error loading sessions: ' + error.message, 'error');
       }
     }
@@ -492,12 +653,25 @@
       const upcomingSessions = document.getElementById('upcomingSessions');
       const pastSessions = document.getElementById('pastSessions');
       
+      // Check if elements exist before updating
+      if (!upcomingSessions || !pastSessions) {
+        console.error('❌ Session display elements not found');
+        showNotification('Error: Session display elements not found', 'error');
+        return;
+      }
+      
       const now = new Date();
       const upcoming = customerSessions.filter(session => new Date(session.sessionDate) >= now);
       const past = customerSessions.filter(session => new Date(session.sessionDate) < now);
       
-      upcomingSessions.innerHTML = renderSessionsList(upcoming, true);
-      pastSessions.innerHTML = renderSessionsList(past, false);
+      try {
+        upcomingSessions.innerHTML = renderSessionsList(upcoming, true);
+        pastSessions.innerHTML = renderSessionsList(past, false);
+        console.log('✅ Sessions display updated successfully');
+      } catch (error) {
+        console.error('❌ Error updating sessions display:', error);
+        showNotification('Error updating sessions display: ' + error.message, 'error');
+      }
     }
 
     // Render sessions list
@@ -540,13 +714,108 @@
       });
     }
 
-    // Add New Session
-    function addNewSession() {
-      showSessionModal();
+    // Add New Session function already defined globally above
+
+    // Show available sessions modal
+    async function showAvailableSessionsModal() {
+      try {
+        console.log('🔍 showAvailableSessionsModal started...');
+        
+        // Get all available sessions
+        const schedulesRef = window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'schedules');
+        console.log('📋 Getting schedules from Firebase...');
+        const schedulesSnapshot = await window.firebaseFirestoreFunctions.getDocs(schedulesRef);
+        console.log(`📊 Found ${schedulesSnapshot.size} total sessions`);
+        
+        const availableSessions = [];
+        schedulesSnapshot.forEach(doc => {
+          const schedule = doc.data();
+          // Check if customer is not already booked
+          const isAlreadyBooked = schedule.bookedUsers && 
+            Array.isArray(schedule.bookedUsers) && 
+            schedule.bookedUsers.some(user => user.customerID === customerId || user.email === customerData?.email);
+          
+          if (!isAlreadyBooked) {
+            availableSessions.push({ id: doc.id, ...schedule });
+          }
+        });
+
+        const modal = document.createElement('div');
+        modal.className = 'session-modal';
+        modal.innerHTML = `
+          <div class="session-modal-content">
+            <div class="session-modal-header">
+              <h2>📅 Available Sessions</h2>
+              <span class="close" onclick="closeAvailableSessionsModal()">&times;</span>
+            </div>
+            <div class="available-sessions-list">
+              ${availableSessions.length === 0 ? 
+                '<p>No available sessions found. Create sessions in the main Schedule Management page first.</p>' :
+                availableSessions.map(session => `
+                  <div class="available-session-item" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #007bff;">
+                    <h4>${session.activity}</h4>
+                    <p><strong>Date:</strong> ${new Date(session.date).toLocaleDateString()}</p>
+                    <p><strong>Time:</strong> ${session.startTime} - ${session.endTime}</p>
+                    <p><strong>Trainer:</strong> ${session.trainer}</p>
+                    <p><strong>Location:</strong> ${session.location || 'Main Gym'}</p>
+                    <p><strong>Capacity:</strong> ${(session.bookedUsers?.length || 0)}/${session.maxCapacity}</p>
+                    <button class="btn-primary" onclick="assignCustomerToSession('${session.id}')" style="margin-top: 10px;">
+                      Assign Customer to This Session
+                    </button>
+                  </div>
+                `).join('')
+              }
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" onclick="closeSessionModal()">Close</button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+      } catch (error) {
+        console.error('Error loading available sessions:', error);
+        showNotification('Error loading available sessions: ' + error.message, 'error');
+      }
+    }
+
+    // Assign customer to session
+    async function assignCustomerToSession(sessionId) {
+      try {
+        const sessionRef = window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'schedules', sessionId);
+        const sessionDoc = await window.firebaseFirestoreFunctions.getDoc(sessionRef);
+        
+        if (sessionDoc.exists()) {
+          const sessionData = sessionDoc.data();
+          const bookedUsers = sessionData.bookedUsers || [];
+          
+          // Add customer to booked users
+          bookedUsers.push({
+            customerID: customerId,
+            email: customerData?.email,
+            name: `${customerData?.firstName || ''} ${customerData?.lastName || ''}`.trim(),
+            phone: customerData?.phone,
+            bookedAt: new Date()
+          });
+          
+          // Update session
+          await window.firebaseFirestoreFunctions.updateDoc(sessionRef, {
+            bookedUsers: bookedUsers
+          });
+          
+          showNotification('✅ Customer assigned to session successfully!', 'success');
+          closeSessionModal();
+          await loadCustomerSessions(); // Reload sessions
+        }
+      } catch (error) {
+        console.error('Error assigning customer to session:', error);
+        showNotification('Error assigning customer to session: ' + error.message, 'error');
+      }
     }
 
     // Show session modal
     function showSessionModal(sessionId = null) {
+      console.log('✅ showSessionModal called with sessionId:', sessionId);
       const modal = document.createElement('div');
       modal.className = 'session-modal';
       modal.innerHTML = `
@@ -635,11 +904,19 @@
       }
     }
 
+    // Close available sessions modal
+    function closeAvailableSessionsModal() {
+      const modal = document.getElementById('availableSessionsModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
     // Save session
     async function saveSession() {
       try {
         const sessionData = {
-          customerId: customerId,
+          customerID: customerId,
           sessionDate: document.getElementById('sessionDate').value,
           startTime: document.getElementById('startTime').value,
           endTime: document.getElementById('endTime').value,
@@ -656,7 +933,7 @@
         
         if (sessionId) {
           // Update existing session
-          await updateDoc(doc(window.firebaseDb, 'customerSessions', sessionId), {
+          await window.firebaseFirestoreFunctions.updateDoc(window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customerSessions', sessionId), {
             ...sessionData,
             updatedAt: new Date(),
             updatedBy: currentUser.uid
@@ -664,7 +941,7 @@
           showNotification('✅ Session updated successfully!', 'success');
         } else {
           // Add new session
-          await addDoc(collection(window.firebaseDb, 'customerSessions'), sessionData);
+          await window.firebaseFirestoreFunctions.addDoc(window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'customerSessions'), sessionData);
           showNotification('✅ New session added successfully!', 'success');
         }
         
@@ -695,7 +972,7 @@
 
       if (confirm('Are you sure you want to cancel this session?\n\nThis action cannot be undone.')) {
         try {
-          await updateDoc(doc(window.firebaseDb, 'customerSessions', sessionId), {
+          await window.firebaseFirestoreFunctions.updateDoc(window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customerSessions', sessionId), {
             status: 'cancelled',
             cancelledAt: new Date(),
             cancelledBy: currentUser.uid
@@ -738,8 +1015,8 @@
         window.open(`mailto:${customerData.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`);
         
         // Log reminder sent
-        await addDoc(collection(window.firebaseDb, 'customerReminders'), {
-          customerId: customerId,
+        await window.firebaseFirestoreFunctions.addDoc(window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'customerReminders'), {
+          customerID: customerId,
           sessionId: sessionId,
           reminderType: 'email',
           sentAt: new Date(),
@@ -753,10 +1030,7 @@
       }
     }
 
-    // View Progress
-    function viewProgress() {
-      showProgressModal();
-    }
+    // View Progress function already defined globally above
 
     // Show progress modal
     function showProgressModal() {
@@ -818,7 +1092,7 @@
     async function saveProgressNotes() {
       try {
         const progressNotes = document.getElementById('progressNotes').value;
-        await updateDoc(doc(window.firebaseDb, 'customers', customerId), {
+        await window.firebaseFirestoreFunctions.updateDoc(window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customers', customerId), {
           progressNotes: progressNotes,
           progressNotesUpdatedAt: new Date(),
           progressNotesUpdatedBy: currentUser.uid
@@ -832,23 +1106,7 @@
       }
     }
 
-    // Save Notes (Training Notes)
-    async function saveNotes() {
-      try {
-        const notes = document.getElementById('trainingNotes').value;
-        await updateDoc(doc(window.firebaseDb, 'customers', customerId), {
-          trainingNotes: notes,
-          trainingNotesUpdatedAt: new Date(),
-          trainingNotesUpdatedBy: currentUser.uid
-        });
-        
-        showNotification('✅ Training notes saved successfully!', 'success');
-        customerData.trainingNotes = notes;
-      } catch (error) {
-        console.error('Error saving training notes:', error);
-        showNotification('❌ Error saving training notes: ' + error.message, 'error');
-      }
-    }
+    // Save Notes function already defined globally above
 
     // Edit Session
     function editSession(sessionId) {
@@ -907,6 +1165,7 @@
 
     // Show notification
     function showNotification(message, type = 'info') {
+      console.log('📢 Notification:', type, message);
       const notification = document.createElement('div');
       notification.className = `notification ${type}`;
       notification.textContent = message;
@@ -959,7 +1218,7 @@
       }
 
       // Check authentication
-      onAuthStateChanged(window.firebaseAuth, async (user) => {
+      window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
         if (!user) {
           showNotification('Please log in to access this page', 'error');
           setTimeout(() => {
@@ -971,8 +1230,11 @@
         currentUser = user;
         console.log('✅ Admin authenticated:', user.email);
         
-        // Load customer data and sessions
-        await loadCustomerData();
+        // Wait a moment for DOM to be fully ready
+        setTimeout(async () => {
+          // Load customer data and sessions
+          await loadCustomerData();
+        }, 500);
       });
     });
   </script>

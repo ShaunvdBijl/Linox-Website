@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Button Function Test</h1>
+    
+    <div id="results"></div>
+    
+    <button onclick="testAddNewSession()">Test Add New Session</button>
+    <button onclick="testViewProgress()">Test View Progress</button>
+    <button onclick="testSaveNotes()">Test Save Notes</button>
+    <button onclick="testGlobalFunctions()">Test Global Functions</button>
+    
+    <script>
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong> - ${message}`;
+            results.appendChild(div);
+        }
+
+        function testAddNewSession() {
+            addResult('🧪 Testing addNewSession function...', 'info');
+            
+            if (typeof window.addNewSession === 'function') {
+                addResult('✅ addNewSession function exists', 'success');
+                try {
+                    window.addNewSession();
+                    addResult('✅ addNewSession called successfully', 'success');
+                } catch (error) {
+                    addResult(`❌ Error calling addNewSession: ${error.message}`, 'error');
+                }
+            } else {
+                addResult('❌ addNewSession function not found', 'error');
+            }
+        }
+
+        function testViewProgress() {
+            addResult('🧪 Testing viewProgress function...', 'info');
+            
+            if (typeof window.viewProgress === 'function') {
+                addResult('✅ viewProgress function exists', 'success');
+                try {
+                    window.viewProgress();
+                    addResult('✅ viewProgress called successfully', 'success');
+                } catch (error) {
+                    addResult(`❌ Error calling viewProgress: ${error.message}`, 'error');
+                }
+            } else {
+                addResult('❌ viewProgress function not found', 'error');
+            }
+        }
+
+        function testSaveNotes() {
+            addResult('🧪 Testing saveNotes function...', 'info');
+            
+            if (typeof window.saveNotes === 'function') {
+                addResult('✅ saveNotes function exists', 'success');
+                try {
+                    window.saveNotes();
+                    addResult('✅ saveNotes called successfully', 'success');
+                } catch (error) {
+                    addResult(`❌ Error calling saveNotes: ${error.message}`, 'error');
+                }
+            } else {
+                addResult('❌ saveNotes function not found', 'error');
+            }
+        }
+
+        function testGlobalFunctions() {
+            addResult('🧪 Testing all global functions...', 'info');
+            
+            const functions = ['addNewSession', 'viewProgress', 'saveNotes', 'showQuickActionsHelp', 'sendGeneralReminder', 'logout'];
+            
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    addResult(`✅ ${funcName} function exists`, 'success');
+                } else {
+                    addResult(`❌ ${funcName} function missing`, 'error');
+                }
+            });
+        }
+
+        // Test on load
+        addResult('🚀 Button test page loaded. Click buttons to test functions.', 'info');
+    </script>
+</body>
+</html>

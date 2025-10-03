@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Progress - Linox Fitness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .btn-back {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #5a6268;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #14532d 0%, #15803d 50%, #166534 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-card h2 {
+            color: #14532d;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .notes-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .notes-section h2 {
+            color: #14532d;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+            position: relative;
+        }
+
+        .note-date {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-content {
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            font-style: italic;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #007bff;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        @media (max-width: 768px) {
+            .progress-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="admin-container">
+            <a href="#" class="btn-back" onclick="goBackToSchedule()">← Back to Customer Schedule</a>
+            
+            <div class="admin-header">
+                <h1>📊 Customer Progress</h1>
+                <p id="customerName">Loading customer information...</p>
+            </div>
+
+            <!-- Progress Statistics -->
+            <div class="progress-grid">
+                <div class="progress-card">
+                    <h2>🏋️ Workout Statistics</h2>
+                    <div id="workoutStats">
+                        <div class="loading">Loading workout statistics...</div>
+                    </div>
+                </div>
+
+                <div class="progress-card">
+                    <h2>📈 Performance Overview</h2>
+                    <div id="performanceStats">
+                        <div class="loading">Loading performance statistics...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="notes-section">
+                <h2>📝 Training Notes & Progress</h2>
+                <div id="notesList">
+                    <div class="loading">Loading training notes...</div>
+                </div>
+                <button class="btn" onclick="addNewNote()">Add New Note</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Note Modal -->
+    <div id="noteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Training Note</h3>
+                <span class="close" onclick="closeNoteModal()">&times;</span>
+            </div>
+            <form id="noteForm">
+                <textarea id="noteContent" placeholder="Enter training notes, observations, or progress updates..." 
+                         style="width: 100%; height: 150px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; resize: vertical;"></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn">Save Note</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeNoteModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Global variables
+        let customerId = null;
+        let customerData = null;
+        let currentUser = null;
+
+        // Get customer ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        customerId = urlParams.get('id');
+
+        console.log('🔍 URL params:', window.location.search);
+        console.log('🔍 Extracted customer ID:', customerId);
+
+        if (!customerId) {
+            console.error('❌ No customer ID provided in URL');
+            document.getElementById('customerName').textContent = 'Error: No customer ID provided in URL';
+        }
+
+        console.log('📊 Customer Progress page loaded for ID:', customerId);
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                console.log('✅ Admin authenticated:', user.email);
+                
+                if (customerId) {
+                    await loadCustomerData();
+                    await loadProgressData();
+                } else {
+                    console.log('❌ No customer ID available');
+                    document.getElementById('customerName').textContent = 'Error: No customer ID provided';
+                }
+            } else {
+                console.log('❌ Not authenticated');
+                window.location.href = 'loginPage.html';
+            }
+        });
+
+        // Load customer data
+        async function loadCustomerData() {
+            try {
+                const customerRef = doc(db, 'customers', customerId);
+                const customerSnap = await getDoc(customerRef);
+                
+                if (customerSnap.exists()) {
+                    customerData = { id: customerSnap.id, ...customerSnap.data() };
+                    document.getElementById('customerName').textContent = 
+                        `${customerData.firstName} ${customerData.lastName} - Progress Overview`;
+                    console.log('✅ Customer data loaded:', customerData);
+                } else {
+                    console.error('Customer not found');
+                    document.getElementById('customerName').textContent = 'Customer not found';
+                }
+            } catch (error) {
+                console.error('Error loading customer data:', error);
+                document.getElementById('customerName').textContent = 'Error loading customer data';
+            }
+        }
+
+        // Load progress data
+        async function loadProgressData() {
+            try {
+                console.log('🔍 Loading progress data for customer ID:', customerId);
+                await loadWorkoutStats();
+                await loadNotes();
+            } catch (error) {
+                console.error('Error loading progress data:', error);
+            }
+        }
+
+        // Load workout statistics
+        async function loadWorkoutStats() {
+            try {
+                // Get all sessions for this customer
+                const schedulesRef = collection(db, 'schedules');
+                const schedulesSnapshot = await getDocs(schedulesRef);
+                
+                let totalSessions = 0;
+                let completedSessions = 0;
+                let cancelledSessions = 0;
+                let upcomingSessions = 0;
+                let sessionTypes = {};
+
+                schedulesSnapshot.forEach(doc => {
+                    const session = doc.data();
+                    if (session.bookedUsers && Array.isArray(session.bookedUsers)) {
+                        const isBooked = session.bookedUsers.some(user => 
+                            user.customerID === customerId || user.email === customerData?.email
+                        );
+                        
+                        if (isBooked) {
+                            totalSessions++;
+                            
+                            // Track session types
+                            const activity = session.activity || 'Unknown';
+                            sessionTypes[activity] = (sessionTypes[activity] || 0) + 1;
+                            
+                            // Check session status
+                            const sessionDate = new Date(session.date);
+                            const now = new Date();
+                            
+                            if (session.status === 'cancelled') {
+                                cancelledSessions++;
+                            } else if (sessionDate < now) {
+                                completedSessions++;
+                            } else {
+                                upcomingSessions++;
+                            }
+                        }
+                    }
+                });
+
+                // Update workout stats
+                document.getElementById('workoutStats').innerHTML = `
+                    <div class="stat-item">
+                        <span class="stat-label">Total Sessions</span>
+                        <span class="stat-value">${totalSessions}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-value">${completedSessions}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Upcoming</span>
+                        <span class="stat-value">${upcomingSessions}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Cancelled</span>
+                        <span class="stat-value">${cancelledSessions}</span>
+                    </div>
+                `;
+
+                // Update performance stats
+                const completionRate = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
+                const mostPopularActivity = Object.keys(sessionTypes).reduce((a, b) => sessionTypes[a] > sessionTypes[b] ? a : b, 'None');
+                
+                document.getElementById('performanceStats').innerHTML = `
+                    <div class="stat-item">
+                        <span class="stat-label">Completion Rate</span>
+                        <span class="stat-value">${completionRate}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Favorite Activity</span>
+                        <span class="stat-value">${mostPopularActivity}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Session Types</span>
+                        <span class="stat-value">${Object.keys(sessionTypes).length}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Active Member Since</span>
+                        <span class="stat-value">${getMemberSince(customerData)}</span>
+                    </div>
+                `;
+
+                console.log('✅ Workout stats loaded');
+            } catch (error) {
+                console.error('Error loading workout stats:', error);
+                document.getElementById('workoutStats').innerHTML = '<div class="empty-state">Error loading workout statistics</div>';
+            }
+        }
+
+        // Get member since date
+        function getMemberSince(customerData) {
+            if (customerData && customerData.createdAt) {
+                const date = new Date(customerData.createdAt);
+                return date.toLocaleDateString();
+            } else if (customerData && customerData.registrationDate) {
+                const date = new Date(customerData.registrationDate);
+                return date.toLocaleDateString();
+            } else {
+                return 'Unknown';
+            }
+        }
+
+        // Load training notes
+        async function loadNotes() {
+            try {
+                if (!customerData) {
+                    console.error('Customer data not loaded');
+                    return;
+                }
+
+                // Get notes from customer document
+                const rawNotes = customerData.trainingNotes;
+                
+                // Handle both string and array formats
+                let notes = [];
+                if (Array.isArray(rawNotes)) {
+                    // Array format (new system)
+                    notes = rawNotes;
+                } else if (typeof rawNotes === 'string' && rawNotes.trim()) {
+                    // String format (current system) - convert to array format
+                    notes = [{
+                        id: 'legacy-note',
+                        content: rawNotes,
+                        date: customerData.trainingNotesUpdatedAt || new Date(),
+                        createdBy: customerData.trainingNotesUpdatedBy || 'system'
+                    }];
+                }
+                
+                if (notes.length === 0) {
+                    document.getElementById('notesList').innerHTML = '<div class="empty-state">No training notes yet. Add your first note below!</div>';
+                    return;
+                }
+
+                // Sort notes by date (newest first)
+                notes.sort((a, b) => {
+                    const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+                    const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+                    return dateB - dateA;
+                });
+
+                document.getElementById('notesList').innerHTML = notes.map(note => {
+                    const noteDate = note.date?.toDate ? note.date.toDate() : new Date(note.date);
+                    return `
+                        <div class="note-item">
+                            <div class="note-date">📅 ${noteDate.toLocaleDateString()} at ${noteDate.toLocaleTimeString()}</div>
+                            <div class="note-content">${note.content}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                console.log('✅ Notes loaded:', notes.length);
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                document.getElementById('notesList').innerHTML = '<div class="empty-state">Error loading training notes</div>';
+            }
+        }
+
+        // Add new note
+        window.addNewNote = function() {
+            document.getElementById('noteModal').style.display = 'block';
+        };
+
+        // Close note modal
+        window.closeNoteModal = function() {
+            document.getElementById('noteModal').style.display = 'none';
+            document.getElementById('noteForm').reset();
+        };
+
+        // Save note
+        document.getElementById('noteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const noteContent = document.getElementById('noteContent').value.trim();
+            if (!noteContent) {
+                alert('Please enter a note');
+                return;
+            }
+
+            try {
+                // Get current notes (handle both string and array formats)
+                const currentNotes = customerData.trainingNotes || '';
+                const currentContent = typeof currentNotes === 'string' ? currentNotes : '';
+                
+                // Append new note to existing content
+                const timestamp = new Date().toLocaleString();
+                const newNoteText = `\n\n--- ${timestamp} ---\n${noteContent}`;
+                const updatedNotes = currentContent + newNoteText;
+
+                // Update customer document with updated notes
+                const customerRef = doc(db, 'customers', customerId);
+                await updateDoc(customerRef, {
+                    trainingNotes: updatedNotes,
+                    trainingNotesUpdatedAt: new Date(),
+                    trainingNotesUpdatedBy: currentUser.uid
+                });
+
+                // Update local data
+                customerData.trainingNotes = updatedNotes;
+                
+                // Reload notes display
+                await loadNotes();
+                
+                // Close modal
+                closeNoteModal();
+                
+                console.log('✅ Note added successfully');
+                showNotification('Note added successfully!', 'success');
+            } catch (error) {
+                console.error('Error adding note:', error);
+                showNotification('Error adding note: ' + error.message, 'error');
+            }
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            
+            if (type === 'success') notification.style.background = '#28a745';
+            else if (type === 'error') notification.style.background = '#dc3545';
+            else notification.style.background = '#007bff';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Go back to customer schedule with preserved customer ID
+        window.goBackToSchedule = function() {
+            console.log('✅ Going back to customer schedule with ID:', customerId);
+            window.location.href = `customer-schedule.html?id=${customerId}`;
+        };
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('noteModal');
+            if (event.target === modal) {
+                closeNoteModal();
+            }
+        };
+    </script>
+</body>
+</html>

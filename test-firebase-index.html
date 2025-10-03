@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Index Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔥 Firebase Index Test</h1>
+    
+    <div id="results"></div>
+    
+    <button onclick="testIndex()">Test Index</button>
+    <button onclick="createTestData()">Create Test Data</button>
+    <button onclick="testSimpleQuery()">Test Simple Query</button>
+    
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong> - ${message}`;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+
+        // Test the exact query that's failing
+        window.testIndex = async function() {
+            addResult('🧪 Testing customerSessions index...', 'info');
+            
+            try {
+                const testCustomerId = 'test-customer-123';
+                
+                // This is the exact query from customer-schedule.html (updated version)
+                const sessionsRef = collection(db, 'customerSessions');
+                const q = query(
+                    sessionsRef,
+                    where('customerID', '==', testCustomerId)
+                );
+                
+                const snapshot = await getDocs(q);
+                addResult(`✅ Index test successful! Found ${snapshot.size} sessions for test customer.`, 'success');
+                
+            } catch (error) {
+                addResult(`❌ Index test failed: ${error.message}`, 'error');
+                
+                if (error.message.includes('index')) {
+                    addResult('🔧 Index required. Please create the index using the link below:', 'error');
+                    addResult(`<a href="https://console.firebase.google.com/v1/r/project/linox-soccer/firestore/indexes?create_composite=ClVwcm9qZWN0cy9saW5veC1zb2NjZXIvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2N1c3RvbWVyU2Vzc2lvbnMvaW5kZXhlcy9fEAEaDgoKY3VzdG9tZXJJZBABGg8KC3Nlc3Npb25EYXRlEAIaDAoIX19uYW1lX18QAg" target="_blank">Create Index Link</a>`, 'info');
+                }
+            }
+        };
+
+        // Create test data
+        window.createTestData = async function() {
+            addResult('📝 Creating test session data...', 'info');
+            
+            try {
+                const testSessionData = {
+                    customerID: 'test-customer-123',
+                    sessionDate: new Date().toISOString().split('T')[0],
+                    startTime: '10:00',
+                    endTime: '11:00',
+                    sessionType: 'Personal Training',
+                    trainer: 'Test Trainer',
+                    location: 'Main Gym',
+                    notes: 'Test session created by index test',
+                    status: 'scheduled',
+                    createdAt: new Date(),
+                    createdBy: 'test-admin'
+                };
+                
+                const docRef = await addDoc(collection(db, 'customerSessions'), testSessionData);
+                addResult(`✅ Test session created successfully! ID: ${docRef.id}`, 'success');
+                
+            } catch (error) {
+                addResult(`❌ Failed to create test data: ${error.message}`, 'error');
+            }
+        };
+
+        // Test simple query without orderBy
+        window.testSimpleQuery = async function() {
+            addResult('🔍 Testing simple query without orderBy...', 'info');
+            
+            try {
+                const sessionsRef = collection(db, 'customerSessions');
+                const q = query(
+                    sessionsRef,
+                    where('customerID', '==', 'test-customer-123')
+                );
+                
+                const snapshot = await getDocs(q);
+                addResult(`✅ Simple query successful! Found ${snapshot.size} sessions.`, 'success');
+                
+                if (snapshot.size > 0) {
+                    snapshot.forEach(doc => {
+                        addResult(`📋 Session: ${doc.data().sessionType} on ${doc.data().sessionDate}`, 'info');
+                    });
+                }
+                
+            } catch (error) {
+                addResult(`❌ Simple query failed: ${error.message}`, 'error');
+            }
+        };
+
+        // Initialize
+        addResult('🚀 Firebase Index Test loaded. Click "Test Index" to begin.', 'info');
+        
+        // Check auth
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                addResult(`👤 Logged in as: ${user.email}`, 'success');
+            } else {
+                addResult('⚠️ Not logged in. Some operations may fail.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
