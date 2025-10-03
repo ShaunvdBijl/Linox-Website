@@ -29,14 +29,15 @@
   </header>
 
   <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Master the Beautiful Game</h1>
-        <p>Elevate your soccer skills with our specialized training programs designed to develop your technical abilities, tactical understanding, and physical conditioning for peak performance on the pitch.</p>
+    <!-- Hero Section with Transition -->
+    <section class="hero hero-transition">
+      <div class="hero-content hero-fade-in">
+        <h1 class="hero-main-text">Hardwork Meets Talent</h1>
+        <h2 class="hero-sub-text">Champions Are Made</h2>
+        <p>Elevate your athletic performance with specialized training programs designed to develop your technical abilities, tactical understanding, and physical conditioning for peak performance.</p>
         <div class="hero-buttons">
-          <button class="btn-primary" onclick="alert('Join Us feature coming soon!')">Start Training</button>
-          <button class="btn-secondary" onclick="alert('Learn More feature coming soon!')">View Programs</button>
+          <a href="signUp.html" class="btn-primary">Start Training</a>
+          <a href="services.html" class="btn-secondary">View Programs</a>
         </div>
       </div>
       <div class="hero-image">
@@ -94,19 +95,20 @@
       </div>
     </section>
 
-    <!-- About Preview Section -->
+    <!-- Meet Coach Lee Section -->
     <section class="about-preview">
       <div class="container">
         <div class="about-content">
-          <h2>Meet Your Trainer</h2>
-          <p>With years of experience in fitness training and nutrition, our certified professionals are dedicated to helping you achieve your goals. We believe in creating sustainable, long-term results through proven methods and personalized attention.</p>
-          <p>Whether you're a beginner or an experienced athlete, we have the expertise to guide you through your fitness journey with confidence and support.</p>
+          <h2>Meet Coach Lee</h2>
+          <p>Coach Lee is an enthusiastic coach with a massive desire in sports and a passion for helping athletes reach their peak performance. With a background in both playing and coaching soccer, Coach Lee brings real-world experience to every training session.</p>
+          <p>Qualified in Sports Sciences as an Exercise Specialist, Coach Lee combines academic knowledge with practical expertise to deliver elite-level training that prepares you to meet the required demands, both technically and physically.</p>
+          <p>From grassroots athletes to professionals, Coach Lee is dedicated to elevating your game and helping you achieve your athletic goals.</p>
           <a href="about.html" class="btn-outline">Learn More About Us</a>
         </div>
         <div class="about-image">
           <!-- About image placeholder -->
           <div class="image-placeholder">
-            <p>Trainer Profile</p>
+            <p>Coach Lee Profile</p>
           </div>
         </div>
       </div>
@@ -125,18 +127,29 @@
               </div>
             </div>
             <h3>One-on-One Training</h3>
-            <p>Personalized attention and customized programs designed specifically for your needs and goals.</p>
+            <p>Personalized elite training including technical development, tactical development, nutritional advice, recovery strategies, and fitness training tailored to your specific needs.</p>
           </div>
           
           <div class="service-card">
             <div class="service-image">
               <!-- Service image placeholder -->
               <div class="image-placeholder">
-                <p>Group Classes</p>
+                <p>Youth to Pro Athletes</p>
               </div>
             </div>
-            <h3>Group Classes</h3>
-            <p>High-energy group sessions that combine cardio, strength training, and fun in a motivating environment.</p>
+            <h3>Grassroots to Pro Athletes</h3>
+            <p>Comprehensive training for athletes of all levels, from age 8 and up. We develop talent from grassroots to professional standards.</p>
+          </div>
+          
+          <div class="service-card">
+            <div class="service-image">
+              <!-- Service image placeholder -->
+              <div class="image-placeholder">
+                <p>Group Sessions</p>
+              </div>
+            </div>
+            <h3>Group Sessions</h3>
+            <p>High-energy group training sessions that mirror game intensity while fostering teamwork and competitive spirit.</p>
           </div>
           
           <div class="service-card">
@@ -146,8 +159,8 @@
                 <p>Nutrition Coaching</p>
               </div>
             </div>
-            <h3>Nutrition Coaching</h3>
-            <p>Comprehensive nutrition guidance to complement your training and maximize your results.</p>
+            <h3>Nutritional Coaching</h3>
+            <p>Specialized nutritional advice and education to fuel your performance. We educate athletes on this crucial aspect that many overlook.</p>
           </div>
         </div>
         <div class="services-cta">
@@ -239,5 +252,107 @@
 
   <script src="auth-utils.js"></script>
   <script src="home.js"></script>
+
+  <style>
+    /* Hero Transition Animations */
+    .hero-transition {
+      opacity: 0;
+      animation: fadeInHero 1.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeInHero {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-fade-in {
+      opacity: 0;
+      animation: fadeInContent 2s ease-in-out 0.5s forwards;
+    }
+
+    @keyframes fadeInContent {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-main-text {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: slideInLeft 1.5s ease-out 0.8s both;
+    }
+
+    @keyframes slideInLeft {
+      0% {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .hero-sub-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #ffd700;
+      animation: slideInRight 1.5s ease-out 1.2s both;
+    }
+
+    @keyframes slideInRight {
+      0% {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .hero-buttons {
+      animation: fadeInUp 1.5s ease-out 1.6s both;
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-main-text {
+        font-size: 2.5rem;
+      }
+      
+      .hero-sub-text {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
 </body>
 </html>
