@@ -413,14 +413,18 @@
       const passwordInput = document.getElementById('loginPassword');
       const toggleButton = document.getElementById('togglePassword');
       
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleButton.textContent = '🙈';
-        toggleButton.title = 'Hide password';
-      } else {
-        passwordInput.type = 'password';
-        toggleButton.textContent = '👁️';
-        toggleButton.title = 'Show password';
+      if (passwordInput && toggleButton) {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          toggleButton.textContent = '🙈';
+          toggleButton.title = 'Hide password';
+          toggleButton.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+        } else {
+          passwordInput.type = 'password';
+          toggleButton.textContent = '👁️';
+          toggleButton.title = 'Show password';
+          toggleButton.style.backgroundColor = 'transparent';
+        }
       }
     };
 
@@ -451,6 +455,15 @@
       
       .notification {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      
+      #togglePassword:hover {
+        background-color: rgba(102, 126, 234, 0.1) !important;
+        color: #667eea !important;
+      }
+      
+      #togglePassword:active {
+        transform: translateY(-50%) scale(0.95) !important;
       }
     `;
     document.head.appendChild(style);
