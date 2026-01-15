@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Messaging - LINQXFITNESS Admin</title>
+    <link rel="stylesheet" href="HomePage.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h1 {
+            color: white;
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .admin-nav button,
+        .admin-nav a {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .admin-nav button:hover,
+        .admin-nav a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .messaging-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            height: calc(100vh - 150px);
+        }
+
+        .clients-panel,
+        .composer-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            color: #1e3a8a;
+            font-size: 1.2rem;
+        }
+
+        .client-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .client-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .client-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .client-item input[type="checkbox"] {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .client-info {
+            flex: 1;
+        }
+
+        .client-name {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .client-email {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .selected-count {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .messaging-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .clients-panel {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>📢 Bulk Messaging</h1>
+            <div class="admin-nav">
+                <a href="admin-portal.html">← Back to Portal</a>
+            </div>
+        </div>
+
+        <div class="messaging-grid">
+            <!-- Client Selection -->
+            <div class="clients-panel">
+                <div class="panel-header">
+                    <h2>Select Recipients</h2>
+                    <span class="selected-count" id="selectedCount">0 selected</span>
+                </div>
+                <div style="padding-bottom: 10px; border-bottom: 1px solid #e5e7eb; margin-bottom: 10px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="selectAll" style="margin-right: 15px; width: 18px; height: 18px;">
+                        <span style="font-weight: 600; color: #374151;">Select All Users</span>
+                    </label>
+                </div>
+                <div id="clientList" class="client-list">
+                    <div style="text-align: center; padding: 20px; color: #666;">Loading clients...</div>
+                </div>
+            </div>
+
+            <!-- Message Composer -->
+            <div class="composer-panel">
+                <div class="panel-header">
+                    <h2>Compose Message</h2>
+                </div>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label for="messageSubject">Subject</label>
+                        <input type="text" id="messageSubject" placeholder="e.g., Important Schedule Change" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="messageBody">Message</label>
+                        <textarea id="messageBody" placeholder="Type your message here..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="priority" style="width: auto;">
+                            <span style="color: #dc3545; font-weight: bold;">Mark as High Priority</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="sendBtn">
+                        🚀 Send Message
+                    </button>
+                    <div id="statusMessage" style="margin-top: 15px; text-align: center; display: none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, addDoc, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // This should ideally allow importing the config, but for standalone functionality we'll use inline or import
+        // Assuming we are in the same directory as config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let allClients = [];
+
+        // Auth Check
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'loginPage.html';
+                return;
+            }
+            // Check admin claim or user profile here if strict security needed
+            loadClients();
+        });
+
+        async function loadClients() {
+            const listContainer = document.getElementById('clientList');
+            try {
+                // Fetch users (assuming they are in 'users' or 'customers')
+                const q = query(collection(db, 'users'), orderBy('createdAt', 'desc')); // Fallback to basic fetch if index missing
+                // Simplest: fetch 'users'
+                const snapshot = await getDocs(collection(db, 'users'));
+
+                allClients = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (!data.isAdmin) { // Filter out admins if necessary
+                        allClients.push({ id: doc.id, ...data });
+                    }
+                });
+
+                renderClients(allClients);
+
+            } catch (error) {
+                console.error('Error loading clients:', error);
+                listContainer.innerHTML = '<p style="color:red; text-align:center;">Error loading clients.</p>';
+            }
+        }
+
+        function renderClients(clients) {
+            const listContainer = document.getElementById('clientList');
+            if (clients.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center;">No clients found.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = clients.map(client => `
+                <label class="client-item">
+                    <input type="checkbox" class="client-checkbox" value="${client.id}">
+                    <div class="client-info">
+                        <div class="client-name">${client.firstName || 'Unknown'} ${client.lastName || ''}</div>
+                        <div class="client-email">${client.email}</div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #9ca3af;">${client.status || 'Active'}</div>
+                </label>
+            `).join('');
+
+            // Re-attach listeners
+            document.querySelectorAll('.client-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateSelectedCount);
+            });
+        }
+
+        function updateSelectedCount() {
+            const checked = document.querySelectorAll('.client-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = `${checked} selected`;
+        }
+
+        // Select All Logic
+        document.getElementById('selectAll').addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            document.querySelectorAll('.client-checkbox').forEach(cb => {
+                cb.checked = isChecked;
+            });
+            updateSelectedCount();
+        });
+
+        // Send Logic
+        document.getElementById('messageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const selectedIds = Array.from(document.querySelectorAll('.client-checkbox:checked')).map(cb => cb.value);
+
+            if (selectedIds.length === 0) {
+                alert('Please select at least one recipient.');
+                return;
+            }
+
+            const subject = document.getElementById('messageSubject').value;
+            const body = document.getElementById('messageBody').value;
+            const isPriority = document.getElementById('priority').checked;
+            const btn = document.getElementById('sendBtn');
+            const statusFn = document.getElementById('statusMessage');
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            try {
+                // Batch writes or individual adds? Firestore batch limit is 500.
+                // For simplicity, we'll do promises all.
+
+                const notificationsRef = collection(db, 'notifications');
+                const promises = selectedIds.map(userId => {
+                    return addDoc(notificationsRef, {
+                        userId: userId,
+                        title: subject,
+                        message: body,
+                        priority: isPriority ? 'high' : 'normal',
+                        read: false,
+                        createdAt: serverTimestamp(),
+                        type: 'admin_message'
+                    });
+                });
+
+                await Promise.all(promises);
+
+                statusFn.style.display = 'block';
+                statusFn.style.color = 'green';
+                statusFn.textContent = `✅ Successfully sent to ${selectedIds.length} users!`;
+
+                // Reset form
+                document.getElementById('messageForm').reset();
+                document.querySelectorAll('.client-checkbox').forEach(cb => cb.checked = false);
+                document.getElementById('selectAll').checked = false;
+                updateSelectedCount();
+
+                setTimeout(() => {
+                    statusFn.style.display = 'none';
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Send Message';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error sending messages:', error);
+                statusFn.style.display = 'block';
+                statusFn.style.color = 'red';
+                statusFn.textContent = '❌ Error sending messages. Check console.';
+                btn.disabled = false;
+                btn.textContent = '🚀 Send Message';
+            }
+        });
+
+    </script>
+</body>
+
+</html>
