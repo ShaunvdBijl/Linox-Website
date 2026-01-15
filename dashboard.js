@@ -1,218 +1,379 @@
-// Check if user is logged in
+// Firebase imports
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { firebaseDB } from './firebase-database.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { db } from './firebase-config.js'; // Ensure we can access db directly if needed or via firebaseDB
+
+// Initialize Auth
+const auth = getAuth();
+
+// State management
+let currentUser = null;
+let currentCustomerId = null;
+
 document.addEventListener('DOMContentLoaded', async function() {
-    const isAuthenticated = await isUserAuthenticated();
-    if (!isAuthenticated) {
-        // Redirect to login if not authenticated
-        window.location.href = 'loginPage.html';
-        return;
-    }
-    
-    loadUserData();
-    updateDashboardStats();
-});
-
-async function checkUserAuth() {
-    const isAuthenticated = await isUserAuthenticated();
-    if (!isAuthenticated) {
-        // Redirect to login if not authenticated
-        window.location.href = 'loginPage.html';
-        return;
-    }
-    
-    // Update user name in dashboard
-    const currentUser = await getCurrentUser();
-    if (currentUser) {
-        const userName = `${currentUser.firstName} ${currentUser.lastName}`;
-        document.getElementById('userName').textContent = userName;
-    }
-}
-
-function loadUserData() {
-    // Load user data from localStorage or simulate API call
-    const userData = {
-        name: localStorage.getItem('userName') || 'John',
-        email: localStorage.getItem('userEmail') || 'demo@linoxfitness.com',
-        fitnessGoal: localStorage.getItem('fitnessGoal') || 'Weight Loss',
-        experience: localStorage.getItem('experience') || 'Intermediate'
-    };
-    
-    // Update dashboard with user data
-    updateUserInfo(userData);
-}
-
-function updateUserInfo(userData) {
-    // Update user-specific information on dashboard
-    document.getElementById('userName').textContent = userData.name;
-}
-
-function updateDashboardStats() {
-    // Update progress stats (in a real app, this would come from a database)
-    const stats = {
-        workoutsThisWeek: 4,
-        caloriesBurned: 2450,
-        weightProgress: -3.2,
-        nextSession: 'Tomorrow'
-    };
-    
-    // Update stats display
-    updateStatsDisplay(stats);
-}
-
-function updateStatsDisplay(stats) {
-    // Update the stats cards with current data
-    // This would typically update the DOM elements with the stats
-    console.log('Dashboard stats updated:', stats);
-}
-
-function markWorkoutComplete() {
-    // Mark today's workout as complete
-    const button = event.target;
-    const originalText = button.textContent;
-    
-    button.textContent = 'Completing...';
-    button.disabled = true;
-    
-    // Simulate API call
-    setTimeout(() => {
-        button.textContent = '✓ Completed!';
-        button.style.backgroundColor = '#28a745';
-        button.style.borderColor = '#28a745';
-        
-        // Update workout count
-        updateWorkoutCount();
-        
-        // Show success message
-        showSuccessMessage('Workout marked as complete! Great job!');
-        
-        // Reset button after 3 seconds
-        setTimeout(() => {
-            button.textContent = originalText;
-            button.disabled = false;
-            button.style.backgroundColor = '';
-            button.style.borderColor = '';
-        }, 3000);
-        
-    }, 1500);
-}
-
-function updateWorkoutCount() {
-    // Update the workout count in the stats
-    const workoutCard = document.querySelector('.feature-card');
-    if (workoutCard) {
-        const countElement = workoutCard.querySelector('div');
-        if (countElement) {
-            const currentCount = parseInt(countElement.textContent);
-            countElement.textContent = currentCount + 1;
-        }
-    }
-}
-
-function viewFullPlan() {
-    // Navigate to full workout plan page
-    window.location.href = 'workout-plans.html';
-}
-
-function showSuccessMessage(message) {
-    // Create and show success message
-    const successDiv = document.createElement('div');
-    successDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #d4edda;
-        color: #155724;
-        padding: 1rem;
-        border-radius: 8px;
-        border: 1px solid #c3e6cb;
-        z-index: 1000;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    `;
-    successDiv.textContent = message;
-    
-    document.body.appendChild(successDiv);
-    
-    // Remove message after 3 seconds
-    setTimeout(() => {
-        if (successDiv.parentNode) {
-            successDiv.remove();
-        }
-    }, 3000);
-}
-
-async function logout() {
-    // Clear user data and redirect to login
-    await clearSecureSession();
-    
-    // Redirect to login page
-    window.location.href = 'loginPage.html';
-}
-
-// Add active navigation highlighting
-document.addEventListener('DOMContentLoaded', function() {
-    const currentPage = window.location.pathname.split('/').pop();
-    const navLinks = document.querySelectorAll('.nav-menu a');
-    
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('active');
+    // Check authentication state
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            console.log('User authenticated:', user.email);
+            
+            // Get customer ID
+            await loadUserProfile(user.uid);
+            
+            // Load dashboard data
+            await Promise.all([
+                loadDashboardStats(),
+                loadNextTraining(),
+                loadTodaysWorkout(),
+                loadUpcomingSessions(),
+                loadRecentActivity()
+            ]);
+            
+            startRealTimeUpdates();
+        } else {
+            console.log('No user authenticated, redirecting...');
+            window.location.href = 'loginPage.html';
         }
     });
+    
+    // Add hover effects
+    initHoverEffects();
+    
+    // Highlight active nav
+    highlightActiveNav();
 });
 
-// Add hover effects for interactive elements
-document.addEventListener('DOMContentLoaded', function() {
-    const interactiveElements = document.querySelectorAll('.feature-card, .btn-primary, .btn-secondary, .btn-outline');
+async function loadUserProfile(userId) {
+    try {
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Athlete';
+            
+            // Update UI name
+            const userNameElement = document.getElementById('userName');
+            if (userNameElement) userNameElement.textContent = userName;
+            
+            // Determine Customer ID (it might be the same as Auth UID or stored in profile)
+            currentCustomerId = userData.customerId || userId;
+            console.log('Customer ID loaded:', currentCustomerId);
+        }
+    } catch (error) {
+        console.error('Error loading user profile:', error);
+    }
+}
+
+async function loadDashboardStats() {
+    if (!currentCustomerId) return;
     
+    // Default stats
+    let sessionsCount = 0;
+    let skillRating = '-';
+    let fitnessProgress = '-';
+    let sessionGoal = 3; // Default goal
+    
+    try {
+        // 1. Sessions This Week
+        // Fetch schedules for this customer to count completed sessions this week
+        const { success: scheduleSuccess, schedules } = await firebaseDB.getCustomerSchedule(currentCustomerId);
+        
+        if (scheduleSuccess && schedules) {
+            const now = new Date();
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+            startOfWeek.setHours(0, 0, 0, 0);
+            
+            sessionsCount = schedules.filter(s => {
+                const sessionDate = s.date.toDate(); // timestamp to Date
+                return sessionDate >= startOfWeek && s.status === 'completed';
+            }).length;
+        }
+
+        // 2. Skill Rating & Fitness Progress
+        // These might come from a 'customerStats' or 'progress' collection. 
+        // For now, we'll try to fetch from the customer document if fields exist, or 'progress' collection
+        const { success: customerSuccess, customer } = await firebaseDB.getCustomer(currentCustomerId);
+        if (customerSuccess && customer) {
+            if (customer.skillRating) skillRating = `${customer.skillRating}/10`;
+            if (customer.fitnessProgress) fitnessProgress = `${customer.fitnessProgress}%`;
+            if (customer.sessionGoal) sessionGoal = customer.sessionGoal;
+        }
+
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+    
+    // Update UI
+    updateElement('sessionsThisWeek', sessionsCount);
+    updateElement('sessionsGoal', sessionGoal);
+    updateElement('skillRating', skillRating);
+    updateElement('fitnessProgress', fitnessProgress);
+}
+
+async function loadNextTraining() {
+    if (!currentCustomerId) return;
+    
+    try {
+        const { success, schedules } = await firebaseDB.getCustomerSchedule(currentCustomerId);
+        
+        // Find next upcoming confirmed session
+        const now = new Date();
+        let nextSession = null;
+        
+        if (success && schedules) {
+            const upcoming = schedules
+                .filter(s => s.date.toDate() > now && s.status !== 'cancelled')
+                .sort((a, b) => a.date.toDate() - b.date.toDate());
+            
+            if (upcoming.length > 0) {
+                nextSession = upcoming[0];
+            }
+        }
+        
+        if (nextSession) {
+            const date = nextSession.date.toDate();
+            const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Check if it's tomorrow, today, or a date
+            const isToday = isSameDay(date, new Date());
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const isTomorrow = isSameDay(date, tomorrow);
+            
+            let dateDisplay = date.toLocaleDateString();
+            if (isToday) dateDisplay = 'Today';
+            if (isTomorrow) dateDisplay = 'Tomorrow';
+            
+            updateElement('nextTrainingTime', dateDisplay);
+            updateElement('nextTrainingType', `${timeString} - ${nextSession.type || 'Training'}`);
+        } else {
+            updateElement('nextTrainingTime', 'No session');
+            updateElement('nextTrainingType', 'Book a session');
+        }
+        
+    } catch (error) {
+        console.error('Error loading next training:', error);
+    }
+}
+
+async function loadTodaysWorkout() {
+    if (!currentCustomerId) return;
+    
+    const container = document.getElementById('todaysWorkoutContent');
+    if (!container) return;
+    
+    try {
+        // Fetch assigned workouts
+        const { success, workouts } = await firebaseDB.getCustomerWorkouts(currentCustomerId);
+        
+        // Simple logic: Is there a workout assigned for "today"? 
+        // Note: The schema for workouts isn't explicitly date-based in FIREBASE_SETUP.md, 
+        // usually workouts are plans assigned to a user. We might check if there's a schedule for today with a linked workout.
+        // For this implementation, we will fetch the most recently created active workout plan
+        
+        let todaysWorkout = null;
+        if (success && workouts && workouts.length > 0) {
+            todaysWorkout = workouts[0]; // Just take the latest for now
+        }
+        
+        if (todaysWorkout) {
+            let exercisesHtml = '';
+            if (todaysWorkout.exercises && Array.isArray(todaysWorkout.exercises)) {
+                 exercisesHtml = todaysWorkout.exercises.map(ex => `
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                        <strong>${ex.name}:</strong> ${ex.sets} sets x ${ex.reps} reps
+                    </li>
+                 `).join('');
+            }
+            
+            container.innerHTML = `
+                <h3 style="color: #1e3a8a; margin-bottom: 1rem;">${todaysWorkout.title || 'Daily Workout'}</h3>
+                <ul style="list-style: none; padding: 0;">
+                    ${exercisesHtml || '<li>No exercises listed.</li>'}
+                </ul>
+                <div style="margin-top: 1.5rem;">
+                  <button class="btn-primary" onclick="window.markWorkoutComplete('${todaysWorkout.id}')">Mark as Complete</button>
+                  <button class="btn-secondary" onclick="window.viewFullPlan()">View Full Plan</button>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div style="text-align: center; color: #666; padding: 2rem;">
+                    <p>No workout planned for today. Enjoy your rest day!</p>
+                    <a href="workout-plans.html" class="btn-primary" style="margin-top: 1rem; display: inline-block;">Browse Plans</a>
+                </div>
+            `;
+        }
+
+    } catch (error) {
+        console.error('Error loading workout:', error);
+        container.innerHTML = '<p>Error loading workout.</p>';
+    }
+}
+
+async function loadUpcomingSessions() {
+    if (!currentCustomerId) return;
+    
+    const container = document.getElementById('upcomingSessionsList');
+    if (!container) return;
+    
+    try {
+        const { success, schedules } = await firebaseDB.getCustomerSchedule(currentCustomerId);
+        
+        if (success && schedules) {
+            const now = new Date();
+            const upcoming = schedules
+                .filter(s => s.date.toDate() > now && s.status !== 'cancelled')
+                .sort((a, b) => a.date.toDate() - b.date.toDate())
+                .slice(0, 3); // Take next 3
+                
+            if (upcoming.length > 0) {
+                container.innerHTML = upcoming.map(session => {
+                    const date = session.date.toDate();
+                    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+                    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    return `
+                      <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <strong>${dayName} - ${timeString}</strong><br>
+                        ${session.type || 'Training'} with Coach Lee
+                      </div>
+                    `;
+                }).join('');
+            } else {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">No upcoming sessions scheduled.</p>';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading schedule:', error);
+    }
+}
+
+async function loadRecentActivity() {
+    if (!currentCustomerId) return;
+    
+    const container = document.getElementById('recentActivityList');
+    if (!container) return;
+    
+    try {
+        // We could fetch from a specific 'activities' collection or infer from completed sessions
+        const { success, schedules } = await firebaseDB.getCustomerSchedule(currentCustomerId);
+        
+        const completedSessions = (success && schedules) 
+            ? schedules.filter(s => s.status === 'completed').sort((a, b) => b.date.toDate() - a.date.toDate()).slice(0, 3) 
+            : [];
+            
+        // For demo purposes, we will just show completed sessions as "activity"
+        // In a real app, you might have achievement unlocks, etc.
+        
+        if (completedSessions.length > 0) {
+            container.innerHTML = completedSessions.map(session => {
+                const date = session.date.toDate();
+                return `
+                  <div class="service-card" style="padding: 1rem;">
+                    <h3>✅ Completed Session</h3>
+                    <p><strong>${session.type}</strong></p>
+                    <small style="color: #666;">${date.toLocaleDateString()} at ${date.toLocaleTimeString()}</small>
+                  </div>
+                `;
+            }).join('');
+        } else {
+             container.innerHTML = '<p>No recent activity recorded.</p>';
+        }
+    } catch (error) {
+        console.error('Error loading activity:', error);
+    }
+}
+
+
+// --- Helper Functions ---
+
+function updateElement(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function isSameDay(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate();
+}
+
+
+function initHoverEffects() {
+    const interactiveElements = document.querySelectorAll('.feature-card, .btn-primary, .btn-secondary, .btn-outline');
     interactiveElements.forEach(element => {
         element.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-2px)';
             this.style.transition = 'transform 0.3s ease';
         });
-        
         element.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
         });
     });
-});
-
-// Real-time updates (simulated)
-function startRealTimeUpdates() {
-    // Simulate real-time updates every 30 seconds
-    setInterval(() => {
-        // Update any real-time data
-        updateDashboardStats();
-    }, 30000);
 }
 
-// Initialize real-time updates
-document.addEventListener('DOMContentLoaded', function() {
-    startRealTimeUpdates();
-});
+function highlightActiveNav() {
+    const currentPage = window.location.pathname.split('/').pop();
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
+    });
+}
 
-// Add CSS for active navigation
-const style = document.createElement('style');
-style.textContent = `
-    .nav-menu a.active {
-        color: #ffd700 !important;
-        font-weight: bold;
-    }
+// --- Global Functions (for onclick handlers) ---
+
+window.markWorkoutComplete = function(workoutId) {
+    const button = event.target;
+    button.textContent = 'Completing...';
+    button.disabled = true;
     
-    .feature-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+    // Here we would call an API update
+    // await firebaseDB.updateWorkout(workoutId, { status: 'completed' });
     
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    setTimeout(() => {
+        button.textContent = '✓ Completed!';
+        button.style.backgroundColor = '#28a745';
+        button.style.borderColor = '#28a745';
+        
+        // Show success message
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+            position: fixed; top: 20px; right: 20px; background: #d4edda; color: #155724;
+            padding: 1rem; border-radius: 8px; border: 1px solid #c3e6cb; z-index: 1000;
+        `;
+        successDiv.textContent = 'Workout marked as complete! Great job!';
+        document.body.appendChild(successDiv);
+        
+        setTimeout(() => {
+            successDiv.remove();
+            // Reload stats to reflect completion
+            loadDashboardStats();
+            loadRecentActivity();
+        }, 2000);
+    }, 1000);
+};
+
+window.viewFullPlan = function() {
+    window.location.href = 'workout-plans.html';
+};
+
+window.logout = async function() {
+    try {
+        await signOut(auth);
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = 'loginPage.html';
+    } catch (error) {
+        console.error('Logout error:', error);
     }
-    
-    .btn-primary, .btn-secondary, .btn-outline {
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover, .btn-secondary:hover, .btn-outline:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-`;
-document.head.appendChild(style);
+};
+
+function startRealTimeUpdates() {
+    // Poll every minute for updates if needed, or rely on Firestore snapshots (better)
+    setInterval(() => {
+        loadDashboardStats();
+    }, 60000);
+}

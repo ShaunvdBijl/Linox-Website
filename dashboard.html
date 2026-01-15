@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard - LinoxFitness</title>
   <link rel="stylesheet" href="HomePage.css" />
 </head>
+
 <body>
   <header>
     <nav class="navbar">
@@ -38,28 +40,32 @@
       <div class="container">
         <h2>Your Athletic Performance Overview</h2>
         <div class="features-grid">
-          <div class="feature-card" style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white;">
+          <div class="feature-card"
+            style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white;">
             <h3>Training Sessions This Week</h3>
-            <div style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">4</div>
-            <p>Goal: 5 sessions</p>
+            <div id="sessionsThisWeek" style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">0</div>
+            <p>Goal: <span id="sessionsGoal">3</span> sessions</p>
           </div>
-          
-          <div class="feature-card" style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); color: white;">
+
+          <div class="feature-card"
+            style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); color: white;">
             <h3>Technical Skill Rating</h3>
-            <div style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">8.5/10</div>
+            <div id="skillRating" style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">-</div>
             <p>Coach Lee's Assessment</p>
           </div>
-          
-          <div class="feature-card" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white;">
+
+          <div class="feature-card"
+            style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white;">
             <h3>Fitness Progress</h3>
-            <div style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">+12%</div>
+            <div id="fitnessProgress" style="font-size: 2.5rem; font-weight: bold; margin: 1rem 0;">-</div>
             <p>Endurance improvement</p>
           </div>
-          
-          <div class="feature-card" style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); color: white;">
+
+          <div class="feature-card"
+            style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); color: white;">
             <h3>Next Training</h3>
-            <div style="font-size: 1.5rem; font-weight: bold; margin: 1rem 0;">Tomorrow</div>
-            <p>9:00 AM - Technical Development</p>
+            <div id="nextTrainingTime" style="font-size: 1.5rem; font-weight: bold; margin: 1rem 0;">No session</div>
+            <p id="nextTrainingType">Book a session</p>
           </div>
         </div>
       </div>
@@ -70,66 +76,44 @@
       <div class="container">
         <div class="about-content">
           <h2>Today's Athletic Training Plan</h2>
-          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
-            <h3 style="color: #1e3a8a; margin-bottom: 1rem;">Technical Development & Strength Training</h3>
-            <ul style="list-style: none; padding: 0;">
-              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                <strong>Technical Drills:</strong> Ball control & passing (20 min)
-              </li>
-              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                <strong>Squats:</strong> 3 sets x 12 reps
-              </li>
-              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                <strong>Lunges:</strong> 3 sets x 10 reps each leg
-              </li>
-              <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                <strong>Core Circuit:</strong> Plank, Russian twists (15 min)
-              </li>
-              <li style="padding: 0.5rem 0;">
-                <strong>Agility Training:</strong> Ladder drills & cone work (15 min)
-              </li>
-            </ul>
-            <div style="margin-top: 1.5rem;">
-              <button class="btn-primary" onclick="markWorkoutComplete()">Mark as Complete</button>
-              <button class="btn-secondary" onclick="viewFullPlan()">View Full Plan</button>
+          <div
+            style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+            <div id="todaysWorkoutContent">
+              <p>Loading today's plan...</p>
             </div>
           </div>
-          
+
           <!-- Recommended Exercises Section -->
           <h2 style="margin-top: 2rem;">🏋️ Your Recommended Exercises</h2>
-          <div id="recommendedExercises" style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+          <div id="recommendedExercises"
+            style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
             <div class="loading" style="text-align: center; padding: 2rem; color: #666;">
               <p>Loading your recommended exercises...</p>
             </div>
           </div>
-          
+
           <h3>Quick Actions</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-            <a href="my-workout-plan.html" class="btn-primary" style="text-align: center; padding: 1rem;">⚽ My Training Plan</a>
-            <a href="schedule.html" class="btn-secondary" style="text-align: center; padding: 1rem;">📅 Training Schedule</a>
-            <a href="book-session.html" class="btn-secondary" style="text-align: center; padding: 1rem;">📆 Book Training Session</a>
+            <a href="my-workout-plan.html" class="btn-primary" style="text-align: center; padding: 1rem;">⚽ My Training
+              Plan</a>
+            <a href="schedule.html" class="btn-secondary" style="text-align: center; padding: 1rem;">📅 Training
+              Schedule</a>
+            <a href="book-session.html" class="btn-secondary" style="text-align: center; padding: 1rem;">📆 Book
+              Training Session</a>
             <a href="progress.html" class="btn-outline" style="text-align: center; padding: 1rem;">📈 Track Progress</a>
           </div>
         </div>
-        
+
         <div class="about-image">
           <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             <h3 style="color: #1e3a8a; margin-bottom: 1rem;">Upcoming Training Sessions</h3>
             <div style="margin-bottom: 1rem;">
-              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
-                <strong>Tomorrow - 9:00 AM</strong><br>
-                Technical Development with Coach Lee
-              </div>
-              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
-                <strong>Friday - 6:00 PM</strong><br>
-                Strength & Conditioning with Coach Lee
-              </div>
-              <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
-                <strong>Sunday - 10:00 AM</strong><br>
-                Recovery & Mobility with Coach Lee
+              <div id="upcomingSessionsList">
+                <p>Loading schedule...</p>
               </div>
             </div>
-            <a href="book-session.html" class="btn-primary" style="width: 100%; text-align: center;">Book Training Session</a>
+            <a href="book-session.html" class="btn-primary" style="width: 100%; text-align: center;">Book Training
+              Session</a>
           </div>
         </div>
       </div>
@@ -139,24 +123,8 @@
     <section class="services-preview">
       <div class="container">
         <h2>Recent Training Activity & Achievements</h2>
-        <div class="services-grid">
-          <div class="service-card">
-            <h3>🏆 New Achievement!</h3>
-            <p><strong>Training Consistency</strong> - Completed 4 training sessions this week!</p>
-            <small style="color: #666;">Earned 2 days ago</small>
-          </div>
-          
-          <div class="service-card">
-            <h3>📈 Skill Progress</h3>
-            <p><strong>Ball Control:</strong> Improved from 7.5 to 8.5/10 rating</p>
-            <small style="color: #666;">Updated yesterday</small>
-          </div>
-          
-          <div class="service-card">
-            <h3>🎯 Performance Milestone</h3>
-            <p><strong>Endurance:</strong> 75% to your athletic performance goal!</p>
-            <small style="color: #666;">Updated 3 days ago</small>
-          </div>
+        <div id="recentActivityList" class="services-grid" style="grid-template-columns: 1fr; gap: 1rem;">
+          <p>No recent activity.</p>
         </div>
       </div>
     </section>
@@ -177,7 +145,7 @@
             </div>
             <a href="#" class="btn-outline" style="margin-top: 1rem;">View Full Nutrition Plan</a>
           </div>
-          
+
           <div class="testimonial-card">
             <h3>Athletic Recovery Tips</h3>
             <div style="text-align: left;">
@@ -222,350 +190,10 @@
     </div>
   </footer>
 
-  <!-- Firebase CDN -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, collection, doc, getDoc, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  <!-- Dashboard Logic -->
+  <script type="module" src="dashboard.js"></script>
 
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
-      authDomain: "linox-soccer.firebaseapp.com",
-      projectId: "linox-soccer",
-      storageBucket: "linox-soccer.firebasestorage.app",
-      messagingSenderId: "313058607377",
-      appId: "1:313058607377:web:784530fe05a04272dd4cb0",
-      measurementId: "G-QQJD06D5RK"
-    };
 
-    console.log('✅ Using Firebase configuration for linox-soccer project');
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Check authentication on page load
-    let authCheckDone = false;
-    
-    onAuthStateChanged(auth, async (user) => {
-      console.log('🔐 Auth state changed:', user ? `User: ${user.email}` : 'No user');
-      
-      if (authCheckDone) {
-        console.log('Auth check already completed, skipping');
-        return;
-      }
-      
-      if (!user) {
-        // Give Firebase a moment to initialize
-        setTimeout(() => {
-          const currentUser = auth.currentUser;
-          if (!currentUser) {
-            console.log('❌ No user authenticated, redirecting to login');
-            window.location.href = 'loginPage.html';
-          }
-        }, 500);
-        return;
-      }
-
-      authCheckDone = true;
-      
-      try {
-        console.log('✅ User authenticated, loading profile...');
-        
-        // Load user profile from Firestore
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        
-        let userData = null;
-        if (userDocSnap.exists()) {
-          userData = userDocSnap.data();
-          console.log('📄 User data loaded:', userData);
-        } else {
-          console.warn('⚠️ User document not found, using basic data');
-          userData = {
-            firstName: user.displayName?.split(' ')[0] || 'User',
-            lastName: user.displayName?.split(' ')[1] || '',
-            email: user.email
-          };
-        }
-        
-        // Update dashboard with user info
-        document.getElementById('userName').textContent = userData.firstName || 'User';
-        
-        // Store user data for other pages
-        localStorage.setItem('userName', `${userData.firstName} ${userData.lastName}`);
-        localStorage.setItem('userEmail', userData.email);
-        
-        // Load recommended exercises
-        await loadRecommendedExercises(user.uid);
-        
-        console.log('✅ Dashboard loaded successfully');
-        
-      } catch (error) {
-        console.error('❌ Error loading user data:', error);
-      }
-    });
-
-    // Logout function
-    window.logout = async function() {
-      try {
-        console.log('🚪 Logging out...');
-        await signOut(auth);
-        localStorage.clear();
-        sessionStorage.clear();
-        console.log('✅ Logged out successfully');
-        window.location.href = 'loginPage.html';
-      } catch (error) {
-        console.error('❌ Logout error:', error);
-        alert('Error logging out. Please try again.');
-      }
-    };
-
-    // Dashboard functionality
-    function markWorkoutComplete() {
-      const button = event.target;
-      const originalText = button.textContent;
-      
-      button.textContent = 'Completing...';
-      button.disabled = true;
-      
-      setTimeout(() => {
-        button.textContent = '✓ Completed!';
-        button.style.backgroundColor = '#28a745';
-        button.style.borderColor = '#28a745';
-        
-        showSuccessMessage('Workout marked as complete! Great job!');
-        
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.disabled = false;
-          button.style.backgroundColor = '';
-          button.style.borderColor = '';
-        }, 3000);
-      }, 1500);
-    }
-
-    function viewFullPlan() {
-      window.location.href = 'workout-plans.html';
-    }
-
-    function showSuccessMessage(message) {
-      const successDiv = document.createElement('div');
-      successDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #d4edda;
-        color: #155724;
-        padding: 1rem;
-        border-radius: 8px;
-        border: 1px solid #c3e6cb;
-        z-index: 1000;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      `;
-      successDiv.textContent = message;
-      
-      document.body.appendChild(successDiv);
-      
-      setTimeout(() => {
-        if (successDiv.parentNode) {
-          successDiv.remove();
-        }
-      }, 3000);
-    }
-
-    // Load recommended exercises for the customer
-    async function loadRecommendedExercises(userId) {
-      try {
-        console.log('🏋️ Loading recommended exercises for user:', userId);
-        
-        // First, get the customer ID from the users collection
-        const userDoc = await getDoc(doc(db, 'users', userId));
-        let customerId = userId; // Default to user ID
-        
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          // Check if there's a customerId field or use email to find customer
-          if (userData.customerId) {
-            customerId = userData.customerId;
-          } else if (userData.email) {
-            // Try to find customer by email
-            const customersQuery = query(collection(db, 'customers'), where('email', '==', userData.email));
-            const customersSnapshot = await getDocs(customersQuery);
-            if (!customersSnapshot.empty) {
-              customerId = customersSnapshot.docs[0].id;
-            }
-          }
-        }
-        
-        console.log('🔍 Using customer ID:', customerId);
-        
-        // Get recommended exercises
-        const recommendationsQuery = query(
-          collection(db, 'customerRecommendedExercises'),
-          where('customerID', '==', customerId),
-          where('status', '==', 'active')
-        );
-        
-        const recommendationsSnapshot = await getDocs(recommendationsQuery);
-        const recommendations = [];
-        
-        recommendationsSnapshot.forEach(doc => {
-          recommendations.push({ id: doc.id, ...doc.data() });
-        });
-        
-        // Sort by priority
-        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
-        recommendations.sort((a, b) => {
-          return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
-        });
-        
-        console.log('✅ Loaded recommendations:', recommendations.length);
-        displayRecommendedExercises(recommendations);
-        
-      } catch (error) {
-        console.error('❌ Error loading recommended exercises:', error);
-        displayRecommendedExercises([]);
-      }
-    }
-
-    // Display recommended exercises in the dashboard
-    function displayRecommendedExercises(recommendations) {
-      const container = document.getElementById('recommendedExercises');
-      
-      if (!recommendations || recommendations.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 2rem; color: #666;">
-            <h3>No exercises recommended yet</h3>
-            <p>Your trainer hasn't assigned any specific exercises yet. Check back later or contact your trainer for personalized recommendations!</p>
-            <div style="margin-top: 1rem;">
-              <a href="my-workout-plan.html" class="btn-primary">View General Workout Plan</a>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      const exercisesHtml = recommendations.map(rec => `
-        <div style="
-          background: #f8f9fa;
-          border-radius: 8px;
-          padding: 1rem;
-          margin-bottom: 1rem;
-          border-left: 4px solid ${getPriorityColor(rec.priority)};
-        ">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div style="flex: 1;">
-              <h4 style="margin: 0 0 0.5rem 0; color: #333; font-size: 1.1rem;">
-                ${rec.exerciseName}
-                <span style="
-                  background: ${getPriorityColor(rec.priority)};
-                  color: white;
-                  padding: 2px 8px;
-                  border-radius: 12px;
-                  font-size: 0.8rem;
-                  margin-left: 0.5rem;
-                ">${rec.priority}</span>
-              </h4>
-              <div style="color: #666; margin-bottom: 0.5rem;">
-                ${rec.sets ? `${rec.sets} sets` : ''} 
-                ${rec.reps ? `x ${rec.reps} reps` : ''} 
-                ${rec.duration ? `x ${rec.duration}s` : ''}
-              </div>
-              ${rec.notes ? `<div style="color: #555; font-style: italic; font-size: 0.9rem;">${rec.notes}</div>` : ''}
-            </div>
-            <div style="margin-left: 1rem;">
-              <button onclick="markExerciseComplete('${rec.id}')" style="
-                background: #28a745;
-                color: white;
-                border: none;
-                padding: 0.5rem 1rem;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 0.9rem;
-              ">Mark Done</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-
-      container.innerHTML = `
-        <div style="margin-bottom: 1rem;">
-          <h3 style="margin: 0 0 1rem 0; color: #667eea;">Your Personalized Exercise Plan</h3>
-          <p style="color: #666; margin-bottom: 1rem;">These exercises have been specifically recommended for you by your trainer.</p>
-        </div>
-        ${exercisesHtml}
-        <div style="text-align: center; margin-top: 1.5rem;">
-          <a href="my-workout-plan.html" class="btn-secondary">View Full Workout Plan</a>
-        </div>
-      `;
-    }
-
-    // Get priority color
-    function getPriorityColor(priority) {
-      switch (priority) {
-        case 'high': return '#dc3545';
-        case 'medium': return '#ffc107';
-        case 'low': return '#28a745';
-        default: return '#6c757d';
-      }
-    }
-
-    // Mark exercise as complete (placeholder function)
-    window.markExerciseComplete = function(exerciseId) {
-      showSuccessMessage('Exercise marked as complete! Great job! 🎉');
-      // TODO: Implement actual completion tracking
-    };
-
-    // Make functions available globally
-    window.markWorkoutComplete = markWorkoutComplete;
-    window.viewFullPlan = viewFullPlan;
-
-    // Add hover effects
-    document.addEventListener('DOMContentLoaded', function() {
-      const interactiveElements = document.querySelectorAll('.feature-card, .btn-primary, .btn-secondary, .btn-outline');
-      
-      interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', function() {
-          this.style.transform = 'translateY(-2px)';
-          this.style.transition = 'transform 0.3s ease';
-        });
-        
-        element.addEventListener('mouseleave', function() {
-          this.style.transform = 'translateY(0)';
-        });
-      });
-    });
-
-    // Add CSS
-    const style = document.createElement('style');
-    style.textContent = `
-      .nav-menu a.active {
-        color: #ffd700 !important;
-        font-weight: bold;
-      }
-      
-      .feature-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-      
-      .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-      }
-      
-      .btn-primary, .btn-secondary, .btn-outline {
-        transition: all 0.3s ease;
-      }
-      
-      .btn-primary:hover, .btn-secondary:hover, .btn-outline:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-    `;
-    document.head.appendChild(style);
-  </script>
 </body>
+
 </html>

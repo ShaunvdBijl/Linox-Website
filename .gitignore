@@ -1,5 +1,7 @@
 # Firebase Configuration (Never commit actual API keys)
 config.js
+secure-config.js
+setup-secure-config.js
 .env
 .env.local
 .env.production
