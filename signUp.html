@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up - LinoxFitness</title>
   <link rel="stylesheet" href="HomePage.css" />
 </head>
+
 <body>
   <header>
     <nav class="navbar">
@@ -15,7 +17,7 @@
       <ul class="nav-menu">
         <li><a href="about.html">About</a></li>
         <li><a href="services.html">Services</a></li>
-        <li><a href="credentials.html">Credentials</a></li>
+
         <li><a href="signUp.html">Sign Up</a></li>
         <li><a href="loginPage.html">Login</a></li>
         <li id="memberPortal" style="display: none;"><a href="dashboard.html">Dashboard</a></li>
@@ -29,61 +31,83 @@
     <section class="hero" style="min-height: 60vh;">
       <div class="hero-content">
         <h1>Join LinoxFitness</h1>
-        <p>Start your fitness journey today and transform your life with personalized training and nutrition guidance.</p>
+        <p>Start your fitness journey today and transform your life with personalized training and nutrition guidance.
+        </p>
       </div>
     </section>
 
     <section class="features">
       <div class="container">
-        <div style="max-width: 600px; margin: 0 auto; background: white; padding: 3rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+        <div
+          style="max-width: 600px; margin: 0 auto; background: white; padding: 3rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
           <h2 style="text-align: center; margin-bottom: 2rem; color: #1e1e2f;">Create Your Account</h2>
-          
+
           <form id="signupForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
               <div>
-                <label for="firstName" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">First Name *</label>
-                <input type="text" id="firstName" name="firstName" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+                <label for="firstName"
+                  style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">First Name *</label>
+                <input type="text" id="firstName" name="firstName" required
+                  style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
               </div>
               <div>
-                <label for="lastName" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Last Name *</label>
-                <input type="text" id="lastName" name="lastName" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+                <label for="lastName"
+                  style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Last Name *</label>
+                <input type="text" id="lastName" name="lastName" required
+                  style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
               </div>
             </div>
-            
+
             <div>
-              <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Email Address *</label>
-              <input type="email" id="email" name="email" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+              <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Email
+                Address *</label>
+              <input type="email" id="email" name="email" required
+                style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
             </div>
-            
+
             <div>
-              <label for="phone" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Phone Number</label>
-              <input type="tel" id="phone" name="phone" style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+              <label for="phone" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Phone
+                Number</label>
+              <input type="tel" id="phone" name="phone"
+                style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
             </div>
-            
+
             <div>
-              <label for="password" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Password *</label>
+              <label for="password"
+                style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Password *</label>
               <div style="position: relative;">
-                <input type="password" id="password" name="password" required minlength="8" style="width: 100%; padding: 12px; padding-right: 50px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
-                <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666; padding: 0;" onclick="togglePasswordVisibility()">
+                <input type="password" id="password" name="password" required minlength="8"
+                  style="width: 100%; padding: 12px; padding-right: 50px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+                <button type="button" id="togglePassword"
+                  style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666; padding: 0;"
+                  onclick="togglePasswordVisibility()">
                   👁️
                 </button>
               </div>
               <small style="color: #666; font-size: 0.9rem;">Password must be at least 8 characters long</small>
             </div>
-            
+
             <div>
-              <label for="confirmPassword" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Confirm Password *</label>
+              <label for="confirmPassword"
+                style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Confirm Password
+                *</label>
               <div style="position: relative;">
-                <input type="password" id="confirmPassword" name="confirmPassword" required style="width: 100%; padding: 12px; padding-right: 50px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
-                <button type="button" id="toggleConfirmPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666; padding: 0;" onclick="toggleConfirmPasswordVisibility()">
+                <input type="password" id="confirmPassword" name="confirmPassword" required
+                  style="width: 100%; padding: 12px; padding-right: 50px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+                <button type="button" id="toggleConfirmPassword"
+                  style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666; padding: 0;"
+                  onclick="toggleConfirmPasswordVisibility()">
                   👁️
                 </button>
               </div>
             </div>
-            
+
             <div>
-              <label for="fitnessGoals" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Primary Fitness Goal *</label>
-              <select id="fitnessGoals" name="fitnessGoals" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+              <label for="fitnessGoals"
+                style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Primary Fitness Goal
+                *</label>
+              <select id="fitnessGoals" name="fitnessGoals" required
+                style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
                 <option value="">Select your primary goal</option>
                 <option value="weight-loss">Weight Loss</option>
                 <option value="muscle-gain">Muscle Building</option>
@@ -93,36 +117,42 @@
                 <option value="rehabilitation">Rehabilitation</option>
               </select>
             </div>
-            
+
             <div>
-              <label for="experience" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Fitness Experience Level *</label>
-              <select id="experience" name="experience" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
+              <label for="experience"
+                style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Fitness Experience Level
+                *</label>
+              <select id="experience" name="experience" required
+                style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;">
                 <option value="">Select your experience level</option>
                 <option value="beginner">Beginner (0-6 months)</option>
                 <option value="intermediate">Intermediate (6 months - 2 years)</option>
                 <option value="advanced">Advanced (2+ years)</option>
               </select>
             </div>
-            
+
             <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
               <input type="checkbox" id="terms" name="terms" required style="width: auto;">
               <label for="terms" style="font-size: 0.9rem; color: #333;">
-                I agree to the <a href="#" style="color: #667eea;">Terms of Service</a> and <a href="#" style="color: #667eea;">Privacy Policy</a> *
+                I agree to the <a href="#" style="color: #667eea;">Terms of Service</a> and <a href="#"
+                  style="color: #667eea;">Privacy Policy</a> *
               </label>
             </div>
-            
+
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
               <input type="checkbox" id="newsletter" name="newsletter" style="width: auto;">
               <label for="newsletter" style="font-size: 0.9rem; color: #333;">
                 Subscribe to our newsletter for fitness tips and updates
               </label>
             </div>
-            
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 1rem;">Create Account</button>
+
+            <button type="submit" class="btn-primary"
+              style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 1rem;">Create Account</button>
           </form>
-          
+
           <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
-            <p style="color: #666;">Already have an account? <a href="loginPage.html" style="color: #667eea; font-weight: bold;">Log in here</a></p>
+            <p style="color: #666;">Already have an account? <a href="loginPage.html"
+                style="color: #667eea; font-weight: bold;">Log in here</a></p>
           </div>
         </div>
       </div>
@@ -131,7 +161,8 @@
     <section class="cta">
       <div class="container">
         <h2>Why Sign Up?</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
           <div style="text-align: center;">
             <h3 style="color: #ffd700; margin-bottom: 1rem;">Personalized Plans</h3>
             <p>Get customized workout and nutrition plans tailored to your specific goals and fitness level.</p>
@@ -162,7 +193,7 @@
             <li><a href="about.html">About Us</a></li>
             <li><a href="services.html">Services</a></li>
             <li><a href="schedule.html">Schedule</a></li>
-            <li><a href="credentials.html">Credentials</a></li>
+
             <li id="dashboardLink" style="display: none;"><a href="dashboard.html">Dashboard</a></li>
             <li id="bookingLink" style="display: none;"><a href="book-session.html">Book Session</a></li>
             <li id="workoutLink" style="display: none;"><a href="workout-plans.html">Workout Plans</a></li>
@@ -197,7 +228,7 @@
       appId: "1:313058607377:web:784530fe05a04272dd4cb0",
       measurementId: "G-QQJD06D5RK"
     };
-    
+
     console.log('✅ Using Firebase configuration for linox-soccer project');
 
     // Initialize Firebase
@@ -224,7 +255,7 @@
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 if (userDoc.exists()) {
                   const userData = userDoc.data();
-                  
+
                   if (userData.isAdmin) {
                     window.location.href = 'admin-portal.html';
                   } else {
@@ -329,7 +360,7 @@
         } catch (error) {
           console.error('Signup error:', error);
           let errorMessage = 'Signup failed. Please try again.';
-          
+
           if (error.code === 'auth/email-already-in-use') {
             errorMessage = 'An account with this email already exists.';
           } else if (error.code === 'auth/weak-password') {
@@ -337,7 +368,7 @@
           } else if (error.code === 'auth/invalid-email') {
             errorMessage = 'Please enter a valid email address.';
           }
-          
+
           alert(errorMessage);
         }
       }
@@ -351,7 +382,7 @@
     // Password toggle functions
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById('password');
-      
+
       if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
       } else {
@@ -361,7 +392,7 @@
 
     function toggleConfirmPasswordVisibility() {
       const confirmPasswordInput = document.getElementById('confirmPassword');
-      
+
       if (confirmPasswordInput.type === 'password') {
         confirmPasswordInput.type = 'text';
       } else {
@@ -369,8 +400,9 @@
       }
     }
   </script>
-  
+
   <script src="auth-utils.js"></script>
   <script src="home.js"></script>
 </body>
+
 </html>
