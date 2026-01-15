@@ -129,35 +129,77 @@
       </div>
     </section>
 
-    <!-- Nutrition & Wellness -->
-    <section class="testimonials">
+    <!-- Performance Tracking & Goals -->
+    <section class="performance-tracking">
       <div class="container">
-        <h2>Athletic Nutrition & Recovery</h2>
-        <div class="testimonials-grid">
-          <div class="testimonial-card">
-            <h3>Today's Performance Nutrition</h3>
-            <div style="text-align: left;">
-              <p><strong>Pre-Training:</strong> Oatmeal with banana & protein</p>
-              <p><strong>Post-Training:</strong> Protein shake with recovery nutrients</p>
-              <p><strong>Lunch:</strong> Grilled chicken with sweet potato</p>
-              <p><strong>Dinner:</strong> Salmon with quinoa & vegetables</p>
-              <p><strong>Hydration:</strong> 2.5L water + electrolyte supplements</p>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+
+          <!-- Performance Chart -->
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">📊 Performance Trends</h2>
+            <div style="position: relative; height: 300px; width: 100%;">
+              <canvas id="progressChart"></canvas>
             </div>
-            <a href="#" class="btn-outline" style="margin-top: 1rem;">View Full Nutrition Plan</a>
           </div>
 
-          <div class="testimonial-card">
-            <h3>Athletic Recovery Tips</h3>
-            <div style="text-align: left;">
-              <p>💧 Hydrate - 2.5L water + electrolytes daily</p>
-              <p>😴 Sleep - 8-9 hours for optimal recovery</p>
-              <p>🧘 Mobility - 15 minutes daily stretching</p>
-              <p>⚡ Fuel - Pre/post training nutrition timing</p>
-              <p>🏃 Active Recovery - Light movement on rest days</p>
+          <!-- Goal Tracking -->
+          <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">🎯 Assessment Data</h2>
+
+            <div id="currentGoalContainer" style="margin-bottom: 2rem;">
+              <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 5px solid #3b82f6;">
+                <h3 id="goalTitle" style="color: #333; margin: 0 0 0.5rem 0; font-size: 1.2rem;">Loading Data...</h3>
+                <p id="goalTarget" style="color: #666; margin-bottom: 0.5rem;">...</p>
+                <div style="margin-top: 1rem;">
+                  <div
+                    style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; color: #555;">
+                    <span>Progress</span>
+                    <span id="goalPercentage">0%</span>
+                  </div>
+                  <div style="width: 100%; background: #e9ecef; border-radius: 4px; height: 8px;">
+                    <div id="goalProgressBar"
+                      style="width: 0%; background: #3b82f6; height: 8px; border-radius: 4px; transition: width 0.5s;">
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <a href="#" class="btn-outline" style="margin-top: 1rem;">More Recovery Tips</a>
+
+            <div style="text-align: center;">
+              <button onclick="openGoalModal()" class="btn-outline" style="width: 100%;">Update Goal</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Session History -->
+        <div style="margin-top: 3rem;">
+          <h2 style="margin-bottom: 1.5rem;">📅 Recent Training History</h2>
+          <div
+            style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); overflow: hidden;">
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #f8f9fa; text-align: left;">
+                    <th style="padding: 1rem; border-bottom: 2px solid #e9ecef;">Date</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #e9ecef;">Type</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #e9ecef;">Trainer</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #e9ecef;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="sessionHistoryBody">
+                  <tr>
+                    <td colspan="4" style="padding: 2rem; text-align: center; color: #666;">Loading history...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="padding: 1rem; text-align: center; border-top: 1px solid #e9ecef;">
+              <a href="#" class="btn-secondary" style="font-size: 0.9rem;">View All History</a>
+            </div>
           </div>
         </div>
+
       </div>
     </section>
   </main>
@@ -189,6 +231,9 @@
       </div>
     </div>
   </footer>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Dashboard Logic -->
   <script type="module" src="dashboard.js"></script>

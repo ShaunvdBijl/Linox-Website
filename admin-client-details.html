@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Details - LINQXFITNESS Admin</title>
+    <link rel="stylesheet" href="HomePage.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+        }
+
+        .header-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .client-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            color: #1e3a8a;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-back {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #4b5563;
+        }
+
+        @media (max-width: 900px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="header-card">
+            <div class="client-profile">
+                <div class="avatar-circle" id="clientAvatar">?</div>
+                <div>
+                    <h1 style="margin: 0; color: #111;" id="clientName">Loading...</h1>
+                    <p style="margin: 5px 0; color: #666;" id="clientEmail">...</p>
+                    <span class="stat-badge status-active" id="clientStatus">Active</span>
+                </div>
+            </div>
+            <div>
+                <a href="admin-portal.html" class="btn-back">← Back to Portal</a>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            <!-- Left Column: Charts & History -->
+            <div>
+                <!-- Progress Chart -->
+                <div class="card">
+                    <h2>📊 Performance Trends</h2>
+                    <div style="height: 350px;">
+                        <canvas id="adminProgressChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Session History -->
+                <div class="card">
+                    <h2>📅 Recent Sessions</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>Trainer</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="4">Loading data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Column: Goals & Stats -->
+            <div>
+                <!-- Active Goal -->
+                <div class="card">
+                    <h2>🎯 Current Goal</h2>
+                    <div id="goalContainer">
+                        <h3 id="goalTitle" style="margin-top:0;">No goal set</h3>
+                        <p id="goalTarget" style="color: #666;">...</p>
+                        <div style="background: #eee; height: 10px; border-radius: 5px; margin-top: 10px;">
+                            <div id="goalBar" style="width: 0%; background: #3b82f6; height: 100%; border-radius: 5px;">
+                            </div>
+                        </div>
+                        <p id="goalPercent" style="text-align: right; font-weight: bold; margin-top: 5px;">0%</p>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card">
+                    <h2>⚡ Quick Stats</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;" id="totalSessions">0</div>
+                            <div style="color: #64748b; font-size: 0.9rem;">Total Sessions</div>
+                        </div>
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="attendanceRate">100%
+                            </div>
+                            <div style="color: #64748b; font-size: 0.9rem;">Attendance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="card">
+                    <h2>📝 Coach Notes</h2>
+                    <textarea
+                        style="width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; min-height: 100px;"
+                        placeholder="Add private notes about this client..."></textarea>
+                    <button class="btn-back"
+                        style="background: #3b82f6; color: white; margin-top: 10px; width: 100%; border:none; cursor: pointer;">Save
+                        Notes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIrzE92nfyWeCxqpX1KcR2c_Rs1ubviy4",
+            authDomain: "linox-soccer.firebaseapp.com",
+            projectId: "linox-soccer",
+            storageBucket: "linox-soccer.firebasestorage.app",
+            messagingSenderId: "313058607377",
+            appId: "1:313058607377:web:784530fe05a04272dd4cb0",
+            measurementId: "G-QQJD06D5RK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Get ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const clientId = urlParams.get('id');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'loginPage.html';
+                return;
+            }
+            if (!clientId) {
+                alert('No client ID specified');
+                window.location.href = 'admin-portal.html';
+                return;
+            }
+
+            try {
+                // Load Client Profile
+                const userDoc = await getDoc(doc(db, 'users', clientId));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById('clientName').textContent = `${data.firstName} ${data.lastName}`;
+                    document.getElementById('clientEmail').textContent = data.email;
+                    document.getElementById('clientAvatar').textContent = data.firstName ? data.firstName[0].toUpperCase() : '?';
+                    if (data.status) document.getElementById('clientStatus').textContent = data.status;
+                }
+
+                // Load Sessions (History & Stats)
+                // Assuming schedules are stored in 'schedules' and have 'userId' or via 'bookedUsers' array if many-to-many
+                // Or looking at customer dashboard logic: firebaseDB.getCustomerSchedule(customerId) scans schedules
+                // Here we replicate a simple query. NOT efficient for production if scanning all schedules, 
+                // but matches current architecture. Using 'bookedUsers' array contains clientID.
+
+                // Note: Customer Dashboard uses a dedicated service. We'll do a direct query here if possible.
+                // Since 'bookedUsers' is an array, we use array-contains.
+                const q = query(collection(db, 'schedules'), where('bookedUsers', 'array-contains', clientId));
+                const snap = await getDocs(q);
+
+                let sessions = [];
+                snap.forEach(d => sessions.push({ id: d.id, ...d.data() }));
+
+                // Sort
+                sessions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Render History
+                const tbody = document.getElementById('historyTableBody');
+                if (sessions.length > 0) {
+                    tbody.innerHTML = sessions.slice(0, 10).map(s => `
+                        <tr>
+                            <td>${new Date(s.date).toLocaleDateString()}</td>
+                            <td>${s.activity || s.type || 'Training'}</td>
+                            <td>${s.trainer}</td>
+                            <td><span class="stat-badge status-active">${s.status || 'Completed'}</span></td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('totalSessions').textContent = sessions.length;
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4">No sessions found.</td></tr>';
+                }
+
+                // Render Chart (Mock for now, same as user dashboard)
+                renderChart();
+
+                // Mock Goal
+                document.getElementById('goalTitle').textContent = "Weight Loss";
+                document.getElementById('goalTarget').textContent = "Target: 75kg";
+                document.getElementById('goalBar').style.width = "60%";
+                document.getElementById('goalPercent').textContent = "60%";
+
+            } catch (err) {
+                console.error(err);
+                alert('Error loading client data');
+            }
+        });
+
+        function renderChart() {
+            const ctx = document.getElementById('adminProgressChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                    datasets: [{
+                        label: 'Body Weight (kg)',
+                        data: [80, 79.5, 79, 78.5, 78],
+                        borderColor: '#3b82f6',
+                        tension: 0.3
+                    }, {
+                        label: 'Squat Max (kg)',
+                        data: [100, 105, 105, 110, 115],
+                        borderColor: '#10b981',
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+    </script>
+</body>
+
+</html>
