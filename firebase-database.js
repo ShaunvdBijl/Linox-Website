@@ -1,21 +1,21 @@
 // Firebase Firestore Database Service
 // This file handles all database operations
 
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
   limit,
   addDoc,
   serverTimestamp
-} from 'firebase/firestore';
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { db } from './firebase-config.js';
 
 class FirebaseDatabaseService {
@@ -29,12 +29,12 @@ class FirebaseDatabaseService {
       const customersRef = collection(this.db, 'customers');
       const q = query(customersRef, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      
+
       const customers = [];
       querySnapshot.forEach((doc) => {
         customers.push({ id: doc.id, ...doc.data() });
       });
-      
+
       return { success: true, customers };
     } catch (error) {
       console.error('Error getting customers:', error);
@@ -46,7 +46,7 @@ class FirebaseDatabaseService {
     try {
       const customerRef = doc(this.db, 'customers', customerId);
       const customerSnap = await getDoc(customerRef);
-      
+
       if (customerSnap.exists()) {
         return { success: true, customer: { id: customerSnap.id, ...customerSnap.data() } };
       } else {
@@ -67,7 +67,7 @@ class FirebaseDatabaseService {
         updatedAt: serverTimestamp(),
         isActive: true
       };
-      
+
       const docRef = await addDoc(customerRef, newCustomer);
       return { success: true, customerId: docRef.id };
     } catch (error) {
@@ -105,17 +105,17 @@ class FirebaseDatabaseService {
     try {
       const workoutsRef = collection(this.db, 'workouts');
       const q = query(
-        workoutsRef, 
+        workoutsRef,
         where('customerId', '==', customerId),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const workouts = [];
       querySnapshot.forEach((doc) => {
         workouts.push({ id: doc.id, ...doc.data() });
       });
-      
+
       return { success: true, workouts };
     } catch (error) {
       console.error('Error getting workouts:', error);
@@ -131,7 +131,7 @@ class FirebaseDatabaseService {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
-      
+
       const docRef = await addDoc(workoutRef, newWorkout);
       return { success: true, workoutId: docRef.id };
     } catch (error) {
@@ -159,17 +159,17 @@ class FirebaseDatabaseService {
     try {
       const scheduleRef = collection(this.db, 'schedules');
       const q = query(
-        scheduleRef, 
+        scheduleRef,
         where('customerId', '==', customerId),
         orderBy('date', 'asc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const schedules = [];
       querySnapshot.forEach((doc) => {
         schedules.push({ id: doc.id, ...doc.data() });
       });
-      
+
       return { success: true, schedules };
     } catch (error) {
       console.error('Error getting schedule:', error);
@@ -185,7 +185,7 @@ class FirebaseDatabaseService {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
-      
+
       const docRef = await addDoc(scheduleRef, newSchedule);
       return { success: true, scheduleId: docRef.id };
     } catch (error) {
@@ -199,17 +199,17 @@ class FirebaseDatabaseService {
     try {
       const recommendationsRef = collection(this.db, 'exerciseRecommendations');
       const q = query(
-        recommendationsRef, 
+        recommendationsRef,
         where('customerId', '==', customerId),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const recommendations = [];
       querySnapshot.forEach((doc) => {
         recommendations.push({ id: doc.id, ...doc.data() });
       });
-      
+
       return { success: true, recommendations };
     } catch (error) {
       console.error('Error getting exercise recommendations:', error);
@@ -225,7 +225,7 @@ class FirebaseDatabaseService {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
-      
+
       const docRef = await addDoc(recommendationRef, newRecommendation);
       return { success: true, recommendationId: docRef.id };
     } catch (error) {
@@ -239,17 +239,17 @@ class FirebaseDatabaseService {
     try {
       const progressRef = collection(this.db, 'progress');
       const q = query(
-        progressRef, 
+        progressRef,
         where('customerId', '==', customerId),
         orderBy('date', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const progress = [];
       querySnapshot.forEach((doc) => {
         progress.push({ id: doc.id, ...doc.data() });
       });
-      
+
       return { success: true, progress };
     } catch (error) {
       console.error('Error getting progress:', error);
@@ -265,7 +265,7 @@ class FirebaseDatabaseService {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
-      
+
       const docRef = await addDoc(progressRef, newProgress);
       return { success: true, progressId: docRef.id };
     } catch (error) {
@@ -279,7 +279,7 @@ class FirebaseDatabaseService {
     try {
       const customersRef = collection(this.db, 'customers');
       const querySnapshot = await getDocs(customersRef);
-      
+
       const stats = {
         total: 0,
         active: 0,
@@ -287,23 +287,23 @@ class FirebaseDatabaseService {
         inactive: 0,
         newThisWeek: 0
       };
-      
+
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      
+
       querySnapshot.forEach((doc) => {
         const customer = doc.data();
         stats.total++;
-        
+
         if (customer.status === 'active') stats.active++;
         else if (customer.status === 'pending') stats.pending++;
         else if (customer.status === 'inactive') stats.inactive++;
-        
+
         if (customer.createdAt && customer.createdAt.toDate() > oneWeekAgo) {
           stats.newThisWeek++;
         }
       });
-      
+
       return { success: true, stats };
     } catch (error) {
       console.error('Error getting customer stats:', error);
