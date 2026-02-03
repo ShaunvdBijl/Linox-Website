@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -167,6 +168,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar">
@@ -174,6 +176,7 @@
                 <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
             </div>
             <ul class="nav-menu">
+                <li><a href="home.html">Home</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
                 <li><a href="schedule.html">Class Schedule</a></li>
                 <li><a href="my-workout-plan.html">My Workout</a></li>
@@ -312,7 +315,7 @@
                 window.location.href = 'loginPage.html';
                 return;
             }
-            
+
             currentUser = user;
             console.log('✅ User authenticated:', user.email);
             await loadProgress();
@@ -326,25 +329,25 @@
 
                 // Load workout plan progress
                 const workoutProgress = await loadWorkoutPlanProgress();
-                
+
                 // Load booked classes
                 const bookedClasses = await loadBookedClasses();
-                
+
                 // Calculate stats
                 const stats = calculateStats(workoutProgress, bookedClasses);
-                
+
                 // Display everything
                 displayStats(stats);
                 displayWorkoutProgress(workoutProgress);
                 displayUpcomingClasses(bookedClasses);
                 displayRecentActivity(workoutProgress, bookedClasses);
-                
+
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('progressContent').style.display = 'block';
-                
+
             } catch (error) {
                 console.error('❌ Error loading progress:', error);
-                document.getElementById('loadingState').innerHTML = 
+                document.getElementById('loadingState').innerHTML =
                     '<div class="empty-state"><h2>❌ Error</h2><p>' + error.message + '</p></div>';
             }
         }
@@ -355,7 +358,7 @@
                 const progressDoc = await getDoc(doc(db, 'userProgress', currentUser.uid));
                 if (progressDoc.exists()) {
                     const progress = progressDoc.data();
-                    
+
                     // Get the workout plan details
                     if (progress.planId) {
                         const planDoc = await getDoc(doc(db, 'workoutPlans', progress.planId));
@@ -384,14 +387,14 @@
                     where('bookedUsers', 'array-contains', currentUser.uid),
                     where('date', '>=', today)
                 );
-                
+
                 const snapshot = await getDocs(schedulesQuery);
                 const classes = [];
-                
+
                 snapshot.forEach(doc => {
                     classes.push({ id: doc.id, ...doc.data() });
                 });
-                
+
                 // Sort by date and time
                 classes.sort((a, b) => {
                     if (a.date !== b.date) {
@@ -399,7 +402,7 @@
                     }
                     return a.startTime.localeCompare(b.startTime);
                 });
-                
+
                 return classes;
             } catch (error) {
                 console.error('Error loading booked classes:', error);
@@ -412,13 +415,13 @@
             let workoutCompletion = 0;
             let completedCount = 0;
             let totalCount = 0;
-            
+
             if (workoutProgress && workoutProgress.plan) {
                 totalCount = workoutProgress.plan.exercises.length;
                 completedCount = workoutProgress.completedExercises.length;
                 workoutCompletion = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
             }
-            
+
             return {
                 workoutCompletion,
                 completedExercises: completedCount,
@@ -433,7 +436,7 @@
         // Display stats
         function displayStats(stats) {
             document.getElementById('workoutCompletion').textContent = stats.workoutCompletion + '%';
-            document.getElementById('completedExercises').textContent = 
+            document.getElementById('completedExercises').textContent =
                 `${stats.completedExercises}/${stats.totalExercises} exercises`;
             document.getElementById('classesBooked').textContent = stats.classesBooked;
             document.getElementById('streakDays').textContent = stats.streakDays;
@@ -444,17 +447,17 @@
         // Display workout progress
         function displayWorkoutProgress(workoutProgress) {
             const container = document.getElementById('workoutPlanProgress');
-            
+
             if (!workoutProgress || !workoutProgress.plan) {
                 container.innerHTML = '<div class="empty-state"><p>No workout plan assigned yet</p></div>';
                 return;
             }
-            
+
             const plan = workoutProgress.plan;
             const completedCount = workoutProgress.completedExercises.length;
             const totalCount = plan.exercises.length;
             const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-            
+
             container.innerHTML = `
                 <h3 style="color: #667eea; margin-bottom: 15px;">${plan.planName}</h3>
                 <div class="progress-bar-container">
@@ -475,21 +478,21 @@
         // Display upcoming classes
         function displayUpcomingClasses(classes) {
             const container = document.getElementById('upcomingClasses');
-            
+
             if (classes.length === 0) {
                 container.innerHTML = '<div class="empty-state"><p>No upcoming classes booked</p></div>';
                 return;
             }
-            
+
             let html = '';
             classes.slice(0, 5).forEach(classItem => {
                 const date = new Date(classItem.date);
-                const dateStr = date.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    month: 'short', 
-                    day: 'numeric' 
+                const dateStr = date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'short',
+                    day: 'numeric'
                 });
-                
+
                 html += `
                     <div class="activity-item">
                         <div class="activity-info">
@@ -501,13 +504,13 @@
                     </div>
                 `;
             });
-            
+
             if (classes.length > 5) {
                 html += `<p style="text-align: center; color: #666; margin-top: 15px;">
                     + ${classes.length - 5} more classes
                 </p>`;
             }
-            
+
             container.innerHTML = html;
         }
 
@@ -515,7 +518,7 @@
         function displayRecentActivity(workoutProgress, bookedClasses) {
             const container = document.getElementById('recentActivity');
             const activities = [];
-            
+
             // Add workout completions
             if (workoutProgress && workoutProgress.completedExercises.length > 0) {
                 activities.push({
@@ -526,7 +529,7 @@
                     status: 'completed'
                 });
             }
-            
+
             // Add recent bookings
             bookedClasses.slice(0, 3).forEach(classItem => {
                 activities.push({
@@ -537,12 +540,12 @@
                     status: 'pending'
                 });
             });
-            
+
             if (activities.length === 0) {
                 container.innerHTML = '<div class="empty-state"><p>No recent activity to display</p></div>';
                 return;
             }
-            
+
             let html = '';
             activities.forEach(activity => {
                 html += `
@@ -555,12 +558,12 @@
                     </div>
                 `;
             });
-            
+
             container.innerHTML = html;
         }
 
         // Logout
-        window.logout = async function() {
+        window.logout = async function () {
             try {
                 await signOut(auth);
                 window.location.href = 'loginPage.html';
@@ -571,5 +574,5 @@
         };
     </script>
 </body>
-</html>
 
+</html>

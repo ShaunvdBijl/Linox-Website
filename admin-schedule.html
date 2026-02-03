@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,8 @@
             flex-wrap: wrap;
         }
 
-        .admin-nav button, .admin-nav a {
+        .admin-nav button,
+        .admin-nav a {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -51,7 +53,8 @@
             display: inline-block;
         }
 
-        .admin-nav button:hover, .admin-nav a:hover {
+        .admin-nav button:hover,
+        .admin-nav a:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
@@ -63,7 +66,8 @@
             margin-top: 20px;
         }
 
-        .form-card, .schedule-card {
+        .form-card,
+        .schedule-card {
             background: white;
             border-radius: 15px;
             padding: 25px;
@@ -71,7 +75,8 @@
             overflow: hidden;
         }
 
-        .form-card h2, .schedule-card h2 {
+        .form-card h2,
+        .schedule-card h2 {
             color: #1e3a8a;
             margin-top: 0;
             margin-bottom: 20px;
@@ -389,9 +394,20 @@
         }
 
         @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
+
+            0%,
+            20% {
+                content: '.';
+            }
+
+            40% {
+                content: '..';
+            }
+
+            60%,
+            100% {
+                content: '...';
+            }
         }
 
         /* Notification styles */
@@ -424,6 +440,7 @@
                 transform: translateX(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -431,12 +448,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Admin Header -->
         <div class="admin-header">
             <h1>📅 Schedule Management</h1>
             <div class="admin-nav">
+                <a href="home.html">🏠 Home</a>
                 <a href="admin-portal.html">← Back to Admin Portal</a>
                 <button onclick="window.location.reload()">🔄 Refresh</button>
                 <button onclick="logout()">🚪 Logout</button>
@@ -450,7 +469,7 @@
                 <h2 id="formTitle">➕ Add New Class/Session</h2>
                 <form id="scheduleForm">
                     <input type="hidden" id="scheduleId">
-                    
+
                     <div class="form-group">
                         <label for="scheduleDate">Date *</label>
                         <input type="date" id="scheduleDate" required>
@@ -494,8 +513,9 @@
                     <button type="submit" class="btn-primary" id="submitBtn">
                         ➕ Add Class
                     </button>
-                    
-                    <button type="button" class="btn-secondary" id="cancelBtn" style="display: none; width: 100%; margin-top: 10px;" onclick="resetForm()">
+
+                    <button type="button" class="btn-secondary" id="cancelBtn"
+                        style="display: none; width: 100%; margin-top: 10px;" onclick="resetForm()">
                         Cancel Edit
                     </button>
                 </form>
@@ -570,10 +590,10 @@
 
             currentUser = user;
             console.log('✅ Admin authenticated:', user.email);
-            
+
             // Set default date to today
             document.getElementById('scheduleDate').valueAsDate = new Date();
-            
+
             // Load schedules for current week
             await loadSchedules();
         });
@@ -583,14 +603,14 @@
             const now = new Date();
             const currentDay = now.getDay();
             const diff = now.getDate() - currentDay + (currentDay === 0 ? -6 : 1); // Monday as first day
-            
+
             const monday = new Date(now.setDate(diff + (offset * 7)));
             monday.setHours(0, 0, 0, 0);
-            
+
             const sunday = new Date(monday);
             sunday.setDate(monday.getDate() + 6);
             sunday.setHours(23, 59, 59, 999);
-            
+
             return { start: monday, end: sunday };
         }
 
@@ -601,7 +621,7 @@
         }
 
         // Change week
-        window.changeWeek = function(offset) {
+        window.changeWeek = function (offset) {
             if (offset === 0) {
                 currentWeekOffset = 0;
             } else {
@@ -614,13 +634,13 @@
         async function loadSchedules() {
             const scheduleList = document.getElementById('scheduleList');
             const weekDisplay = document.getElementById('weekDisplay');
-            
+
             try {
                 scheduleList.innerHTML = '<div class="loading">Loading schedules</div>';
-                
+
                 const { start, end } = getWeekRange(currentWeekOffset);
                 weekDisplay.textContent = `${formatDateDisplay(start)} - ${formatDateDisplay(end)}`;
-                
+
                 const schedulesRef = collection(db, 'schedules');
                 // Simplified query - sort client-side to avoid composite index requirement
                 const q = query(
@@ -628,22 +648,22 @@
                     where('date', '>=', start.toISOString().split('T')[0]),
                     where('date', '<=', end.toISOString().split('T')[0])
                 );
-                
+
                 const snapshot = await getDocs(q);
-                
+
                 // Sort results client-side
                 const schedules = [];
                 snapshot.forEach(doc => {
                     schedules.push({ id: doc.id, ...doc.data() });
                 });
-                
+
                 schedules.sort((a, b) => {
                     if (a.date !== b.date) {
                         return a.date.localeCompare(b.date);
                     }
                     return a.startTime.localeCompare(b.startTime);
                 });
-                
+
                 if (schedules.length === 0) {
                     scheduleList.innerHTML = `
                         <div class="empty-state">
@@ -653,16 +673,16 @@
                     `;
                     return;
                 }
-                
+
                 let html = '';
                 schedules.forEach(schedule => {
                     const bookedCount = schedule.bookedUsers ? schedule.bookedUsers.length : 0;
                     const spotsLeft = schedule.maxCapacity - bookedCount;
                     const isFull = spotsLeft <= 0;
-                    
+
                     const date = new Date(schedule.date);
                     const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                    
+
                     html += `
                         <div class="schedule-item">
                             <div class="schedule-item-header">
@@ -697,10 +717,10 @@
                         </div>
                     `;
                 });
-                
+
                 scheduleList.innerHTML = html;
                 console.log(`✅ Loaded ${schedules.length} schedules`);
-                
+
             } catch (error) {
                 console.error('❌ Error loading schedules:', error);
                 scheduleList.innerHTML = `
@@ -720,16 +740,16 @@
             const activity = document.getElementById('activity').value.trim();
             const trainer = document.getElementById('trainer').value.trim();
             const maxCapacity = parseInt(document.getElementById('maxCapacity').value);
-            
+
             const errors = [];
-            
+
             if (!date) errors.push('Date is required');
             if (!startTime) errors.push('Start time is required');
             if (!endTime) errors.push('End time is required');
             if (!activity) errors.push('Activity name is required');
             if (!trainer) errors.push('Trainer name is required');
             if (!maxCapacity || maxCapacity < 1) errors.push('Max capacity must be at least 1');
-            
+
             // Validate time logic
             if (startTime && endTime) {
                 const start = new Date(`2000-01-01T${startTime}`);
@@ -738,7 +758,7 @@
                     errors.push('End time must be after start time');
                 }
             }
-            
+
             // Validate date is not in the past
             if (date) {
                 const selectedDate = new Date(date);
@@ -748,31 +768,31 @@
                     errors.push('Cannot schedule classes in the past');
                 }
             }
-            
+
             if (errors.length > 0) {
                 showNotification('❌ Validation errors:\n• ' + errors.join('\n• '), 'error');
                 return false;
             }
-            
+
             return true;
         }
 
         // Handle form submission
         document.getElementById('scheduleForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             // Validate form before submission
             if (!validateScheduleForm()) {
                 return;
             }
-            
+
             const submitBtn = document.getElementById('submitBtn');
             const scheduleId = document.getElementById('scheduleId').value;
             const originalText = submitBtn.textContent;
-            
+
             submitBtn.disabled = true;
             submitBtn.textContent = scheduleId ? 'Updating...' : 'Adding...';
-            
+
             try {
                 const scheduleData = {
                     date: document.getElementById('scheduleDate').value,
@@ -788,7 +808,7 @@
                     updatedAt: new Date(),
                     updatedBy: currentUser.uid
                 };
-                
+
                 if (scheduleId) {
                     // Update existing schedule
                     await updateDoc(doc(db, 'schedules', scheduleId), scheduleData);
@@ -802,14 +822,14 @@
                     showNotification('✅ Class added successfully!', 'success');
                     console.log('✅ New schedule created');
                 }
-                
+
                 resetForm();
                 await loadSchedules();
-                
+
             } catch (error) {
                 console.error('❌ Error saving schedule:', error);
                 let errorMessage = 'Error saving schedule';
-                
+
                 // Handle specific Firebase errors
                 if (error.code === 'permission-denied') {
                     errorMessage = 'Permission denied. Please check your admin privileges.';
@@ -818,7 +838,7 @@
                 } else if (error.message) {
                     errorMessage = error.message;
                 }
-                
+
                 showNotification('❌ ' + errorMessage, 'error');
             } finally {
                 submitBtn.disabled = false;
@@ -827,7 +847,7 @@
         });
 
         // Edit schedule
-        window.editSchedule = function(id, schedule) {
+        window.editSchedule = function (id, schedule) {
             document.getElementById('scheduleId').value = id;
             document.getElementById('scheduleDate').value = schedule.date;
             document.getElementById('startTime').value = schedule.startTime;
@@ -837,21 +857,21 @@
             document.getElementById('location').value = schedule.location || '';
             document.getElementById('maxCapacity').value = schedule.maxCapacity;
             document.getElementById('description').value = schedule.description || '';
-            
+
             document.getElementById('formTitle').textContent = '✏️ Edit Class/Session';
             document.getElementById('submitBtn').textContent = '💾 Update Class';
             document.getElementById('cancelBtn').style.display = 'block';
-            
+
             // Scroll to form
             document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
         };
 
         // Delete schedule
-        window.deleteSchedule = async function(id, activityName) {
+        window.deleteSchedule = async function (id, activityName) {
             if (!confirm(`Are you sure you want to delete "${activityName}"?\n\nThis action cannot be undone.`)) {
                 return;
             }
-            
+
             try {
                 await deleteDoc(doc(db, 'schedules', id));
                 showNotification('✅ Class deleted successfully!', 'success');
@@ -864,7 +884,7 @@
         };
 
         // Reset form
-        window.resetForm = function() {
+        window.resetForm = function () {
             document.getElementById('scheduleForm').reset();
             document.getElementById('scheduleId').value = '';
             document.getElementById('formTitle').textContent = '➕ Add New Class/Session';
@@ -874,7 +894,7 @@
         };
 
         // Logout
-        window.logout = async function() {
+        window.logout = async function () {
             try {
                 await signOut(auth);
                 window.location.href = 'loginPage.html';
@@ -890,7 +910,7 @@
             notification.className = `notification ${type}`;
             notification.textContent = message;
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.style.animation = 'slideOutRight 0.3s ease-out';
                 setTimeout(() => notification.remove(), 300);
@@ -898,11 +918,11 @@
         }
 
         // View bookings for a specific class
-        window.viewBookings = function(scheduleId, activityName, bookedUsers) {
+        window.viewBookings = function (scheduleId, activityName, bookedUsers) {
             document.getElementById('bookingModalTitle').textContent = `📅 ${activityName} - Bookings`;
-            
+
             let bookingHtml = '';
-            
+
             if (!bookedUsers || bookedUsers.length === 0) {
                 bookingHtml = `
                     <div class="empty-bookings">
@@ -935,52 +955,52 @@
                 });
                 bookingHtml += '</div>';
             }
-            
+
             document.getElementById('bookingModalBody').innerHTML = bookingHtml;
             document.getElementById('bookingModal').style.display = 'block';
         };
 
         // Close booking modal
-        window.closeBookingModal = function() {
+        window.closeBookingModal = function () {
             document.getElementById('bookingModal').style.display = 'none';
         };
 
         // Contact user (placeholder function)
-        window.contactUser = function(email, activityName) {
+        window.contactUser = function (email, activityName) {
             const subject = encodeURIComponent(`Regarding your booking for ${activityName}`);
             const body = encodeURIComponent(`Hi there,\n\nI'm contacting you regarding your booking for ${activityName}.\n\nBest regards,\nLINQXFITNESS Team`);
             window.open(`mailto:${email}?subject=${subject}&body=${body}`);
         };
 
         // Remove booking
-        window.removeBooking = async function(scheduleId, bookingIndex, userName) {
+        window.removeBooking = async function (scheduleId, bookingIndex, userName) {
             if (!confirm(`Are you sure you want to remove ${userName} from this class?\n\nThis action cannot be undone.`)) {
                 return;
             }
-            
+
             try {
                 const scheduleRef = doc(db, 'schedules', scheduleId);
                 const scheduleDoc = await getDoc(scheduleRef);
-                
+
                 if (scheduleDoc.exists()) {
                     const scheduleData = scheduleDoc.data();
                     const bookedUsers = scheduleData.bookedUsers || [];
-                    
+
                     // Remove the booking at the specified index
                     bookedUsers.splice(bookingIndex, 1);
-                    
+
                     // Update the schedule
                     await updateDoc(scheduleRef, {
                         bookedUsers: bookedUsers,
                         updatedAt: new Date(),
                         updatedBy: currentUser.uid
                     });
-                    
+
                     showNotification(`✅ ${userName} removed from class successfully!`, 'success');
-                    
+
                     // Refresh the booking modal
                     viewBookings(scheduleId, scheduleData.activity, bookedUsers);
-                    
+
                     // Refresh the schedule list
                     await loadSchedules();
                 }
@@ -991,7 +1011,7 @@
         };
 
         // Close modal when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('bookingModal');
             if (event.target === modal) {
                 closeBookingModal();
@@ -999,5 +1019,5 @@
         };
     </script>
 </body>
-</html>
 
+</html>

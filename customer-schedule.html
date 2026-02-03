@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,8 +88,11 @@
     .btn-primary:hover {
       background: #764ba2;
     }
+
     /* Modal Styles */
-    .session-modal, .progress-modal, .session-details-modal {
+    .session-modal,
+    .progress-modal,
+    .session-details-modal {
       display: none;
       position: fixed;
       z-index: 1000;
@@ -100,7 +104,9 @@
       backdrop-filter: blur(5px);
     }
 
-    .session-modal-content, .progress-modal-content, .session-details-modal-content {
+    .session-modal-content,
+    .progress-modal-content,
+    .session-details-modal-content {
       background: white;
       margin: 5% auto;
       padding: 20px;
@@ -116,7 +122,9 @@
       max-width: 800px;
     }
 
-    .session-modal-header, .progress-modal-header, .session-details-modal-header {
+    .session-modal-header,
+    .progress-modal-header,
+    .session-details-modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -125,7 +133,9 @@
       border-bottom: 2px solid #e9ecef;
     }
 
-    .session-modal-header h2, .progress-modal-header h2, .session-details-modal-header h2 {
+    .session-modal-header h2,
+    .progress-modal-header h2,
+    .session-details-modal-header h2 {
       margin: 0;
       color: #333;
     }
@@ -153,7 +163,9 @@
       color: #333;
     }
 
-    .form-group input, .form-group select, .form-group textarea {
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
       width: 100%;
       padding: 10px;
       border: 2px solid #e9ecef;
@@ -162,7 +174,9 @@
       transition: border-color 0.3s ease;
     }
 
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
       outline: none;
       border-color: #667eea;
     }
@@ -258,10 +272,25 @@
     }
 
     /* Status badges */
-    .status-scheduled { color: #007bff; font-weight: bold; }
-    .status-completed { color: #28a745; font-weight: bold; }
-    .status-cancelled { color: #dc3545; font-weight: bold; }
-    .status-in-progress { color: #ffc107; font-weight: bold; }
+    .status-scheduled {
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .status-completed {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .status-cancelled {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .status-in-progress {
+      color: #ffc107;
+      font-weight: bold;
+    }
 
     /* Notification styles */
     .notification {
@@ -276,10 +305,22 @@
       animation: slideInRight 0.3s ease-out;
     }
 
-    .notification.success { background: #28a745; }
-    .notification.error { background: #dc3545; }
-    .notification.info { background: #17a2b8; }
-    .notification.warning { background: #ffc107; color: #333; }
+    .notification.success {
+      background: #28a745;
+    }
+
+    .notification.error {
+      background: #dc3545;
+    }
+
+    .notification.info {
+      background: #17a2b8;
+    }
+
+    .notification.warning {
+      background: #ffc107;
+      color: #333;
+    }
 
     .empty-state {
       text-align: center;
@@ -292,16 +333,31 @@
     }
 
     @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     @keyframes slideOutRight {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
     }
   </style>
 </head>
+
 <body>
   <header>
     <nav class="navbar">
@@ -309,6 +365,7 @@
         <h1><a href="admin-portal.html" style="color: white; text-decoration: none;">LINQXFITNESS Admin</a></h1>
       </div>
       <ul class="nav-menu">
+        <li><a href="home.html">Home</a></li>
         <li><a href="admin-portal.html">Dashboard</a></li>
         <li><a href="#" onclick="logout()">Logout</a></li>
       </ul>
@@ -318,14 +375,15 @@
   <main>
     <div class="admin-container">
       <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
-      
+
       <div class="admin-header">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h1>Manage Customer Schedule</h1>
             <p>View and manage training sessions for the selected customer</p>
           </div>
-          <button class="btn btn-secondary" onclick="goBackToCustomerManagement()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+          <button class="btn btn-secondary" onclick="goBackToCustomerManagement()"
+            style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
             ← Back to Customer Management
           </button>
         </div>
@@ -357,14 +415,17 @@
               <button class="btn-primary" onclick="testFunctions()" style="background: #28a745;">Test Functions</button>
             </div>
             <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
-              💡 <strong>Tip:</strong> Use the action buttons next to each session for specific operations like reschedule, cancel, or send individual reminders.
+              💡 <strong>Tip:</strong> Use the action buttons next to each session for specific operations like
+              reschedule, cancel, or send individual reminders.
             </p>
           </div>
         </div>
 
         <div class="schedule-section">
           <h3>Training Notes</h3>
-          <textarea id="trainingNotes" style="width: 100%; height: 100px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical;" placeholder="Add training notes for this customer...">Customer shows great progress in strength training. Focus on improving cardio endurance. Knee issues require modified exercises.</textarea>
+          <textarea id="trainingNotes"
+            style="width: 100%; height: 100px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical;"
+            placeholder="Add training notes for this customer...">Customer shows great progress in strength training. Focus on improving cardio endurance. Knee issues require modified exercises.</textarea>
           <button class="btn-primary" onclick="saveNotes()" style="margin-top: 1rem;">Save Notes</button>
         </div>
       </div>
@@ -406,7 +467,7 @@
     // Get customer ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const customerId = urlParams.get('id');
-    
+
     let currentUser = null;
     let customerData = null;
     let customerSessions = [];
@@ -438,13 +499,13 @@
           showNotification('Customer ID or user not available', 'error');
           return;
         }
-        
+
         await window.firebaseFirestoreFunctions.updateDoc(window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customers', customerId), {
           trainingNotes: notes,
           trainingNotesUpdatedAt: new Date(),
           trainingNotesUpdatedBy: currentUser.uid
         });
-        
+
         showNotification('✅ Training notes saved successfully!', 'success');
         if (customerData) customerData.trainingNotes = notes;
       } catch (error) {
@@ -465,7 +526,7 @@
 
       const subject = encodeURIComponent(`Message from LINQXFITNESS - ${customerData.firstName || 'Customer'}`);
       const body = encodeURIComponent(`Hi ${customerData.firstName || 'there'},\n\nThis is a general message from your LINQXFITNESS team.\n\nIf you have any questions or need to schedule/reschedule sessions, please don't hesitate to contact us.\n\nBest regards,\nLINQXFITNESS Team`);
-      
+
       window.open(`mailto:${customerData.email}?subject=${subject}&body=${body}`);
       showNotification('✅ General reminder email opened in your email client!', 'success');
     }
@@ -478,10 +539,10 @@
     // Test function to verify all functions are working
     function testFunctions() {
       console.log('🧪 Testing all functions...');
-      
+
       const functions = ['addNewSession', 'viewProgress', 'saveNotes', 'showQuickActionsHelp', 'sendGeneralReminder', 'logout'];
       let allWorking = true;
-      
+
       functions.forEach(funcName => {
         if (typeof window[funcName] === 'function') {
           console.log(`✅ ${funcName} function exists`);
@@ -490,7 +551,7 @@
           allWorking = false;
         }
       });
-      
+
       if (allWorking) {
         showNotification('✅ All functions are working!', 'success');
         console.log('✅ All functions are accessible');
@@ -540,7 +601,7 @@
         // Load customer data
         const customerRef = window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customers', customerId);
         const customerSnap = await window.firebaseFirestoreFunctions.getDoc(customerRef);
-        
+
         if (customerSnap.exists()) {
           customerData = { id: customerSnap.id, ...customerSnap.data() };
           console.log('✅ Customer data loaded:', customerData);
@@ -549,7 +610,7 @@
         } else {
           console.log('❌ Customer not found in database');
           showNotification('Customer not found in database', 'error');
-          
+
           // Clear the template data
           clearTemplateData();
         }
@@ -564,7 +625,7 @@
     function clearTemplateData() {
       const upcomingSessions = document.getElementById('upcomingSessions');
       const pastSessions = document.getElementById('pastSessions');
-      
+
       if (upcomingSessions) {
         upcomingSessions.innerHTML = '<div class="empty-state">No upcoming sessions found.</div>';
       }
@@ -578,12 +639,12 @@
       if (customerData) {
         const headerTitle = document.querySelector('.admin-header h1');
         const headerSubtitle = document.querySelector('.admin-header p');
-        
+
         if (!headerTitle || !headerSubtitle) {
           console.error('❌ Header elements not found');
           return;
         }
-        
+
         try {
           headerTitle.textContent = `Manage Schedule - ${customerData.firstName || customerData.name || 'Customer'} ${customerData.lastName || ''}`;
           headerSubtitle.textContent = `Email: ${customerData.email || 'Not provided'} | Phone: ${customerData.phone || 'Not provided'}`;
@@ -598,18 +659,18 @@
     async function loadCustomerSessions() {
       try {
         console.log('🔍 Loading sessions for customer:', customerId);
-        
+
         // First, get all sessions from the main schedules collection
         const schedulesRef = window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'schedules');
         const schedulesSnapshot = await window.firebaseFirestoreFunctions.getDocs(schedulesRef);
-        
+
         console.log(`📋 Found ${schedulesSnapshot.size} total sessions in database`);
-        
+
         customerSessions = [];
         schedulesSnapshot.forEach(doc => {
           const schedule = doc.data();
           console.log('🔍 Checking session:', schedule.activity, 'Booked users:', schedule.bookedUsers);
-          
+
           // Check if this customer is booked for this session
           if (schedule.bookedUsers && Array.isArray(schedule.bookedUsers)) {
             const isBooked = schedule.bookedUsers.some(user => {
@@ -619,11 +680,11 @@
               console.log(`  Matches customer ID: ${matchesCustomerID}, Matches email: ${matchesEmail}`);
               return matchesCustomerID || matchesEmail;
             });
-            
+
             if (isBooked) {
               console.log(`✅ Customer is booked for session: ${schedule.activity}`);
-              customerSessions.push({ 
-                id: doc.id, 
+              customerSessions.push({
+                id: doc.id,
                 ...schedule,
                 sessionDate: schedule.date, // Map date to sessionDate for consistency
                 sessionType: schedule.activity // Map activity to sessionType
@@ -631,17 +692,17 @@
             }
           }
         });
-        
+
         // Sort sessions by date
         customerSessions.sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate));
-        
+
         updateSessionsDisplay();
         console.log(`✅ Loaded ${customerSessions.length} sessions for customer ${customerId}`);
-        
+
         if (customerSessions.length === 0) {
           console.log('ℹ️ No sessions found for this customer. They may not be assigned to any sessions yet.');
         }
-        
+
       } catch (error) {
         console.error('❌ Error loading customer sessions:', error);
         showNotification('Error loading sessions: ' + error.message, 'error');
@@ -652,18 +713,18 @@
     function updateSessionsDisplay() {
       const upcomingSessions = document.getElementById('upcomingSessions');
       const pastSessions = document.getElementById('pastSessions');
-      
+
       // Check if elements exist before updating
       if (!upcomingSessions || !pastSessions) {
         console.error('❌ Session display elements not found');
         showNotification('Error: Session display elements not found', 'error');
         return;
       }
-      
+
       const now = new Date();
       const upcoming = customerSessions.filter(session => new Date(session.sessionDate) >= now);
       const past = customerSessions.filter(session => new Date(session.sessionDate) < now);
-      
+
       try {
         upcomingSessions.innerHTML = renderSessionsList(upcoming, true);
         pastSessions.innerHTML = renderSessionsList(past, false);
@@ -679,7 +740,7 @@
       if (sessions.length === 0) {
         return `<div class="empty-state">No ${isUpcoming ? 'upcoming' : 'past'} sessions found.</div>`;
       }
-      
+
       return sessions.map(session => `
         <div class="session-item">
           <div class="session-info">
@@ -706,11 +767,11 @@
     // Format date
     function formatDate(dateString) {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        weekday: 'short', 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
+      return date.toLocaleDateString('en-US', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
       });
     }
 
@@ -720,21 +781,21 @@
     async function showAvailableSessionsModal() {
       try {
         console.log('🔍 showAvailableSessionsModal started...');
-        
+
         // Get all available sessions
         const schedulesRef = window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'schedules');
         console.log('📋 Getting schedules from Firebase...');
         const schedulesSnapshot = await window.firebaseFirestoreFunctions.getDocs(schedulesRef);
         console.log(`📊 Found ${schedulesSnapshot.size} total sessions`);
-        
+
         const availableSessions = [];
         schedulesSnapshot.forEach(doc => {
           const schedule = doc.data();
           // Check if customer is not already booked
-          const isAlreadyBooked = schedule.bookedUsers && 
-            Array.isArray(schedule.bookedUsers) && 
+          const isAlreadyBooked = schedule.bookedUsers &&
+            Array.isArray(schedule.bookedUsers) &&
             schedule.bookedUsers.some(user => user.customerID === customerId || user.email === customerData?.email);
-          
+
           if (!isAlreadyBooked) {
             availableSessions.push({ id: doc.id, ...schedule });
           }
@@ -749,9 +810,9 @@
               <span class="close" onclick="closeAvailableSessionsModal()">&times;</span>
             </div>
             <div class="available-sessions-list">
-              ${availableSessions.length === 0 ? 
-                '<p>No available sessions found. Create sessions in the main Schedule Management page first.</p>' :
-                availableSessions.map(session => `
+              ${availableSessions.length === 0 ?
+            '<p>No available sessions found. Create sessions in the main Schedule Management page first.</p>' :
+            availableSessions.map(session => `
                   <div class="available-session-item" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #007bff;">
                     <h4>${session.activity}</h4>
                     <p><strong>Date:</strong> ${new Date(session.date).toLocaleDateString()}</p>
@@ -764,14 +825,14 @@
                     </button>
                   </div>
                 `).join('')
-              }
+          }
             </div>
             <div class="form-actions">
               <button type="button" class="btn-secondary" onclick="closeSessionModal()">Close</button>
             </div>
           </div>
         `;
-        
+
         document.body.appendChild(modal);
       } catch (error) {
         console.error('Error loading available sessions:', error);
@@ -784,11 +845,11 @@
       try {
         const sessionRef = window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'schedules', sessionId);
         const sessionDoc = await window.firebaseFirestoreFunctions.getDoc(sessionRef);
-        
+
         if (sessionDoc.exists()) {
           const sessionData = sessionDoc.data();
           const bookedUsers = sessionData.bookedUsers || [];
-          
+
           // Add customer to booked users
           bookedUsers.push({
             customerID: customerId,
@@ -797,12 +858,12 @@
             phone: customerData?.phone,
             bookedAt: new Date()
           });
-          
+
           // Update session
           await window.firebaseFirestoreFunctions.updateDoc(sessionRef, {
             bookedUsers: bookedUsers
           });
-          
+
           showNotification('✅ Customer assigned to session successfully!', 'success');
           closeSessionModal();
           await loadCustomerSessions(); // Reload sessions
@@ -867,15 +928,15 @@
           </form>
         </div>
       `;
-      
+
       document.body.appendChild(modal);
-      
+
       // Handle form submission
       document.getElementById('sessionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         await saveSession();
       });
-      
+
       // Load existing session data if editing
       if (sessionId) {
         const session = customerSessions.find(s => s.id === sessionId);
@@ -930,7 +991,7 @@
         };
 
         const sessionId = document.getElementById('sessionId').value;
-        
+
         if (sessionId) {
           // Update existing session
           await window.firebaseFirestoreFunctions.updateDoc(window.firebaseFirestoreFunctions.doc(window.firebaseDb, 'customerSessions', sessionId), {
@@ -944,10 +1005,10 @@
           await window.firebaseFirestoreFunctions.addDoc(window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'customerSessions'), sessionData);
           showNotification('✅ New session added successfully!', 'success');
         }
-        
+
         closeSessionModal();
         await loadCustomerSessions();
-        
+
       } catch (error) {
         console.error('Error saving session:', error);
         showNotification('❌ Error saving session: ' + error.message, 'error');
@@ -977,7 +1038,7 @@
             cancelledAt: new Date(),
             cancelledBy: currentUser.uid
           });
-          
+
           showNotification('✅ Session cancelled successfully!', 'success');
           await loadCustomerSessions();
         } catch (error) {
@@ -1013,7 +1074,7 @@
 
         // Open email client
         window.open(`mailto:${customerData.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`);
-        
+
         // Log reminder sent
         await window.firebaseFirestoreFunctions.addDoc(window.firebaseFirestoreFunctions.collection(window.firebaseDb, 'customerReminders'), {
           customerID: customerId,
@@ -1076,7 +1137,7 @@
           </div>
         </div>
       `;
-      
+
       document.body.appendChild(modal);
     }
 
@@ -1097,7 +1158,7 @@
           progressNotesUpdatedAt: new Date(),
           progressNotesUpdatedBy: currentUser.uid
         });
-        
+
         showNotification('✅ Progress notes saved successfully!', 'success');
         customerData.progressNotes = progressNotes;
       } catch (error) {
@@ -1150,7 +1211,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.appendChild(modal);
       }
     }
@@ -1170,7 +1231,7 @@
       notification.className = `notification ${type}`;
       notification.textContent = message;
       document.body.appendChild(notification);
-      
+
       setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
@@ -1191,7 +1252,7 @@
 
       const subject = encodeURIComponent(`Message from LINQXFITNESS - ${customerData.firstName || 'Customer'}`);
       const body = encodeURIComponent(`Hi ${customerData.firstName || 'there'},\n\nThis is a general message from your LINQXFITNESS team.\n\nIf you have any questions or need to schedule/reschedule sessions, please don't hesitate to contact us.\n\nBest regards,\nLINQXFITNESS Team`);
-      
+
       window.open(`mailto:${customerData.email}?subject=${subject}&body=${body}`);
       showNotification('✅ General reminder email opened in your email client!', 'success');
     }
@@ -1202,9 +1263,9 @@
     }
 
     // Load customer schedule when page loads
-    document.addEventListener('DOMContentLoaded', async function() {
+    document.addEventListener('DOMContentLoaded', async function () {
       console.log('Managing schedule for customer ID:', customerId);
-      
+
       // Wait for Firebase to be initialized
       let attempts = 0;
       while (!window.firebaseAuth && attempts < 50) {
@@ -1229,7 +1290,7 @@
 
         currentUser = user;
         console.log('✅ Admin authenticated:', user.email);
-        
+
         // Wait a moment for DOM to be fully ready
         setTimeout(async () => {
           // Load customer data and sessions
@@ -1239,4 +1300,5 @@
     });
   </script>
 </body>
+
 </html>
