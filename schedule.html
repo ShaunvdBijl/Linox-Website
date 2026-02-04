@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -360,20 +361,22 @@
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .day-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
-  <header>
-    <nav class="navbar">
-      <div class="nav-brand">
-        <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
-      </div>
-      <ul class="nav-menu">
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="home.html">Home</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
                 <li><a href="schedule.html" class="active">Class Schedule</a></li>
                 <li><a href="my-workout-plan.html">My Workout</a></li>
@@ -381,25 +384,25 @@
                 <li><a href="progress.html">Progress</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="#" onclick="logout()">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+            </ul>
+        </nav>
+    </header>
 
-  <main>
+    <main>
         <div class="container-custom">
             <!-- Back Button -->
             <div style="margin-bottom: 20px;">
-              <a href="dashboard.html" class="btn-back-schedule">
-                ← Back to Dashboard
-              </a>
+                <a href="dashboard.html" class="btn-back-schedule">
+                    ← Back to Dashboard
+                </a>
             </div>
-            
+
             <!-- Header -->
             <div class="schedule-header">
                 <h1>📅 Weekly Class Schedule</h1>
                 <p>Book your spot in our group fitness classes</p>
             </div>
-            
+
             <!-- Week Navigation -->
             <div class="week-navigation">
                 <div class="week-display" id="weekDisplay">Loading...</div>
@@ -409,7 +412,7 @@
                     <button class="btn-nav" onclick="changeWeek(1)">Next →</button>
                 </div>
             </div>
-            
+
             <!-- Filters -->
             <div class="filters">
                 <h3>🔍 Filter by Activity:</h3>
@@ -421,23 +424,23 @@
                     <button class="filter-tag" onclick="filterByActivity('Cardio')">Cardio</button>
                 </div>
             </div>
-            
+
             <!-- Loading State -->
             <div id="loadingState" class="loading">
                 Loading schedule...
             </div>
-            
+
             <!-- Schedule Grid -->
             <div id="scheduleGrid" class="day-grid" style="display: none;">
                 <!-- Days will be populated here -->
             </div>
-            
+
             <!-- Empty State -->
             <div id="emptyState" class="empty-state" style="display: none;">
                 <h2>📭 No Classes This Week</h2>
                 <p>There are no classes scheduled for this week yet.</p>
                 <p>Check back later or contact your trainer!</p>
-          </div>
+            </div>
         </div>
     </main>
 
@@ -455,29 +458,29 @@
                 <!-- Action buttons will be populated -->
             </div>
         </div>
-      </div>
+    </div>
 
-  <footer>
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>LinoxFitness</h3>
-          <p>Transforming lives through personalized fitness and nutrition guidance.</p>
-        </div>
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <ul>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LinoxFitness</h3>
+                    <p>Transforming lives through personalized fitness and nutrition guidance.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
                         <li><a href="dashboard.html">Dashboard</a></li>
                         <li><a href="schedule.html">Class Schedule</a></li>
                         <li><a href="my-workout-plan.html">My Workout</a></li>
-          </ul>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
+            </div>
         </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 LinoxFitness. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+    </footer>
 
     <!-- Firebase CDN -->
     <script type="module">
@@ -510,7 +513,7 @@
                 window.location.href = 'loginPage.html';
                 return;
             }
-            
+
             currentUser = user;
             console.log('✅ User authenticated:', user.email);
             await loadSchedule();
@@ -521,14 +524,14 @@
             const now = new Date();
             const currentDay = now.getDay();
             const diff = now.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
-            
+
             const monday = new Date(now.setDate(diff + (offset * 7)));
             monday.setHours(0, 0, 0, 0);
-            
+
             const sunday = new Date(monday);
             sunday.setDate(monday.getDate() + 6);
             sunday.setHours(23, 59, 59, 999);
-            
+
             return { start: monday, end: sunday };
         }
 
@@ -538,7 +541,7 @@
         }
 
         // Change week
-        window.changeWeek = function(offset) {
+        window.changeWeek = function (offset) {
             if (offset === 0) {
                 currentWeekOffset = 0;
             } else {
@@ -548,15 +551,15 @@
         };
 
         // Filter by activity
-        window.filterByActivity = function(activity) {
+        window.filterByActivity = function (activity) {
             currentFilter = activity;
-            
+
             // Update active tag
             document.querySelectorAll('.filter-tag').forEach(tag => {
                 tag.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             displaySchedule();
         };
 
@@ -566,11 +569,11 @@
                 document.getElementById('loadingState').style.display = 'block';
                 document.getElementById('scheduleGrid').style.display = 'none';
                 document.getElementById('emptyState').style.display = 'none';
-                
+
                 const { start, end } = getWeekRange(currentWeekOffset);
-                document.getElementById('weekDisplay').textContent = 
+                document.getElementById('weekDisplay').textContent =
                     `${formatDate(start)} - ${formatDate(end)}`;
-                
+
                 const schedulesRef = collection(db, 'schedules');
                 // Simplified query - sort client-side to avoid composite index requirement
                 const q = query(
@@ -578,14 +581,14 @@
                     where('date', '>=', start.toISOString().split('T')[0]),
                     where('date', '<=', end.toISOString().split('T')[0])
                 );
-                
+
                 const snapshot = await getDocs(q);
                 allSchedules = [];
-                
+
                 snapshot.forEach(doc => {
                     allSchedules.push({ id: doc.id, ...doc.data() });
                 });
-                
+
                 // Sort results client-side by date and time
                 allSchedules.sort((a, b) => {
                     if (a.date !== b.date) {
@@ -593,13 +596,13 @@
                     }
                     return a.startTime.localeCompare(b.startTime);
                 });
-                
+
                 console.log(`✅ Loaded ${allSchedules.length} classes`);
                 displaySchedule();
-                
+
             } catch (error) {
                 console.error('❌ Error loading schedule:', error);
-                document.getElementById('loadingState').innerHTML = 
+                document.getElementById('loadingState').innerHTML =
                     '<div class="empty-state"><h2>❌ Error</h2><p>' + error.message + '</p></div>';
             }
         }
@@ -607,25 +610,25 @@
         // Display schedule
         function displaySchedule() {
             document.getElementById('loadingState').style.display = 'none';
-            
+
             // Filter schedules
             let filteredSchedules = allSchedules;
             if (currentFilter !== 'all') {
-                filteredSchedules = allSchedules.filter(s => 
+                filteredSchedules = allSchedules.filter(s =>
                     s.activity.toLowerCase().includes(currentFilter.toLowerCase())
                 );
             }
-            
+
             if (filteredSchedules.length === 0) {
                 document.getElementById('emptyState').style.display = 'block';
                 document.getElementById('scheduleGrid').style.display = 'none';
                 return;
             }
-            
+
             // Group by day
             const dayMap = new Map();
             const { start } = getWeekRange(currentWeekOffset);
-            
+
             // Initialize all 7 days
             for (let i = 0; i < 7; i++) {
                 const day = new Date(start);
@@ -636,25 +639,25 @@
                     classes: []
                 });
             }
-            
+
             // Add classes to respective days
             filteredSchedules.forEach(schedule => {
                 if (dayMap.has(schedule.date)) {
                     dayMap.get(schedule.date).classes.push(schedule);
                 }
             });
-            
+
             // Build HTML
             const scheduleGrid = document.getElementById('scheduleGrid');
             scheduleGrid.innerHTML = '';
-            
+
             dayMap.forEach((dayData, dateKey) => {
                 const dayCard = document.createElement('div');
                 dayCard.className = 'day-card';
-                
+
                 const dayName = dayData.date.toLocaleDateString('en-US', { weekday: 'long' });
                 const dayDate = dayData.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                
+
                 let classesHtml = '';
                 if (dayData.classes.length === 0) {
                     classesHtml = '<div class="no-classes">No classes scheduled</div>';
@@ -664,10 +667,10 @@
                         const spotsLeft = classItem.maxCapacity - bookedCount;
                         const isFull = spotsLeft <= 0;
                         const isBooked = classItem.bookedUsers && classItem.bookedUsers.includes(currentUser.uid);
-                        
+
                         let capacityClass = 'capacity-available';
                         let capacityText = `${spotsLeft} spots left`;
-                        
+
                         if (isBooked) {
                             capacityClass = 'class-booked';
                             capacityText = '✅ You\'re booked!';
@@ -678,7 +681,7 @@
                             capacityClass = 'capacity-low';
                             capacityText = `${spotsLeft} spots left`;
                         }
-                        
+
                         classesHtml += `
                             <div class="class-item ${isFull ? 'full' : ''} ${isBooked ? 'booked' : ''}" 
                                  onclick='openModal(${JSON.stringify(classItem).replace(/'/g, "&#39;")})'>
@@ -691,7 +694,7 @@
                         `;
                     });
                 }
-                
+
                 dayCard.innerHTML = `
                     <div class="day-header">
                         <div class="day-name">${dayName}</div>
@@ -699,32 +702,32 @@
                     </div>
                     ${classesHtml}
                 `;
-                
+
                 scheduleGrid.appendChild(dayCard);
             });
-            
+
             document.getElementById('scheduleGrid').style.display = 'grid';
             document.getElementById('emptyState').style.display = 'none';
         }
 
         // Open modal
-        window.openModal = function(classData) {
+        window.openModal = function (classData) {
             const modal = document.getElementById('classModal');
             const bookedCount = classData.bookedUsers ? classData.bookedUsers.length : 0;
             const spotsLeft = classData.maxCapacity - bookedCount;
             const isBooked = classData.bookedUsers && classData.bookedUsers.includes(currentUser.uid);
             const isFull = spotsLeft <= 0 && !isBooked;
-            
+
             document.getElementById('modalClassName').textContent = classData.activity;
-            
+
             const classDate = new Date(classData.date);
-            const dateStr = classDate.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric' 
+            const dateStr = classDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
             });
-            
+
             document.getElementById('modalDetails').innerHTML = `
                 <p><strong>📅 Date:</strong> ${dateStr}</p>
                 <p><strong>🕐 Time:</strong> ${classData.startTime} - ${classData.endTime}</p>
@@ -734,7 +737,7 @@
                 <p><strong>✅ Available Spots:</strong> ${spotsLeft > 0 ? spotsLeft : 'FULL'}</p>
                 ${classData.description ? `<p><strong>📝 Description:</strong><br>${classData.description}</p>` : ''}
             `;
-            
+
             let actionButton = '';
             if (isBooked) {
                 actionButton = `<button class="btn-book btn-cancel" onclick="cancelBooking('${classData.id}')">Cancel Booking</button>`;
@@ -743,29 +746,29 @@
             } else {
                 actionButton = `<button class="btn-book" onclick="bookClass('${classData.id}')">Book This Class</button>`;
             }
-            
+
             document.getElementById('modalActions').innerHTML = actionButton;
             modal.classList.add('show');
         };
 
         // Close modal
-        window.closeModal = function() {
+        window.closeModal = function () {
             document.getElementById('classModal').classList.remove('show');
         };
 
         // Book class
-        window.bookClass = async function(scheduleId) {
+        window.bookClass = async function (scheduleId) {
             try {
                 const scheduleRef = doc(db, 'schedules', scheduleId);
                 await updateDoc(scheduleRef, {
                     bookedUsers: arrayUnion(currentUser.uid)
                 });
-                
+
                 console.log('✅ Class booked successfully');
                 showNotification('✅ Class booked successfully!', 'success');
                 closeModal();
                 await loadSchedule();
-                
+
             } catch (error) {
                 console.error('❌ Error booking class:', error);
                 showNotification('❌ Error: ' + error.message, 'error');
@@ -773,22 +776,22 @@
         };
 
         // Cancel booking
-        window.cancelBooking = async function(scheduleId) {
+        window.cancelBooking = async function (scheduleId) {
             if (!confirm('Are you sure you want to cancel this booking?')) {
                 return;
             }
-            
+
             try {
                 const scheduleRef = doc(db, 'schedules', scheduleId);
                 await updateDoc(scheduleRef, {
                     bookedUsers: arrayRemove(currentUser.uid)
                 });
-                
+
                 console.log('✅ Booking cancelled');
                 showNotification('✅ Booking cancelled successfully', 'success');
                 closeModal();
                 await loadSchedule();
-                
+
             } catch (error) {
                 console.error('❌ Error cancelling booking:', error);
                 showNotification('❌ Error: ' + error.message, 'error');
@@ -796,7 +799,7 @@
         };
 
         // Logout
-        window.logout = async function() {
+        window.logout = async function () {
             try {
                 await signOut(auth);
                 window.location.href = 'loginPage.html';
@@ -823,11 +826,12 @@
                 animation: slideInRight 0.3s ease-out;
             `;
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.remove();
             }, 4000);
         }
     </script>
 </body>
+
 </html>

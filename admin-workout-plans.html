@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,8 @@
             flex-wrap: wrap;
         }
 
-        .admin-nav button, .admin-nav a {
+        .admin-nav button,
+        .admin-nav a {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -51,7 +53,8 @@
             display: inline-block;
         }
 
-        .admin-nav button:hover, .admin-nav a:hover {
+        .admin-nav button:hover,
+        .admin-nav a:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
@@ -414,25 +417,37 @@
         }
 
         @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 968px) {
-            .form-grid, .exercise-fields {
+
+            .form-grid,
+            .exercise-fields {
                 grid-template-columns: 1fr;
             }
+
             .plan-list {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="admin-container">
         <div class="admin-header">
             <h1>💪 Workout Plans Management</h1>
             <div class="admin-nav">
+                <a href="home.html">🏠 Home</a>
                 <a href="admin-portal.html">← Back to Admin Portal</a>
                 <a href="admin-schedule.html">📅 Class Schedule</a>
                 <button onclick="window.location.reload()">🔄 Refresh</button>
@@ -452,7 +467,7 @@
                 <h2>Create New Workout Plan</h2>
                 <form id="workoutPlanForm">
                     <input type="hidden" id="planId">
-                    
+
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="planName">Plan Name *</label>
@@ -466,23 +481,26 @@
 
                         <div class="form-group full-width">
                             <label for="description">Description</label>
-                            <textarea id="description" placeholder="Brief description of the workout plan..."></textarea>
+                            <textarea id="description"
+                                placeholder="Brief description of the workout plan..."></textarea>
                         </div>
                     </div>
 
                     <div class="exercises-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h3>Exercises</h3>
                             <button type="button" class="btn-add" onclick="addExercise()">+ Add Exercise</button>
                         </div>
-                        
+
                         <div id="exercisesList">
                             <!-- Exercises will be added here dynamically -->
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 10px;">
-                        <button type="submit" class="btn-primary" style="flex: 1;" id="submitBtn">💾 Save Workout Plan</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;" id="submitBtn">💾 Save Workout
+                            Plan</button>
                         <button type="button" class="btn-secondary" onclick="resetForm()">🔄 Reset</button>
                     </div>
                 </form>
@@ -503,7 +521,7 @@
         <div id="assignTab" class="tab-content">
             <div class="content-card">
                 <h2>Assign Plans to Clients</h2>
-                
+
                 <div class="form-group">
                     <label for="selectPlanToAssign">Select Workout Plan *</label>
                     <select id="selectPlanToAssign" onchange="loadClientsForAssignment()">
@@ -552,26 +570,26 @@
             }
             currentUser = user;
             console.log('✅ Admin authenticated:', user.email);
-            
+
             await loadPlans();
             await loadClients();
             addExercise(); // Add first exercise field
         });
 
         // Tab switching
-        window.switchTab = function(tabName) {
+        window.switchTab = function (tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
+
             event.target.classList.add('active');
             document.getElementById(tabName + 'Tab').classList.add('active');
-            
+
             if (tabName === 'manage') loadPlans();
             if (tabName === 'assign') populatePlanDropdown();
         };
 
         // Add exercise field
-        window.addExercise = function() {
+        window.addExercise = function () {
             exerciseCounter++;
             const exercisesList = document.getElementById('exercisesList');
             const exerciseDiv = document.createElement('div');
@@ -609,7 +627,7 @@
         };
 
         // Remove exercise
-        window.removeExercise = function(id) {
+        window.removeExercise = function (id) {
             const element = document.getElementById(`exercise-${id}`);
             if (element) {
                 element.remove();
@@ -629,12 +647,12 @@
         // Submit form
         document.getElementById('workoutPlanForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.textContent;
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
-            
+
             try {
                 const exercises = [];
                 document.querySelectorAll('.exercise-item').forEach((item, index) => {
@@ -643,7 +661,7 @@
                     const reps = parseInt(item.querySelector('.exercise-reps').value);
                     const rest = parseInt(item.querySelector('.exercise-rest').value) || 60;
                     const notes = item.querySelector('.exercise-notes').value;
-                    
+
                     if (name && sets && reps) {
                         exercises.push({
                             order: index + 1,
@@ -655,11 +673,11 @@
                         });
                     }
                 });
-                
+
                 if (exercises.length === 0) {
                     throw new Error('Please add at least one exercise');
                 }
-                
+
                 const planData = {
                     planName: document.getElementById('planName').value,
                     duration: parseInt(document.getElementById('duration').value),
@@ -668,7 +686,7 @@
                     createdBy: currentUser.uid,
                     updatedAt: new Date()
                 };
-                
+
                 const planId = document.getElementById('planId').value;
                 if (planId) {
                     await updateDoc(doc(db, 'workoutPlans', planId), planData);
@@ -679,10 +697,10 @@
                     await addDoc(collection(db, 'workoutPlans'), planData);
                     showNotification('✅ Workout plan created!', 'success');
                 }
-                
+
                 resetForm();
                 await loadPlans();
-                
+
             } catch (error) {
                 console.error('❌ Error saving plan:', error);
                 showNotification('❌ Error: ' + error.message, 'error');
@@ -693,7 +711,7 @@
         });
 
         // Reset form
-        window.resetForm = function() {
+        window.resetForm = function () {
             document.getElementById('workoutPlanForm').reset();
             document.getElementById('planId').value = '';
             document.getElementById('exercisesList').innerHTML = '';
@@ -708,18 +726,18 @@
             try {
                 const snapshot = await getDocs(collection(db, 'workoutPlans'));
                 allPlans = [];
-                
+
                 if (snapshot.empty) {
                     plansList.innerHTML = '<div class="empty-state"><h3>📭 No Plans Yet</h3><p>Create your first workout plan!</p></div>';
                     return;
                 }
-                
+
                 let html = '';
                 snapshot.forEach(doc => {
                     const plan = doc.data();
                     allPlans.push({ id: doc.id, ...plan });
                     const assignedCount = plan.assignedTo ? plan.assignedTo.length : 0;
-                    
+
                     html += `
                         <div class="plan-card">
                             <div class="plan-card-header">
@@ -739,7 +757,7 @@
                         </div>
                     `;
                 });
-                
+
                 plansList.innerHTML = html;
             } catch (error) {
                 console.error('❌ Error loading plans:', error);
@@ -765,31 +783,31 @@
         }
 
         // View plan
-        window.viewPlan = function(planId) {
+        window.viewPlan = function (planId) {
             const plan = allPlans.find(p => p.id === planId);
             if (!plan) return;
-            
+
             let exercisesHtml = '';
             plan.exercises.forEach((ex, i) => {
                 exercisesHtml += `${i + 1}. ${ex.name} - ${ex.sets}x${ex.reps} (${ex.rest}s rest)\n   ${ex.notes || ''}\n\n`;
             });
-            
+
             alert(`📋 ${plan.planName}\n\n⏱️ Duration: ${plan.duration} weeks\n📝 ${plan.description}\n\n💪 EXERCISES:\n\n${exercisesHtml}`);
         };
 
         // Edit plan
-        window.editPlan = function(planId) {
+        window.editPlan = function (planId) {
             const plan = allPlans.find(p => p.id === planId);
             if (!plan) return;
-            
+
             document.getElementById('planId').value = planId;
             document.getElementById('planName').value = plan.planName;
             document.getElementById('duration').value = plan.duration;
             document.getElementById('description').value = plan.description || '';
-            
+
             document.getElementById('exercisesList').innerHTML = '';
             exerciseCounter = 0;
-            
+
             plan.exercises.forEach(ex => {
                 addExercise();
                 const lastExercise = document.querySelector('.exercise-item:last-child');
@@ -799,17 +817,17 @@
                 lastExercise.querySelector('.exercise-rest').value = ex.rest;
                 lastExercise.querySelector('.exercise-notes').value = ex.notes || '';
             });
-            
+
             document.getElementById('submitBtn').textContent = '💾 Update Workout Plan';
             switchTab('create');
         };
 
         // Delete plan
-        window.deletePlan = async function(planId, planName) {
+        window.deletePlan = async function (planId, planName) {
             if (!confirm(`Delete "${planName}"?\n\nThis will unassign it from all clients. This cannot be undone.`)) {
                 return;
             }
-            
+
             try {
                 await deleteDoc(doc(db, 'workoutPlans', planId));
                 showNotification('✅ Plan deleted!', 'success');
@@ -830,21 +848,21 @@
         }
 
         // Load clients for assignment
-        window.loadClientsForAssignment = async function() {
+        window.loadClientsForAssignment = async function () {
             const planId = document.getElementById('selectPlanToAssign').value;
             const clientsList = document.getElementById('clientsListForAssignment');
-            
+
             if (!planId) {
                 clientsList.style.display = 'none';
                 return;
             }
-            
+
             const plan = allPlans.find(p => p.id === planId);
             if (!plan) return;
-            
+
             clientsList.style.display = 'block';
             let html = '<h3>Select Clients to Assign:</h3>';
-            
+
             allClients.forEach(client => {
                 const isAssigned = plan.assignedTo && plan.assignedTo.includes(client.id);
                 html += `
@@ -853,30 +871,30 @@
                             <div class="client-name">${client.firstName} ${client.lastName}</div>
                             <div class="client-email">${client.email}</div>
                         </div>
-                        ${isAssigned 
-                            ? `<button class="btn-danger" onclick="unassignPlan('${planId}', '${client.id}')">Unassign</button>`
-                            : `<button class="btn-primary" onclick="assignPlan('${planId}', '${client.id}')">Assign</button>`
-                        }
+                        ${isAssigned
+                        ? `<button class="btn-danger" onclick="unassignPlan('${planId}', '${client.id}')">Unassign</button>`
+                        : `<button class="btn-primary" onclick="assignPlan('${planId}', '${client.id}')">Assign</button>`
+                    }
                     </div>
                 `;
             });
-            
+
             clientsList.innerHTML = html;
         };
 
         // Assign plan
-        window.assignPlan = async function(planId, clientId) {
+        window.assignPlan = async function (planId, clientId) {
             try {
                 const planRef = doc(db, 'workoutPlans', planId);
                 const planDoc = await getDoc(planRef);
                 const plan = planDoc.data();
-                
+
                 const assignedTo = plan.assignedTo || [];
                 if (!assignedTo.includes(clientId)) {
                     assignedTo.push(clientId);
                     await updateDoc(planRef, { assignedTo });
                 }
-                
+
                 showNotification('✅ Plan assigned to client!', 'success');
                 await loadPlans();
                 loadClientsForAssignment();
@@ -887,19 +905,19 @@
         };
 
         // Unassign plan
-        window.unassignPlan = async function(planId, clientId) {
+        window.unassignPlan = async function (planId, clientId) {
             try {
                 const planRef = doc(db, 'workoutPlans', planId);
                 const planDoc = await getDoc(planRef);
                 const plan = planDoc.data();
-                
+
                 const assignedTo = plan.assignedTo || [];
                 const index = assignedTo.indexOf(clientId);
                 if (index > -1) {
                     assignedTo.splice(index, 1);
                     await updateDoc(planRef, { assignedTo });
                 }
-                
+
                 showNotification('✅ Plan unassigned from client!', 'success');
                 await loadPlans();
                 loadClientsForAssignment();
@@ -910,7 +928,7 @@
         };
 
         // Logout
-        window.logout = async function() {
+        window.logout = async function () {
             try {
                 await signOut(auth);
                 window.location.href = 'loginPage.html';
@@ -926,7 +944,7 @@
             notification.className = `notification ${type}`;
             notification.textContent = message;
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.style.animation = 'slideOutRight 0.3s ease-out';
                 setTimeout(() => notification.remove(), 300);
@@ -934,5 +952,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>

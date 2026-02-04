@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -187,8 +188,15 @@
         }
 
         @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -198,6 +206,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar">
@@ -205,6 +214,7 @@
                 <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
             </div>
             <ul class="nav-menu">
+                <li><a href="home.html">Home</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
                 <li><a href="schedule.html">Class Schedule</a></li>
                 <li><a href="my-workout-plan.html">My Workout</a></li>
@@ -290,12 +300,14 @@
 
                         <div class="form-group full-width">
                             <label for="medicalConditions">Medical Conditions / Injuries</label>
-                            <textarea id="medicalConditions" placeholder="Please list any medical conditions, injuries, or limitations..."></textarea>
+                            <textarea id="medicalConditions"
+                                placeholder="Please list any medical conditions, injuries, or limitations..."></textarea>
                         </div>
 
                         <div class="form-group full-width">
                             <label for="additionalNotes">Additional Notes</label>
-                            <textarea id="additionalNotes" placeholder="Any other information your trainer should know..."></textarea>
+                            <textarea id="additionalNotes"
+                                placeholder="Any other information your trainer should know..."></textarea>
                         </div>
                     </div>
 
@@ -378,7 +390,7 @@
                 window.location.href = 'loginPage.html';
                 return;
             }
-            
+
             currentUser = user;
             console.log('✅ User authenticated:', user.email);
             await loadUserProfile();
@@ -389,7 +401,7 @@
             try {
                 const userDocRef = doc(db, 'users', currentUser.uid);
                 const userDoc = await getDoc(userDocRef);
-                
+
                 if (userDoc.exists()) {
                     userData = userDoc.data();
                     console.log('✅ Profile loaded:', userData);
@@ -403,7 +415,7 @@
                     };
                     displayProfile();
                 }
-                
+
             } catch (error) {
                 console.error('❌ Error loading profile:', error);
                 alert('Error loading profile: ' + error.message);
@@ -416,26 +428,26 @@
             const fullName = `${userData.firstName || 'User'} ${userData.lastName || ''}`.trim();
             document.getElementById('profileName').textContent = fullName;
             document.getElementById('profileEmail').textContent = userData.email || currentUser.email;
-            
+
             // Update avatar with initials
             const initials = `${(userData.firstName || 'U')[0]}${(userData.lastName || '')[0] || ''}`.toUpperCase();
             document.getElementById('avatarInitials').textContent = initials;
-            
+
             // Fill form fields
             document.getElementById('firstName').value = userData.firstName || '';
             document.getElementById('lastName').value = userData.lastName || '';
             document.getElementById('email').value = userData.email || currentUser.email;
             document.getElementById('phone').value = userData.phone || '';
             document.getElementById('dateOfBirth').value = userData.dateOfBirth || '';
-            
+
             document.getElementById('fitnessGoal').value = userData.fitnessGoal || '';
             document.getElementById('trainingLevel').value = userData.trainingLevel || '';
             document.getElementById('medicalConditions').value = userData.medicalConditions || '';
             document.getElementById('additionalNotes').value = userData.additionalNotes || '';
-            
+
             // Account info
             document.getElementById('accountStatus').textContent = userData.isActive !== false ? 'Active ✅' : 'Inactive ❌';
-            
+
             if (userData.createdAt) {
                 const createdDate = userData.createdAt.toDate ? userData.createdAt.toDate() : new Date(userData.createdAt);
                 document.getElementById('memberSince').textContent = createdDate.toLocaleDateString('en-US', {
@@ -451,12 +463,12 @@
         // Save personal info
         document.getElementById('personalInfoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const saveBtn = document.getElementById('savePersonalBtn');
             const originalText = saveBtn.textContent;
             saveBtn.disabled = true;
             saveBtn.textContent = 'Saving...';
-            
+
             try {
                 const updates = {
                     firstName: document.getElementById('firstName').value.trim(),
@@ -465,15 +477,15 @@
                     dateOfBirth: document.getElementById('dateOfBirth').value,
                     updatedAt: new Date()
                 };
-                
+
                 await updateDoc(doc(db, 'users', currentUser.uid), updates);
-                
+
                 userData = { ...userData, ...updates };
                 displayProfile();
-                
+
                 showNotification('✅ Personal information updated successfully!', 'success');
                 console.log('✅ Profile updated');
-                
+
             } catch (error) {
                 console.error('❌ Error updating profile:', error);
                 showNotification('❌ Error: ' + error.message, 'error');
@@ -486,12 +498,12 @@
         // Save fitness info
         document.getElementById('fitnessInfoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const saveBtn = document.getElementById('saveFitnessBtn');
             const originalText = saveBtn.textContent;
             saveBtn.disabled = true;
             saveBtn.textContent = 'Saving...';
-            
+
             try {
                 const updates = {
                     fitnessGoal: document.getElementById('fitnessGoal').value,
@@ -500,14 +512,14 @@
                     additionalNotes: document.getElementById('additionalNotes').value.trim(),
                     updatedAt: new Date()
                 };
-                
+
                 await updateDoc(doc(db, 'users', currentUser.uid), updates);
-                
+
                 userData = { ...userData, ...updates };
-                
+
                 showNotification('✅ Fitness profile updated successfully!', 'success');
                 console.log('✅ Fitness profile updated');
-                
+
             } catch (error) {
                 console.error('❌ Error updating fitness profile:', error);
                 showNotification('❌ Error: ' + error.message, 'error');
@@ -518,7 +530,7 @@
         });
 
         // Logout
-        window.logout = async function() {
+        window.logout = async function () {
             try {
                 await signOut(auth);
                 window.location.href = 'loginPage.html';
@@ -534,12 +546,12 @@
             notification.className = `notification ${type}`;
             notification.textContent = message;
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.remove();
             }, 4000);
         }
     </script>
 </body>
-</html>
 
+</html>

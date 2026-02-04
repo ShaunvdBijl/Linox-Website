@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -183,6 +184,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <nav class="navbar">
@@ -190,6 +192,7 @@
         <h1><a href="admin-portal.html" style="color: white; text-decoration: none;">LINQXFITNESS Admin</a></h1>
       </div>
       <ul class="nav-menu">
+        <li><a href="home.html">Home</a></li>
         <li><a href="admin-portal.html">Dashboard</a></li>
         <li><a href="#" onclick="logout()">Logout</a></li>
       </ul>
@@ -199,7 +202,7 @@
   <main>
     <div class="admin-container">
       <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
-      
+
       <div class="admin-header">
         <h1>Recommend Exercises</h1>
         <p>Manage and recommend exercises for the selected customer</p>
@@ -302,7 +305,9 @@
 
         <div class="exercise-section">
           <h3>Recommendation Notes</h3>
-          <textarea id="recommendationNotes" style="width: 100%; height: 100px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical;" placeholder="Add notes about exercise recommendations...">Customer responds well to bodyweight exercises. Avoid high-impact movements due to knee concerns. Focus on building core strength and improving cardio endurance gradually.</textarea>
+          <textarea id="recommendationNotes"
+            style="width: 100%; height: 100px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical;"
+            placeholder="Add notes about exercise recommendations...">Customer responds well to bodyweight exercises. Avoid high-impact movements due to knee concerns. Focus on building core strength and improving cardio endurance gradually.</textarea>
           <button class="btn-primary" onclick="saveRecommendationNotes()" style="margin-top: 1rem;">Save Notes</button>
         </div>
       </div>
@@ -333,19 +338,19 @@
     // Get customer ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const customerId = urlParams.get('id');
-    
+
     let currentUser = null;
     let allExercises = [];
     let customerRecommendations = [];
     let customerData = null;
 
     // Make functions available immediately
-    window.addNewRecommendation = function() {
+    window.addNewRecommendation = function () {
       console.log('✅ addNewRecommendation called');
       window.openAddRecommendationModal();
     };
 
-    window.openAddRecommendationModal = function() {
+    window.openAddRecommendationModal = function () {
       console.log('✅ openAddRecommendationModal called');
       // Create modal HTML
       const modal = document.createElement('div');
@@ -548,7 +553,7 @@
       });
     };
 
-    window.closeAddRecommendationModal = function() {
+    window.closeAddRecommendationModal = function () {
       const modal = document.getElementById('addRecommendationModal');
       if (modal) {
         modal.remove();
@@ -564,7 +569,7 @@
       }
       currentUser = user;
       console.log('✅ Admin authenticated:', user.email);
-      
+
       await loadCustomerData();
       await loadExercises();
       await loadCustomerRecommendations();
@@ -608,20 +613,20 @@
           collection(db, 'customerRecommendedExercises'),
           where('customerID', '==', customerId)
         );
-        
+
         const recommendationsSnapshot = await getDocs(recommendationsQuery);
         customerRecommendations = [];
-        
+
         recommendationsSnapshot.forEach(doc => {
           customerRecommendations.push({ id: doc.id, ...doc.data() });
         });
-        
+
         // Sort by priority (high, medium, low)
         const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
         customerRecommendations.sort((a, b) => {
           return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
         });
-        
+
         console.log('✅ Customer recommendations loaded:', customerRecommendations.length);
         displayCurrentRecommendations();
       } catch (error) {
@@ -632,7 +637,7 @@
     // Display current recommendations
     function displayCurrentRecommendations() {
       const container = document.getElementById('currentRecommendations');
-      
+
       if (customerRecommendations.length === 0) {
         container.innerHTML = '<div class="empty-state">No recommendations yet. Add some from the exercise library below!</div>';
         return;
@@ -661,7 +666,7 @@
     // Display exercise library
     function displayExerciseLibrary() {
       const container = document.getElementById('exerciseLibrary');
-      
+
       if (allExercises.length === 0) {
         container.innerHTML = '<div class="empty-state">No exercises available. Please set up the exercise library first.</div>';
         return;
@@ -669,7 +674,7 @@
 
       // Filter out exercises that are already recommended
       const recommendedExerciseIds = customerRecommendations.map(rec => rec.exerciseId);
-      const availableExercises = allExercises.filter(exercise => 
+      const availableExercises = allExercises.filter(exercise =>
         !recommendedExerciseIds.includes(exercise.id)
       );
 
@@ -693,13 +698,13 @@
     }
 
     // Add new recommendation (opens modal) - Make globally accessible
-    window.addNewRecommendation = function() {
+    window.addNewRecommendation = function () {
       console.log('✅ addNewRecommendation called');
       window.openAddRecommendationModal();
     };
 
     // Open modal for adding new custom exercise recommendation - Make globally accessible
-    window.openAddRecommendationModal = function() {
+    window.openAddRecommendationModal = function () {
       console.log('✅ openAddRecommendationModal called');
       // Create modal HTML
       const modal = document.createElement('div');
@@ -903,7 +908,7 @@
     }
 
     // Close the add recommendation modal - Make globally accessible
-    window.closeAddRecommendationModal = function() {
+    window.closeAddRecommendationModal = function () {
       const modal = document.getElementById('addRecommendationModal');
       if (modal) {
         modal.remove();
@@ -950,7 +955,7 @@
 
         // Add exercise to library
         const exerciseRef = await addDoc(collection(db, 'exercises'), exerciseData);
-        
+
         // Create recommendation for the customer
         const recommendationData = {
           customerID: customerId,
@@ -987,7 +992,7 @@
     }
 
     // Edit recommendation
-    window.editRecommendation = function(recommendationId) {
+    window.editRecommendation = function (recommendationId) {
       const recommendation = customerRecommendations.find(rec => rec.id === recommendationId);
       if (!recommendation) return;
 
@@ -1013,7 +1018,7 @@
     };
 
     // Remove recommendation
-    window.removeRecommendation = async function(recommendationId) {
+    window.removeRecommendation = async function (recommendationId) {
       if (!confirm('Are you sure you want to remove this recommendation?')) return;
 
       try {
@@ -1028,7 +1033,7 @@
     };
 
     // Recommend exercise from library
-    window.recommendExercise = async function(exerciseId) {
+    window.recommendExercise = async function (exerciseId) {
       const exercise = allExercises.find(ex => ex.id === exerciseId);
       if (!exercise) return;
 
@@ -1087,7 +1092,7 @@
     }
 
     // Save recommendation notes (if there's a notes section)
-    window.saveRecommendationNotes = function() {
+    window.saveRecommendationNotes = function () {
       const notes = document.getElementById('recommendationNotes');
       if (notes) {
         const notesValue = notes.value;
@@ -1097,7 +1102,7 @@
     };
 
     // Logout function
-    window.logout = function() {
+    window.logout = function () {
       localStorage.removeItem('currentUser');
       window.location.href = 'loginPage.html';
     };
@@ -1119,11 +1124,12 @@
       `;
       notification.textContent = message;
       document.body.appendChild(notification);
-      
+
       setTimeout(() => {
         notification.remove();
       }, 3000);
     }
   </script>
 </body>
+
 </html>

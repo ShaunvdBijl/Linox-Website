@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -66,6 +67,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <nav class="navbar">
@@ -73,6 +75,7 @@
         <h1><a href="home.html" style="color: white; text-decoration: none;">LinoxFitness</a></h1>
       </div>
       <ul class="nav-menu">
+        <li><a href="home.html">Home</a></li>
         <li><a href="dashboard.html">Dashboard</a></li>
         <li><a href="schedule.html">Class Schedule</a></li>
         <li><a href="my-workout-plan.html">My Workout</a></li>
@@ -93,20 +96,23 @@
           </a>
         </div>
         <h1>Book Your Session</h1>
-        <p>Choose from our personal training sessions, group classes, or specialized programs to accelerate your fitness journey.</p>
+        <p>Choose from our personal training sessions, group classes, or specialized programs to accelerate your fitness
+          journey.</p>
       </div>
     </section>
 
     <section class="features">
       <div class="container">
         <h2>Available Sessions</h2>
-        
+
         <!-- Session Type Selection -->
         <div style="margin-bottom: 3rem;">
           <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
-            <button class="btn-primary" onclick="showSessionType('personal')" id="personalBtn">Personal Training</button>
+            <button class="btn-primary" onclick="showSessionType('personal')" id="personalBtn">Personal
+              Training</button>
             <button class="btn-secondary" onclick="showSessionType('group')" id="groupBtn">Group Classes</button>
-            <button class="btn-secondary" onclick="showSessionType('specialized')" id="specializedBtn">Specialized Programs</button>
+            <button class="btn-secondary" onclick="showSessionType('specialized')" id="specializedBtn">Specialized
+              Programs</button>
           </div>
         </div>
 
@@ -118,10 +124,11 @@
               <h4>One-on-One Training</h4>
               <p><strong>Duration:</strong> 60 minutes</p>
               <p><strong>Price:</strong> $75/session</p>
-              <p><strong>Description:</strong> Personalized attention with customized workout plans tailored to your goals.</p>
+              <p><strong>Description:</strong> Personalized attention with customized workout plans tailored to your
+                goals.</p>
               <button class="btn-primary" onclick="bookSession('personal', 'one-on-one')">Book Now</button>
             </div>
-            
+
             <div class="feature-card">
               <h4>30-Minute Express</h4>
               <p><strong>Duration:</strong> 30 minutes</p>
@@ -129,7 +136,7 @@
               <p><strong>Description:</strong> Quick, intense workout perfect for busy schedules.</p>
               <button class="btn-primary" onclick="bookSession('personal', 'express')">Book Now</button>
             </div>
-            
+
             <div class="feature-card">
               <h4>Nutrition Consultation</h4>
               <p><strong>Duration:</strong> 45 minutes</p>
@@ -151,7 +158,7 @@
               <p><strong>Schedule:</strong> Mon, Wed, Fri - 6:00 AM</p>
               <button class="btn-primary" onclick="bookSession('group', 'hiit')">Book Now</button>
             </div>
-            
+
             <div class="feature-card">
               <h4>Strength Training</h4>
               <p><strong>Duration:</strong> 60 minutes</p>
@@ -159,7 +166,7 @@
               <p><strong>Schedule:</strong> Tue, Thu - 5:30 PM</p>
               <button class="btn-primary" onclick="bookSession('group', 'strength')">Book Now</button>
             </div>
-            
+
             <div class="feature-card">
               <h4>Yoga & Flexibility</h4>
               <p><strong>Duration:</strong> 60 minutes</p>
@@ -181,7 +188,7 @@
               <p><strong>Includes:</strong> 16 sessions + nutrition plan</p>
               <button class="btn-primary" onclick="bookSession('specialized', 'weight-loss')">Book Now</button>
             </div>
-            
+
             <div class="feature-card">
               <h4>Muscle Building</h4>
               <p><strong>Duration:</strong> 12 weeks</p>
@@ -189,7 +196,7 @@
               <p><strong>Includes:</strong> 24 sessions + meal plan</p>
               <button class="btn-primary" onclick="bookSession('specialized', 'muscle-building')">Book Now</button>
             </div>
-            
+
             <div class="feature-card">
               <h4>Sports Performance</h4>
               <p><strong>Duration:</strong> 6 weeks</p>
@@ -216,36 +223,54 @@
               <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Thu</div>
               <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Fri</div>
               <div style="text-align: center; font-weight: bold; padding: 0.5rem;">Sat</div>
-              
+
               <!-- Calendar days -->
               <div style="text-align: center; padding: 0.5rem; color: #ccc;">28</div>
               <div style="text-align: center; padding: 0.5rem; color: #ccc;">29</div>
               <div style="text-align: center; padding: 0.5rem; color: #ccc;">30</div>
               <div style="text-align: center; padding: 0.5rem; color: #ccc;">31</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('1')">1</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('2')">2</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('3')">3</div>
-              
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('4')">4</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('5')">5</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('6')">6</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('7')">7</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('8')">8</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('9')">9</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('10')">10</div>
-              
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('11')">11</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('12')">12</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('13')">13</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('14')">14</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('15')">15</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('16')">16</div>
-              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;" onclick="selectDate('17')">17</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('1')">1</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('2')">2</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('3')">3</div>
+
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('4')">4</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('5')">5</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('6')">6</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('7')">7</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('8')">8</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('9')">9</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('10')">10</div>
+
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('11')">11</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('12')">12</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('13')">13</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('14')">14</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('15')">15</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('16')">16</div>
+              <div style="text-align: center; padding: 0.5rem; cursor: pointer; border-radius: 5px;"
+                onclick="selectDate('17')">17</div>
             </div>
-            
+
             <div id="timeSlots" style="display: none;">
               <h4>Available Time Slots</h4>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-top: 1rem;">
+              <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-top: 1rem;">
                 <button class="btn-outline" onclick="selectTime('6:00 AM')">6:00 AM</button>
                 <button class="btn-outline" onclick="selectTime('7:00 AM')">7:00 AM</button>
                 <button class="btn-outline" onclick="selectTime('8:00 AM')">8:00 AM</button>
@@ -258,7 +283,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="about-image">
           <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             <h3 style="color: #667eea; margin-bottom: 1rem;">Your Bookings</h3>
@@ -283,7 +308,8 @@
     </section>
 
     <!-- Booking Confirmation Modal -->
-    <div id="bookingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="bookingModal"
+      style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
       <div style="background: white; padding: 2rem; border-radius: 15px; max-width: 500px; width: 90%;">
         <h3 style="color: #1e1e2f; margin-bottom: 1rem;">Confirm Your Booking</h3>
         <div id="bookingDetails" style="margin-bottom: 2rem;">
@@ -355,7 +381,7 @@
         window.location.href = 'loginPage.html';
         return;
       }
-      
+
       currentUser = user;
       console.log('✅ User authenticated:', user.email);
       initializeBookingSystem();
@@ -367,29 +393,29 @@
     }
 
     // Show session type
-    window.showSessionType = function(type) {
+    window.showSessionType = function (type) {
       document.querySelectorAll('.session-section').forEach(section => {
         section.style.display = 'none';
       });
-      
+
       document.querySelectorAll('#personalBtn, #groupBtn, #specializedBtn').forEach(btn => {
         btn.className = 'btn-secondary';
       });
-      
+
       const sectionId = type + 'Section';
       const section = document.getElementById(sectionId);
       if (section) section.style.display = 'block';
-      
+
       const btn = document.getElementById(type + 'Btn');
       if (btn) btn.className = 'btn-primary';
-      
+
       selectedSessionType = type;
     };
 
     // Book session
-    window.bookSession = function(type, session) {
+    window.bookSession = function (type, session) {
       selectedSession = session;
-      
+
       if (type === 'personal') {
         // For personal training, show the booking modal directly
         showBookingModal();
@@ -406,7 +432,7 @@
       const sessionDetails = getSessionDetails();
       const modal = document.getElementById('bookingModal');
       const detailsDiv = document.getElementById('bookingDetails');
-      
+
       detailsDiv.innerHTML = `
         <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
           <h4 style="margin: 0 0 0.5rem 0; color: #667eea;">Session Details</h4>
@@ -421,7 +447,7 @@
           </ul>
         </div>
       `;
-      
+
       modal.style.display = 'flex';
     }
 
@@ -449,18 +475,18 @@
           }
         }
       };
-      
+
       return sessionDetails[selectedSessionType][selectedSession];
     }
 
     // Confirm booking
-    window.confirmBooking = function() {
+    window.confirmBooking = function () {
       const button = event.target;
       const originalText = button.textContent;
-      
+
       button.textContent = 'Processing...';
       button.disabled = true;
-      
+
       // Simulate booking process
       setTimeout(() => {
         // Save booking to localStorage (in a real app, this would go to a database)
@@ -472,29 +498,29 @@
           status: 'confirmed',
           timestamp: new Date().toISOString()
         };
-        
+
         // Get existing bookings
         const existingBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
         existingBookings.push(booking);
         localStorage.setItem('userBookings', JSON.stringify(existingBookings));
-        
+
         // Show success message
         closeBookingModal();
         showSuccessMessage('Personal training session booked! Check your email for details.');
-        
+
         // Reset selections
         selectedSession = '';
-        
+
         // Redirect to dashboard after 2 seconds
         setTimeout(() => {
           window.location.href = 'dashboard.html';
         }, 2000);
-        
+
       }, 2000);
     };
 
     // Close booking modal
-    window.closeBookingModal = function() {
+    window.closeBookingModal = function () {
       document.getElementById('bookingModal').style.display = 'none';
     };
 
@@ -515,9 +541,9 @@
         max-width: 300px;
       `;
       successDiv.textContent = message;
-      
+
       document.body.appendChild(successDiv);
-      
+
       setTimeout(() => {
         if (successDiv.parentNode) {
           successDiv.remove();
@@ -526,7 +552,7 @@
     }
 
     // Logout
-    window.logout = async function() {
+    window.logout = async function () {
       try {
         await signOut(auth);
         window.location.href = 'loginPage.html';
@@ -537,4 +563,5 @@
     };
   </script>
 </body>
+
 </html>

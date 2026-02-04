@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,7 +143,9 @@
       flex-wrap: wrap;
     }
 
-    .btn-edit, .btn-message, .btn-notes {
+    .btn-edit,
+    .btn-message,
+    .btn-notes {
       padding: 10px 20px;
       border: none;
       border-radius: 8px;
@@ -181,6 +184,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <nav class="navbar">
@@ -188,6 +192,7 @@
         <h1><a href="admin-portal.html" style="color: white; text-decoration: none;">LINQXFITNESS Admin</a></h1>
       </div>
       <ul class="nav-menu">
+        <li><a href="home.html">Home</a></li>
         <li><a href="admin-portal.html">Dashboard</a></li>
         <li><a href="#" onclick="logout()">Logout</a></li>
       </ul>
@@ -197,7 +202,7 @@
   <main>
     <div class="admin-container">
       <a href="admin-portal.html" class="btn-back">← Back to Admin Portal</a>
-      
+
       <!-- Customer Header with Profile -->
       <div class="customer-header" id="customerHeader">
         <div class="profile-photo" id="profilePhoto">👤</div>
@@ -211,7 +216,8 @@
             <div class="detail-section">
               <h3>📋 Personal Information</h3>
               <div class="detail-item">
-                <span class="detail-label">Full Name:</span> <span class="detail-value" id="customerName">Loading...</span>
+                <span class="detail-label">Full Name:</span> <span class="detail-value"
+                  id="customerName">Loading...</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">Email:</span> <span class="detail-value" id="customerEmail">Loading...</span>
@@ -220,7 +226,8 @@
                 <span class="detail-label">Phone:</span> <span class="detail-value" id="customerPhone">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Date of Birth:</span> <span class="detail-value" id="dateOfBirth">Loading...</span>
+                <span class="detail-label">Date of Birth:</span> <span class="detail-value"
+                  id="dateOfBirth">Loading...</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">Gender:</span> <span class="detail-value" id="gender">Loading...</span>
@@ -233,89 +240,111 @@
             <div class="detail-section">
               <h3>🏃‍♂️ Training Information</h3>
               <div class="detail-item">
-                <span class="detail-label">Training Level:</span> <span class="detail-value" id="trainingLevel">Loading...</span>
+                <span class="detail-label">Training Level:</span> <span class="detail-value"
+                  id="trainingLevel">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Status:</span> <span class="detail-value" id="customerStatus">Loading...</span>
+                <span class="detail-label">Status:</span> <span class="detail-value"
+                  id="customerStatus">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Registration Date:</span> <span class="detail-value" id="registrationDate">Loading...</span>
+                <span class="detail-label">Registration Date:</span> <span class="detail-value"
+                  id="registrationDate">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Last Activity:</span> <span class="detail-value" id="lastActivity">Loading...</span>
+                <span class="detail-label">Last Activity:</span> <span class="detail-value"
+                  id="lastActivity">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Total Sessions:</span> <span class="detail-value" id="totalSessions">Loading...</span>
+                <span class="detail-label">Total Sessions:</span> <span class="detail-value"
+                  id="totalSessions">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Preferred Trainer:</span> <span class="detail-value" id="preferredTrainer">Loading...</span>
+                <span class="detail-label">Preferred Trainer:</span> <span class="detail-value"
+                  id="preferredTrainer">Loading...</span>
               </div>
             </div>
 
             <div class="detail-section">
               <h3>🎯 Fitness Goals & Health</h3>
               <div class="detail-item">
-                <span class="detail-label">Primary Goal:</span> <span class="detail-value" id="primaryGoal">Loading...</span>
+                <span class="detail-label">Primary Goal:</span> <span class="detail-value"
+                  id="primaryGoal">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Experience Level:</span> <span class="detail-value" id="experienceLevel">Loading...</span>
+                <span class="detail-label">Experience Level:</span> <span class="detail-value"
+                  id="experienceLevel">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Current Weight:</span> <span class="detail-value" id="currentWeight">Loading...</span>
+                <span class="detail-label">Current Weight:</span> <span class="detail-value"
+                  id="currentWeight">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Target Weight:</span> <span class="detail-value" id="targetWeight">Loading...</span>
+                <span class="detail-label">Target Weight:</span> <span class="detail-value"
+                  id="targetWeight">Loading...</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">Height:</span> <span class="detail-value" id="height">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Medical Conditions:</span> <span class="detail-value" id="medicalConditions">None reported</span>
+                <span class="detail-label">Medical Conditions:</span> <span class="detail-value"
+                  id="medicalConditions">None reported</span>
               </div>
             </div>
 
             <div class="detail-section">
               <h3>💳 Membership & Billing</h3>
               <div class="detail-item">
-                <span class="detail-label">Membership Type:</span> <span class="detail-value" id="membershipType">Loading...</span>
+                <span class="detail-label">Membership Type:</span> <span class="detail-value"
+                  id="membershipType">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Payment Status:</span> <span class="detail-value" id="paymentStatus">Loading...</span>
+                <span class="detail-label">Payment Status:</span> <span class="detail-value"
+                  id="paymentStatus">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Next Payment Due:</span> <span class="detail-value" id="nextPayment">Loading...</span>
+                <span class="detail-label">Next Payment Due:</span> <span class="detail-value"
+                  id="nextPayment">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Total Spent:</span> <span class="detail-value" id="totalSpent">Loading...</span>
+                <span class="detail-label">Total Spent:</span> <span class="detail-value"
+                  id="totalSpent">Loading...</span>
               </div>
             </div>
 
             <div class="detail-section">
               <h3>📊 Progress & Statistics</h3>
               <div class="detail-item">
-                <span class="detail-label">Workouts Completed:</span> <span class="detail-value" id="workoutsCompleted">Loading...</span>
+                <span class="detail-label">Workouts Completed:</span> <span class="detail-value"
+                  id="workoutsCompleted">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Average Session Rating:</span> <span class="detail-value" id="averageRating">Loading...</span>
+                <span class="detail-label">Average Session Rating:</span> <span class="detail-value"
+                  id="averageRating">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Favorite Class:</span> <span class="detail-value" id="favoriteClass">Loading...</span>
+                <span class="detail-label">Favorite Class:</span> <span class="detail-value"
+                  id="favoriteClass">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Achievement Badges:</span> <span class="detail-value" id="achievements">Loading...</span>
+                <span class="detail-label">Achievement Badges:</span> <span class="detail-value"
+                  id="achievements">Loading...</span>
               </div>
             </div>
 
             <div class="detail-section">
               <h3>📝 Notes & Communication</h3>
               <div class="detail-item">
-                <span class="detail-label">Admin Notes:</span> <span class="detail-value" id="adminNotes">No notes available</span>
+                <span class="detail-label">Admin Notes:</span> <span class="detail-value" id="adminNotes">No notes
+                  available</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Last Contact:</span> <span class="detail-value" id="lastContact">Loading...</span>
+                <span class="detail-label">Last Contact:</span> <span class="detail-value"
+                  id="lastContact">Loading...</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Communication Preferences:</span> <span class="detail-value" id="commPreferences">Loading...</span>
+                <span class="detail-label">Communication Preferences:</span> <span class="detail-value"
+                  id="commPreferences">Loading...</span>
               </div>
             </div>
           </div>
@@ -325,8 +354,10 @@
             <button class="btn-edit" onclick="editCustomer()">✏️ Edit Customer</button>
             <button class="btn-message" onclick="sendMessage()">💬 Send Message</button>
             <button class="btn-notes" onclick="addNote()">📝 Add Note</button>
-            <a href="customer-schedule.html?id=" + customerId class="btn-primary" id="scheduleLink">📅 Manage Schedule</a>
-            <a href="customer-exercises.html?id=" + customerId class="btn-primary" id="exercisesLink">🏋️ Exercise Plan</a>
+            <a href="customer-schedule.html?id=" + customerId class="btn-primary" id="scheduleLink">📅 Manage
+              Schedule</a>
+            <a href="customer-exercises.html?id=" + customerId class="btn-primary" id="exercisesLink">🏋️ Exercise
+              Plan</a>
           </div>
         </div>
       </div>
@@ -373,10 +404,10 @@
         if (!window.firebaseDb) {
           throw new Error('Firebase not initialized');
         }
-        
+
         const customerRef = doc(window.firebaseDb, 'customers', customerId);
         const customerSnap = await getDoc(customerRef);
-        
+
         if (customerSnap.exists()) {
           return { success: true, customer: { id: customerSnap.id, ...customerSnap.data() } };
         } else {
@@ -413,19 +444,19 @@
 
         // Fetch customer data from Firebase
         const result = await getCustomerFromFirebase(customerId);
-        
+
         if (!result.success) {
           document.getElementById('customerInfo').innerHTML = `<p>Error: ${result.error}</p>`;
           return;
         }
 
         const customer = result.customer;
-        
+
         // Update header
         document.getElementById('customerFullName').textContent = `${customer.firstName || customer.name || 'Unknown'} ${customer.lastName || ''}`;
         document.getElementById('customerEmailHeader').textContent = customer.email || 'No email';
         document.getElementById('profilePhoto').textContent = getInitials(
-          customer.firstName || customer.name || 'U', 
+          customer.firstName || customer.name || 'U',
           customer.lastName || 'N'
         );
 
@@ -479,10 +510,10 @@
     function formatDate(dateString) {
       if (!dateString) return 'N/A';
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       });
     }
 
@@ -514,4 +545,5 @@
     });
   </script>
 </body>
+
 </html>

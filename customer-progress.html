@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -178,18 +179,20 @@
             .progress-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .admin-container {
                 padding: 1rem;
             }
         }
     </style>
 </head>
+
 <body>
     <main>
         <div class="admin-container">
+            <a href="home.html" class="btn-back">🏠 Home</a>
             <a href="#" class="btn-back" onclick="goBackToSchedule()">← Back to Customer Schedule</a>
-            
+
             <div class="admin-header">
                 <h1>📊 Customer Progress</h1>
                 <p id="customerName">Loading customer information...</p>
@@ -231,8 +234,8 @@
                 <span class="close" onclick="closeNoteModal()">&times;</span>
             </div>
             <form id="noteForm">
-                <textarea id="noteContent" placeholder="Enter training notes, observations, or progress updates..." 
-                         style="width: 100%; height: 150px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; resize: vertical;"></textarea>
+                <textarea id="noteContent" placeholder="Enter training notes, observations, or progress updates..."
+                    style="width: 100%; height: 150px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; resize: vertical;"></textarea>
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" class="btn">Save Note</button>
                     <button type="button" class="btn btn-secondary" onclick="closeNoteModal()">Cancel</button>
@@ -286,7 +289,7 @@
             if (user) {
                 currentUser = user;
                 console.log('✅ Admin authenticated:', user.email);
-                
+
                 if (customerId) {
                     await loadCustomerData();
                     await loadProgressData();
@@ -305,10 +308,10 @@
             try {
                 const customerRef = doc(db, 'customers', customerId);
                 const customerSnap = await getDoc(customerRef);
-                
+
                 if (customerSnap.exists()) {
                     customerData = { id: customerSnap.id, ...customerSnap.data() };
-                    document.getElementById('customerName').textContent = 
+                    document.getElementById('customerName').textContent =
                         `${customerData.firstName} ${customerData.lastName} - Progress Overview`;
                     console.log('✅ Customer data loaded:', customerData);
                 } else {
@@ -338,7 +341,7 @@
                 // Get all sessions for this customer
                 const schedulesRef = collection(db, 'schedules');
                 const schedulesSnapshot = await getDocs(schedulesRef);
-                
+
                 let totalSessions = 0;
                 let completedSessions = 0;
                 let cancelledSessions = 0;
@@ -348,21 +351,21 @@
                 schedulesSnapshot.forEach(doc => {
                     const session = doc.data();
                     if (session.bookedUsers && Array.isArray(session.bookedUsers)) {
-                        const isBooked = session.bookedUsers.some(user => 
+                        const isBooked = session.bookedUsers.some(user =>
                             user.customerID === customerId || user.email === customerData?.email
                         );
-                        
+
                         if (isBooked) {
                             totalSessions++;
-                            
+
                             // Track session types
                             const activity = session.activity || 'Unknown';
                             sessionTypes[activity] = (sessionTypes[activity] || 0) + 1;
-                            
+
                             // Check session status
                             const sessionDate = new Date(session.date);
                             const now = new Date();
-                            
+
                             if (session.status === 'cancelled') {
                                 cancelledSessions++;
                             } else if (sessionDate < now) {
@@ -397,7 +400,7 @@
                 // Update performance stats
                 const completionRate = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
                 const mostPopularActivity = Object.keys(sessionTypes).reduce((a, b) => sessionTypes[a] > sessionTypes[b] ? a : b, 'None');
-                
+
                 document.getElementById('performanceStats').innerHTML = `
                     <div class="stat-item">
                         <span class="stat-label">Completion Rate</span>
@@ -447,7 +450,7 @@
 
                 // Get notes from customer document
                 const rawNotes = customerData.trainingNotes;
-                
+
                 // Handle both string and array formats
                 let notes = [];
                 if (Array.isArray(rawNotes)) {
@@ -462,7 +465,7 @@
                         createdBy: customerData.trainingNotesUpdatedBy || 'system'
                     }];
                 }
-                
+
                 if (notes.length === 0) {
                     document.getElementById('notesList').innerHTML = '<div class="empty-state">No training notes yet. Add your first note below!</div>';
                     return;
@@ -493,12 +496,12 @@
         }
 
         // Add new note
-        window.addNewNote = function() {
+        window.addNewNote = function () {
             document.getElementById('noteModal').style.display = 'block';
         };
 
         // Close note modal
-        window.closeNoteModal = function() {
+        window.closeNoteModal = function () {
             document.getElementById('noteModal').style.display = 'none';
             document.getElementById('noteForm').reset();
         };
@@ -506,7 +509,7 @@
         // Save note
         document.getElementById('noteForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const noteContent = document.getElementById('noteContent').value.trim();
             if (!noteContent) {
                 alert('Please enter a note');
@@ -517,7 +520,7 @@
                 // Get current notes (handle both string and array formats)
                 const currentNotes = customerData.trainingNotes || '';
                 const currentContent = typeof currentNotes === 'string' ? currentNotes : '';
-                
+
                 // Append new note to existing content
                 const timestamp = new Date().toLocaleString();
                 const newNoteText = `\n\n--- ${timestamp} ---\n${noteContent}`;
@@ -533,13 +536,13 @@
 
                 // Update local data
                 customerData.trainingNotes = updatedNotes;
-                
+
                 // Reload notes display
                 await loadNotes();
-                
+
                 // Close modal
                 closeNoteModal();
-                
+
                 console.log('✅ Note added successfully');
                 showNotification('Note added successfully!', 'success');
             } catch (error) {
@@ -564,26 +567,26 @@
                 z-index: 1000;
                 animation: slideInRight 0.3s ease-out;
             `;
-            
+
             if (type === 'success') notification.style.background = '#28a745';
             else if (type === 'error') notification.style.background = '#dc3545';
             else notification.style.background = '#007bff';
-            
+
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.remove();
             }, 3000);
         }
 
         // Go back to customer schedule with preserved customer ID
-        window.goBackToSchedule = function() {
+        window.goBackToSchedule = function () {
             console.log('✅ Going back to customer schedule with ID:', customerId);
             window.location.href = `customer-schedule.html?id=${customerId}`;
         };
 
         // Close modal when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('noteModal');
             if (event.target === modal) {
                 closeNoteModal();
@@ -591,4 +594,5 @@
         };
     </script>
 </body>
+
 </html>
