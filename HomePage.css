@@ -240,6 +240,10 @@ main {
   gap: 2rem;
 }
 
+.grid-2x2 {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
 .feature-card {
   text-align: center;
   padding: 2rem;
