@@ -1,5 +1,6 @@
 # Firebase Configuration (Never commit actual API keys)
 config.js
+firebase-config.js
 secure-config.js
 setup-secure-config.js
 .env
